@@ -14,4 +14,5 @@ int main()
 		respostaMainMenu = printMainMenu(logged);
 
 	}
+	return 0;
 }

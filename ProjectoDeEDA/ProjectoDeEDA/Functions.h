@@ -72,7 +72,7 @@ int convert_Str_2_INT(string input)
 int printMainMenu(bool logged)
 {
 	string resposta;
-
+	int resposta_int;
 	bool quit = false;
 
 	while (!quit)
@@ -114,7 +114,7 @@ int printMainMenu(bool logged)
 		//	Obtém resposta do utilizador.
 		getline(cin, resposta);
 
-		int resposta_int = convert_Str_2_INT(resposta);
+		resposta_int = convert_Str_2_INT(resposta);
 
 		//	Verifica se a resposta do utilizado é válida.
 		if (resposta_int == INT_MIN)
@@ -123,9 +123,8 @@ int printMainMenu(bool logged)
 		}
 		else
 		{
-			wcout << "ECHO: " << resposta_int << endl;
+			quit = true;
 		}
 	}
-
 	return resposta_int;
 }
