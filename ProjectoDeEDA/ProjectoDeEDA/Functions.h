@@ -8,10 +8,12 @@
 
 using namespace std;
 
+/*
+*	Função para fazer clear à consola.
+*/
 void clrConsole()
 {
 	system("cls");
-
 }
 
 /*
