@@ -4,6 +4,7 @@
 #include <io.h>
 #include <fcntl.h>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
