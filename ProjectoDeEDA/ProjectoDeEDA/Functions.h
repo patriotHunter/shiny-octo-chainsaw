@@ -66,55 +66,66 @@ int convert_Str_2_INT(string input)
 	}
 }
 
+/*
+*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador. 
+*/
 int printMainMenu(bool logged)
 {
 	string resposta;
 
-	wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
-	wcout << "\n\nEscolha a opção pretendida.\n" << endl;
-	if (logged)
+	bool quit = false;
+
+	while (!quit)
 	{
-		wcout << "1. Logout." << endl;
+		//	Imprime texto no ecrã.
+		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
+		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
+		if (logged)
+		{
+			wcout << "1. Logout." << endl;
+		}
+		else
+		{
+			wcout << "1. Login." << endl;
+		}
+
+		wcout << "2. Inserir novo aluno." << endl;
+
+		wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
+
+		wcout << "4. Pesquisa por número mecanográfico." << endl;
+
+		wcout << "5. Listar alunos por ordem alfabética." << endl;
+
+		wcout << "6. Editar informação de aluno." << endl;
+
+		wcout << "7. Remoção de aluno." << endl;
+
+		wcout << "8. Encomendar Refeição." << endl;
+
+		wcout << "9. Consumo de refeição." << endl;
+
+		wcout << "10. Carregar plafond." << endl;
+
+		wcout << "11. Listar refeições." << endl;
+
+		wcout << "12. Listar refeções por dia.\n\n" << endl;
+
+		//	Obtém resposta do utilizador.
+		getline(cin, resposta);
+
+		int resposta_int = convert_Str_2_INT(resposta);
+
+		//	Verifica se a resposta do utilizado é válida.
+		if (resposta_int == INT_MIN)
+		{
+			wcout << "O que foi inserido não é uma opção válida." << endl;
+		}
+		else
+		{
+			wcout << "ECHO: " << resposta_int << endl;
+		}
 	}
-	else
-	{
-		wcout << "1. Login." << endl;
-	}
 
-	wcout << "2. Inserir novo aluno." << endl;
-
-	wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
-
-	wcout << "4. Pesquisa por número mecanográfico." << endl;
-
-	wcout << "5. Listar alunos por ordem alfabética." << endl;
-
-	wcout << "6. Editar informação de aluno." << endl;
-
-	wcout << "7. Remoção de aluno." << endl;
-
-	wcout << "8. Encomendar Refeição." << endl;
-
-	wcout << "9. Consumo de refeição." << endl;
-
-	wcout << "10. Carregar plafond." << endl;
-
-	wcout << "11. Listar refeições." << endl;
-
-	wcout << "12. Listar refeções por dia.\n\n" << endl;
-
-	getline(cin, resposta);
-
-	int resposta_int = convert_Str_2_INT(resposta);
-
-	if (resposta_int == INT_MIN)
-	{
-		wcout << "O que foi inserido não é uma opção válida." << endl;
-	}
-	else
-	{
-		wcout << "ECHO: " << resposta_int << endl;
-	}
-
-	return 0;
+	return resposta_int;
 }
