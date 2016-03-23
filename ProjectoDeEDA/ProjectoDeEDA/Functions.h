@@ -8,6 +8,12 @@
 
 using namespace std;
 
+void clrConsole()
+{
+	system("cls");
+
+}
+
 /*
 *	Função que irá converter, se possível um char num inteiro.
 */
@@ -75,6 +81,8 @@ int printMainMenu(bool logged)
 	int resposta_int;
 	bool quit = false;
 
+	clrConsole();
+
 	while (!quit)
 	{
 		//	Imprime texto no ecrã.
@@ -88,27 +96,16 @@ int printMainMenu(bool logged)
 		{
 			wcout << "1. Login." << endl;
 		}
-
 		wcout << "2. Inserir novo aluno." << endl;
-
 		wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
-
 		wcout << "4. Pesquisa por número mecanográfico." << endl;
-
 		wcout << "5. Listar alunos por ordem alfabética." << endl;
-
 		wcout << "6. Editar informação de aluno." << endl;
-
 		wcout << "7. Remoção de aluno." << endl;
-
 		wcout << "8. Encomendar Refeição." << endl;
-
 		wcout << "9. Consumo de refeição." << endl;
-
 		wcout << "10. Carregar plafond." << endl;
-
 		wcout << "11. Listar refeições." << endl;
-
 		wcout << "12. Listar refeções por dia.\n\n" << endl;
 
 		//	Obtém resposta do utilizador.

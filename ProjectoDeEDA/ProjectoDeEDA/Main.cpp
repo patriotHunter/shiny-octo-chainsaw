@@ -12,7 +12,6 @@ int main()
 	while (true)
 	{
 		respostaMainMenu = printMainMenu(logged);
-
 	}
 	return 0;
 }
