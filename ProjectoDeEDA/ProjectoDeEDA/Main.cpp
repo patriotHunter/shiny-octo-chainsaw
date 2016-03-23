@@ -1,5 +1,5 @@
 #include "Functions.h"
-#include <fstream>
+
 bool logged = false;
 int respostaMainMenu;
 
