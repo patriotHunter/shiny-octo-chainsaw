@@ -131,5 +131,23 @@ int printMainMenu(bool logged)
 void inserirAluno()
 {
 	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: ";
-
+	string nome;
+	cin >> nome;
+	wcout << endl << endl << "Número Mecaográfico: ";
+	int num;
+	cin >> num;
+	wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
+	int dia, mes, ano;
+	cin >> dia;
+	wcout << endl << "Mês(número): ";
+	cin >> mes;
+	wcout << endl << "Ano: ";
+	cin >> ano;
+	wcout << endl << endl << "Morada" << endl << "Rua: ";
+	string rua, codPost, numPorta;
+	cin >> rua;
+	wcout << endl << "Nº da porta: ";
+	cin >> numPorta;
+	wcout << endl << "Código Posal: ";
+	cin >> codPost;
 }
