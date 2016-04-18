@@ -127,3 +127,9 @@ int printMainMenu(bool logged)
 	}
 	return resposta_int;
 }
+
+void inserirAluno()
+{
+	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: ";
+
+}
