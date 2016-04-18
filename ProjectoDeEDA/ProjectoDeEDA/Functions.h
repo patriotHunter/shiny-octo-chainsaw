@@ -172,7 +172,11 @@ void inserirAluno()
 
 	string Pass;
 
+	//PUT PASSWORD PROMPT HERE!!!!!!
+
 	util util;
+
+	//PUT USER DATA CONFIRMATION FUNCTION HERE!!!!!!!!!!!
 
 	util.morada = mora;
 	util.nasc = date;
