@@ -8,6 +8,7 @@ struct util
 	string nome;
 	dataNasc nasc;
 	morada morada;
+	string pass;
 };
 
 struct dataNasc
@@ -20,6 +21,6 @@ struct dataNasc
 struct morada
 {
 	string rua;
-	int numPorta;
+	string numPorta;
 	string codPost;
 };
