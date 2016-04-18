@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <string>
 #include <fstream>
+#include "Struct.h"
 
 using namespace std;
 
@@ -128,14 +129,19 @@ int printMainMenu(bool logged)
 	return resposta_int;
 }
 
+/*
+*	Cria um aluno e...
+*/
 void inserirAluno()
 {
 	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: ";
 	string nome;
 	cin >> nome;
+
 	wcout << endl << endl << "Número Mecaográfico: ";
 	int num;
 	cin >> num;
+
 	wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
 	int dia, mes, ano;
 	cin >> dia;
@@ -143,6 +149,13 @@ void inserirAluno()
 	cin >> mes;
 	wcout << endl << "Ano: ";
 	cin >> ano;
+
+	dataNasc date;
+
+	date.ano = ano;
+	date.mes = mes;
+	date.dia = dia;
+
 	wcout << endl << endl << "Morada" << endl << "Rua: ";
 	string rua, codPost, numPorta;
 	cin >> rua;
@@ -150,4 +163,20 @@ void inserirAluno()
 	cin >> numPorta;
 	wcout << endl << "Código Posal: ";
 	cin >> codPost;
+
+	morada mora;
+
+	mora.codPost = codPost;
+	mora.rua = rua;
+	mora.numPorta = numPorta;
+
+	string Pass;
+
+	util util;
+
+	util.morada = mora;
+	util.nasc = date;
+	util.nome = nome;
+	util.numero = num;
+	util.pass = Pass;
 }
