@@ -195,6 +195,11 @@ void inserirAluno()
 	cin >> conf;
 	if (conf == 'Y' || conf == 'y')
 	{
-
+		return 0;
+	}
+	else
+	{
+		wcout << "Insira novamente os seus dados" << endl;
+		inserirAluno();
 	}*/
 }
