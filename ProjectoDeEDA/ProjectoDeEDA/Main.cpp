@@ -9,14 +9,12 @@ int respostaMainMenu;
 int main()
 {
 	_setmode(_fileno(stdout), _O_U16TEXT);
-	while (true)
+	/*while (true)
 	{
 		respostaMainMenu = printMainMenu(logged);
-	}
+	}*/
 
-	wstring pass = PassPrompt();
-
-	wcout << pass << endl;
+	inserirAluno();
 
 	return 0;
 	/*

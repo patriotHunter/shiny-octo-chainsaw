@@ -259,9 +259,7 @@ int inserirAluno()
 	mora.rua = rua;
 	mora.numPorta = numPorta;
 
-	wstring Pass;
-
-	//PUT PASSWORD PROMPT HERE!!!!!!
+	wstring Pass = PassPrompt();
 
 	utilizador aluno;
 
@@ -273,24 +271,24 @@ int inserirAluno()
 	aluno.numero = num;
 	aluno.pass = Pass;
 
-/*
 	char conf;
 
 	wcout << "Confirmação de Dados" << endl;
 	wcout << "Número Mecanográfico: " << num << endl;
-	wcout << "Nome Completo: " << (wstring)nome << endl;
-	wcout << "Data de Nascimento: " << date << endl;
-	wcout << "Morada: " << mora << endl;
+	wcout << "Nome Completo: " << nome << endl;
+	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
+	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl << endl;
 	wcout << "Confirma estes dados?(S/N) ";
 	cin >> conf;
-	if (conf == 'Y' || conf == 'y')
+	if (conf == 'S' || conf == 's')
 	{
+		wcout << "YAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 		return 0;
 	}
 	else
 	{
-		wcout << "Insira novamente os seus dados" << endl
-	}*/
+		//alterar dados function...
+	}
 
 	return 0;
 }
