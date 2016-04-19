@@ -182,15 +182,34 @@ int inserirAluno()
 	}
 
 	wcout << endl << endl << "Data de nascimento" << endl << "Dia: " << endl << endl;
-	cin >> dia;
+	getline(wcin, temp);
+	dia = convert_Str_2_INT(temp);
 	clrConsole();
+
+	if (dia == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Dia: ");
+	}
 
 	wcout << endl << "Mês(número): " << endl << endl;
-	cin >> mes;
+	getline(wcin, temp);
+	mes = convert_Str_2_INT(temp);
 	clrConsole();
 
+	if (mes == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Mês(número): ");
+	}
+
 	wcout << endl << "Ano: ";
-	cin >> ano;
+	getline(wcin, temp);
+	ano = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (ano == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Ano: ");
+	}
 
 	dataNasc date;
 
