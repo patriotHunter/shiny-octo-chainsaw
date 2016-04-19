@@ -217,13 +217,18 @@ int inserirAluno()
 	date.mes = mes;
 	date.dia = dia;
 
-	wcout << endl << endl << "Morada" << endl << "Rua: ";
+	wcout << endl << endl << "Morada" << endl << "Rua: " << endl << endl;
 	wstring rua, codPost, numPorta;
-	wcin >> rua;
-	wcout << endl << "Nº da porta: ";
-	wcin >> numPorta;
-	wcout << endl << "Código Posal: ";
-	wcin >> codPost;
+	getline(wcin, rua);
+	clrConsole();
+
+	wcout << endl << "Nº da porta: " << endl << endl;
+	getline(wcin, numPorta);
+	clrConsole();
+
+	wcout << endl << "Código Postal: " << endl << endl;
+	getline(wcin, codPost);
+	clrConsole();
 
 	morada mora;
 
