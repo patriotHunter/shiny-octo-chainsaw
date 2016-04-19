@@ -5,7 +5,7 @@
 struct util
 {
 	int numero;
-	string nome;
+	wstring nome;
 	dataNasc nasc;
 	morada morada;
 	string pass;
@@ -20,7 +20,7 @@ struct dataNasc
 
 struct morada
 {
-	string rua;
-	string numPorta;
-	string codPost;
+	wstring rua;
+	wstring numPorta;
+	wstring codPost;
 };

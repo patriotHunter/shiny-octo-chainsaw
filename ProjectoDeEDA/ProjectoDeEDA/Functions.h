@@ -20,12 +20,12 @@ void clrConsole()
 /*
 *	Função que irá converter, se possível um char num inteiro.
 */
-int convert_Str_2_INT(string input)
+int convert_Str_2_INT(wstring input)
 {
 	bool possible = true;
 	int value, i;
 	int arr[10];
-	
+
 	value = 0;
 	i = 0;
 
@@ -49,14 +49,12 @@ int convert_Str_2_INT(string input)
 				arr[i] = c - 48;
 			}
 		}
-
 		i++;
 	}
 
 	if (possible)
 	{
-
-		int j = pow(10,i-1);
+		int j = pow(10, i - 1);
 		int x = 0;
 		int aux;
 
@@ -66,7 +64,6 @@ int convert_Str_2_INT(string input)
 			value += aux;
 			j /= 10;
 		}
-
 		return value;
 	}
 	else
@@ -76,11 +73,11 @@ int convert_Str_2_INT(string input)
 }
 
 /*
-*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador. 
+*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
 */
 int printMainMenu(bool logged)
 {
-	string resposta;
+	wstring resposta;
 	int resposta_int;
 	bool quit = false;
 
@@ -112,7 +109,7 @@ int printMainMenu(bool logged)
 		wcout << "12. Listar refeções por dia.\n\n" << endl;
 
 		//	Obtém resposta do utilizador.
-		getline(cin, resposta);
+		getline(wcin, resposta);
 
 		resposta_int = convert_Str_2_INT(resposta);
 
@@ -130,23 +127,68 @@ int printMainMenu(bool logged)
 }
 
 /*
+*	Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
+*/
+int valorInvalido_inserirAluno(wstring x)
+{
+	bool repeat = true;
+	char answer;
+	int num;
+	wstring temp;
+
+	while (repeat)
+	{
+		wcout << "O valor inserido não é válido, quer continuar a inserção de aluno? (S/N)" << endl;
+		cin >> answer;
+
+		if (answer == 'n' || answer == 'N')
+		{
+			return -1;
+		}
+		wcout << endl << x << endl << endl;
+		getline(wcin, temp);
+		num = convert_Str_2_INT(temp);
+
+		if (num != INT_MAX)
+		{
+			repeat = false;
+		}
+		clrConsole();
+	}
+	return num;
+}
+
+/*
 *	Cria um aluno e...
 */
-void inserirAluno()
+int inserirAluno()
 {
-	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: ";
-	string nome;
-	cin >> nome;
+	wstring nome, temp;
+	int num, dia, mes, ano;
 
-	wcout << endl << endl << "Número Mecaográfico: ";
-	int num;
-	cin >> num;
 
-	wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
-	int dia, mes, ano;
+	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: " << endl << endl;
+	getline(wcin, nome);
+	clrConsole();
+
+	wcout << endl << endl << "Número Mecanográfico: " << endl << endl;
+	getline(wcin, temp);
+	num = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (num == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+	}
+
+	wcout << endl << endl << "Data de nascimento" << endl << "Dia: " << endl << endl;
 	cin >> dia;
-	wcout << endl << "Mês(número): ";
+	clrConsole();
+
+	wcout << endl << "Mês(número): " << endl << endl;
 	cin >> mes;
+	clrConsole();
+
 	wcout << endl << "Ano: ";
 	cin >> ano;
 
@@ -157,12 +199,12 @@ void inserirAluno()
 	date.dia = dia;
 
 	wcout << endl << endl << "Morada" << endl << "Rua: ";
-	string rua, codPost, numPorta;
-	cin >> rua;
+	wstring rua, codPost, numPorta;
+	wcin >> rua;
 	wcout << endl << "Nº da porta: ";
-	cin >> numPorta;
+	wcin >> numPorta;
 	wcout << endl << "Código Posal: ";
-	cin >> codPost;
+	wcin >> codPost;
 
 	morada mora;
 
@@ -170,7 +212,7 @@ void inserirAluno()
 	mora.rua = rua;
 	mora.numPorta = numPorta;
 
-	string Pass;
+	wstring Pass;
 
 	//PUT PASSWORD PROMPT HERE!!!!!!
 
@@ -183,6 +225,7 @@ void inserirAluno()
 	util.nome = nome;
 	util.numero = num;
 	util.pass = Pass;
+
 /*
 	char conf;
 
