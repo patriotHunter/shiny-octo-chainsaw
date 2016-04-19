@@ -2,6 +2,12 @@
 
 #include "Struct.h"
 
+bool logged = false;
+bool admin = false;
+int respostaMainMenu;
+int const TAMANHO = 500;
+utilizador array_util[TAMANHO];
+
 /*
 *	Função para fazer clear à consola.
 */
@@ -148,7 +154,7 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	num = convert_Str_2_INT(temp);
 	clrConsole();
 
-	if (num == INT_MAX)
+	if (num == INT_MIN)
 	{
 		valorInvalido_inserirAluno(L"Número Mecanográfico: ");
 	}
@@ -158,7 +164,7 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	dia = convert_Str_2_INT(temp);
 	clrConsole();
 
-	if (dia == INT_MAX)
+	if (dia == INT_MIN)
 	{
 		valorInvalido_inserirAluno(L"Dia: ");
 	}
@@ -168,7 +174,7 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	mes = convert_Str_2_INT(temp);
 	clrConsole();
 
-	if (mes == INT_MAX)
+	if (mes == INT_MIN)
 	{
 		valorInvalido_inserirAluno(L"Mês(número): ");
 	}
@@ -178,7 +184,7 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	ano = convert_Str_2_INT(temp);
 	clrConsole();
 
-	if (ano == INT_MAX)
+	if (ano == INT_MIN)
 	{
 		valorInvalido_inserirAluno(L"Ano: ");
 	}
@@ -294,4 +300,64 @@ int printMainMenu(bool logged)
 		}
 	}
 	return resposta_int;
+}
+
+/*
+*	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
+*/
+bool login_logout()
+{
+	if (logged)
+	{
+		wcout << "Logout realizado com sucesso!" << endl;
+		Sleep(3000);
+		return false;										//Realiza um logout
+	}
+
+	int i, num;
+	wstring pass;
+	bool repeat = true;
+	wchar_t answer;
+
+	while (repeat)
+	{
+		wstring temp;
+		wcout << "Insira o seu número mecanográfico: ";
+		getline(wcin, temp);
+		num = convert_Str_2_INT(temp);
+
+		if (num == INT_MIN)
+		{
+			wcout << "Não é um valor válido!!!" << endl;
+		}
+		else
+		{
+			wcout << "Insira a sua password: ";
+			getline(wcin, pass);
+			i = 0;
+			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informação que foi passada pelo utilizador do programa
+			{
+				if (num == array_util[i].numero && array_util[i].pass.compare(pass) == 0)
+				{
+					wcout << "Benvindo " << array_util[i].nome << "!" << endl;
+					Sleep(3000);
+					return true;							//Indica que ocorreu login
+				}
+				i++;
+			}
+		}
+		if (repeat)
+		{
+			clrConsole();
+			wcout << "Pretende tentar novamente? (S/N): ";
+			wcin >> answer;
+			if (answer == 'n' || answer == 'N')
+			{
+				return false;								//Indica que não ocorreu um login correcto
+			}
+			cin.sync();
+			cin.get();										//Retira um ghost "ENTER"
+		}
+	}
+	return false;											//Indica que não ocorreu um login correcto
 }

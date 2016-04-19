@@ -1,8 +1,5 @@
 #include "Functions.h"
-#include <Windows.h>
 
-bool logged = false;
-int respostaMainMenu;
 
 /*
 **	Main Function \(^.^ )/
@@ -19,7 +16,13 @@ int main()
 		respostaMainMenu = printMainMenu(logged);
 	}*/
 
-	inserirAluno();
+	array_util[0].nome = L"Marcelo José";
+	array_util[0].pass = L"kek";
+	array_util[0].numero = 123;
+
+	login_logout();
+
+	//inserirAluno();
 
 	return 0;
 }
