@@ -183,4 +183,18 @@ void inserirAluno()
 	util.nome = nome;
 	util.numero = num;
 	util.pass = Pass;
+/*
+	char conf;
+
+	wcout << "Confirmação de Dados" << endl;
+	wcout << "Número Mecanográfico: " << num << endl;
+	wcout << "Nome Completo: " << (wstring)nome << endl;
+	wcout << "Data de Nascimento: " << date << endl;
+	wcout << "Morada: " << mora << endl;
+	wcout << "Confirma estes dados?(S/N) ";
+	cin >> conf;
+	if (conf == 'Y' || conf == 'y')
+	{
+
+	}*/
 }
