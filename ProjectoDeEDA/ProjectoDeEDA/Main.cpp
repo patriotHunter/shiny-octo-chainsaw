@@ -11,10 +11,10 @@ int main()
 
 	//_setmode(_fileno(stdout), _O_U16TEXT);
 
-	/*while (true)
+	while (true)
 	{
 		respostaMainMenu = printMainMenu(logged);
-	}*/
+	}
 
 	array_util[0].nome = L"Marcelo José";
 	array_util[0].pass = L"kek";

@@ -6,6 +6,7 @@ bool logged = false;
 bool admin = false;
 int respostaMainMenu;
 int const TAMANHO = 500;
+int Util_logged;
 utilizador array_util[TAMANHO];
 
 /*
@@ -264,26 +265,14 @@ int printMainMenu(bool logged)
 		//	Imprime texto no ecrã.
 		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
 		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
-		if (logged)
-		{
-			wcout << "1. Logout." << endl;
-		}
-		else
+		if (!logged)
 		{
 			wcout << "1. Login." << endl;
 		}
-		wcout << "2. Inserir novo aluno." << endl;
-		wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
-		wcout << "4. Pesquisa por número mecanográfico." << endl;
-		wcout << "5. Listar alunos por ordem alfabética." << endl;
-		wcout << "6. Editar informação de aluno." << endl;
-		wcout << "7. Remoção de aluno." << endl;
-		wcout << "8. Encomendar Refeição." << endl;
-		wcout << "9. Consumo de refeição." << endl;
-		wcout << "10. Carregar plafond." << endl;
-		wcout << "11. Listar refeições." << endl;
-		wcout << "12. Listar refeções por dia.\n\n" << endl;
-
+		else
+		{
+			wcout << "1. Logout." << endl;
+		}
 		//	Obtém resposta do utilizador.
 		getline(wcin, resposta);
 
@@ -311,6 +300,7 @@ bool login_logout()
 	{
 		wcout << "Logout realizado com sucesso!" << endl;
 		Sleep(3000);
+		Util_logged = 0;
 		admin = false;										//Faz logout do admin
 		return false;										//Realiza um logout
 	}
@@ -336,6 +326,7 @@ bool login_logout()
 			{
 				wcout << "Benvindo administrador!" << endl;
 				admin = true;
+				Util_logged = INT_MIN;
 				return true;
 			}
 			notAdmin = true;
@@ -345,6 +336,7 @@ bool login_logout()
 		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas não meteu a pass correcta, logo não faz sentido pedir novamente a pass
 		{
 			wcout << "Não é um valor válido!!!" << endl;
+			Sleep(1000);
 		}
 		else
 		{
@@ -357,6 +349,7 @@ bool login_logout()
 				{
 					wcout << "Benvindo " << array_util[i].nome << "!" << endl;
 					Sleep(3000);
+					Util_logged = num;
 					return true;							//Indica que ocorreu login
 				}
 				i++;
