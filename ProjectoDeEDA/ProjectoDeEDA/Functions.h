@@ -1,13 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <io.h>
-#include <fcntl.h>
-#include <string>
-#include <fstream>
 #include "Struct.h"
-
-using namespace std;
 
 /*
 *	Função para fazer clear à consola.
@@ -160,9 +153,30 @@ int valorInvalido_inserirAluno(wstring x)
 
 wstring PassPrompt()
 {
-	wstring Pass;
+	wstring Pass, tempPass;
+	bool repeat = true;
+	clrConsole();
 
+	while (repeat)
+	{
+		wcout << "Insira a sua password: " << endl << endl;
+		getline(wcin, tempPass);
+		clrConsole();
 
+		wcout << "Insira novamente a sua password: " << endl << endl;
+		getline(wcin, Pass);
+		clrConsole();
+
+		if (Pass.compare(tempPass) == 0)
+		{
+			repeat = false;
+		}
+		else
+		{
+			wcout << "As passwords não coincidem!" << endl << endl;
+		}
+	}
+	clrConsole();
 
 	return Pass;
 }
@@ -249,15 +263,15 @@ int inserirAluno()
 
 	//PUT PASSWORD PROMPT HERE!!!!!!
 
-	util util;
+	utilizador aluno;
 
 	//PUT USER DATA CONFIRMATION FUNCTION HERE!!!!!!!!!!!
 
-	util.morada = mora;
-	util.nasc = date;
-	util.nome = nome;
-	util.numero = num;
-	util.pass = Pass;
+	aluno.morada = mora;
+	aluno.nasc = date;
+	aluno.nome = nome;
+	aluno.numero = num;
+	aluno.pass = Pass;
 
 /*
 	char conf;
@@ -277,4 +291,6 @@ int inserirAluno()
 	{
 		wcout << "Insira novamente os seus dados" << endl
 	}*/
+
+	return 0;
 }

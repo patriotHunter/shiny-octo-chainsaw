@@ -1,15 +1,12 @@
 #pragma once
 
-#include "Functions.h"
+#include <iostream>
+#include <io.h>
+#include <fcntl.h>
+#include <string>
+#include <fstream>
 
-struct util
-{
-	int numero;
-	wstring nome;
-	dataNasc nasc;
-	morada morada;
-	wstring pass;
-};
+using namespace std;
 
 struct dataNasc
 {
@@ -24,3 +21,14 @@ struct morada
 	wstring numPorta;
 	wstring codPost;
 };
+
+struct utilizador
+{
+	int numero;
+	wstring nome;
+	dataNasc nasc;
+	morada morada;
+	wstring pass;
+};
+
+

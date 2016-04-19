@@ -13,6 +13,11 @@ int main()
 	{
 		respostaMainMenu = printMainMenu(logged);
 	}
+
+	wstring pass = PassPrompt();
+
+	wcout << pass << endl;
+
 	return 0;
 	/*
 	*	paofdnvaojvnaedvfojaeodv+ifndfvjandfvsafdvsgbsfhn
