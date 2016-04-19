@@ -66,60 +66,6 @@ int convert_Str_2_INT(wstring input)
 }
 
 /*
-*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
-*/
-int printMainMenu(bool logged)
-{
-	wstring resposta;
-	int resposta_int;
-	bool quit = false;
-
-	clrConsole();
-
-	while (!quit)
-	{
-		//	Imprime texto no ecrã.
-		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
-		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
-		if (logged)
-		{
-			wcout << "1. Logout." << endl;
-		}
-		else
-		{
-			wcout << "1. Login." << endl;
-		}
-		wcout << "2. Inserir novo aluno." << endl;
-		wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
-		wcout << "4. Pesquisa por número mecanográfico." << endl;
-		wcout << "5. Listar alunos por ordem alfabética." << endl;
-		wcout << "6. Editar informação de aluno." << endl;
-		wcout << "7. Remoção de aluno." << endl;
-		wcout << "8. Encomendar Refeição." << endl;
-		wcout << "9. Consumo de refeição." << endl;
-		wcout << "10. Carregar plafond." << endl;
-		wcout << "11. Listar refeições." << endl;
-		wcout << "12. Listar refeções por dia.\n\n" << endl;
-
-		//	Obtém resposta do utilizador.
-		getline(wcin, resposta);
-
-		resposta_int = convert_Str_2_INT(resposta);
-
-		//	Verifica se a resposta do utilizado é válida.
-		if (resposta_int == INT_MIN)
-		{
-			wcout << "O que foi inserido não é uma opção válida." << endl;
-		}
-		else
-		{
-			quit = true;
-		}
-	}
-	return resposta_int;
-}
-
-/*
 *	Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
 */
 int valorInvalido_inserirAluno(wstring x)
@@ -151,6 +97,9 @@ int valorInvalido_inserirAluno(wstring x)
 	return num;
 }
 
+/*
+*	Password input e confirmation!
+*/
 wstring PassPrompt()
 {
 	wstring Pass, tempPass;
@@ -184,7 +133,7 @@ wstring PassPrompt()
 /*
 *	Cria um aluno e...
 */
-int inserirAluno()
+int inserirAluno(/*utilizador array_util[], int tamanho*/)
 {
 	wstring nome, temp;
 	int num, dia, mes, ano;
@@ -204,7 +153,7 @@ int inserirAluno()
 		valorInvalido_inserirAluno(L"Número Mecanográfico: ");
 	}
 
-	wcout << endl << endl << "Data de nascimento" << endl << "Dia: " << endl << endl;
+	wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
 	getline(wcin, temp);
 	dia = convert_Str_2_INT(temp);
 	clrConsole();
@@ -214,7 +163,7 @@ int inserirAluno()
 		valorInvalido_inserirAluno(L"Dia: ");
 	}
 
-	wcout << endl << "Mês(número): " << endl << endl;
+	wcout << endl << "Mês(número): ";
 	getline(wcin, temp);
 	mes = convert_Str_2_INT(temp);
 	clrConsole();
@@ -278,7 +227,7 @@ int inserirAluno()
 	wcout << "Nome Completo: " << nome << endl;
 	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
 	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl << endl;
-	wcout << "Confirma estes dados?(S/N) ";
+	wcout << "Os dados estão correctos?(S/N) ";
 	cin >> conf;
 	if (conf == 'S' || conf == 's')
 	{
@@ -291,4 +240,58 @@ int inserirAluno()
 	}
 
 	return 0;
+}
+
+/*
+*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
+*/
+int printMainMenu(bool logged)
+{
+	wstring resposta;
+	int resposta_int;
+	bool quit = false;
+
+	clrConsole();
+
+	while (!quit)
+	{
+		//	Imprime texto no ecrã.
+		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
+		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
+		if (logged)
+		{
+			wcout << "1. Logout." << endl;
+		}
+		else
+		{
+			wcout << "1. Login." << endl;
+		}
+		wcout << "2. Inserir novo aluno." << endl;
+		wcout << "3. Pesquisa de aluno pelo primeiro nome." << endl;
+		wcout << "4. Pesquisa por número mecanográfico." << endl;
+		wcout << "5. Listar alunos por ordem alfabética." << endl;
+		wcout << "6. Editar informação de aluno." << endl;
+		wcout << "7. Remoção de aluno." << endl;
+		wcout << "8. Encomendar Refeição." << endl;
+		wcout << "9. Consumo de refeição." << endl;
+		wcout << "10. Carregar plafond." << endl;
+		wcout << "11. Listar refeições." << endl;
+		wcout << "12. Listar refeções por dia.\n\n" << endl;
+
+		//	Obtém resposta do utilizador.
+		getline(wcin, resposta);
+
+		resposta_int = convert_Str_2_INT(resposta);
+
+		//	Verifica se a resposta do utilizado é válida.
+		if (resposta_int == INT_MIN)
+		{
+			wcout << "O que foi inserido não é uma opção válida." << endl;
+		}
+		else
+		{
+			quit = true;
+		}
+	}
+	return resposta_int;
 }
