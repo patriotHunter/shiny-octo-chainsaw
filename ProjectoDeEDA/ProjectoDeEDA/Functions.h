@@ -311,22 +311,38 @@ bool login_logout()
 	{
 		wcout << "Logout realizado com sucesso!" << endl;
 		Sleep(3000);
+		admin = false;										//Faz logout do admin
 		return false;										//Realiza um logout
 	}
 
 	int i, num;
 	wstring pass;
 	bool repeat = true;
+	bool notAdmin = false;
 	wchar_t answer;
 
 	while (repeat)
 	{
+		notAdmin = false;									//Reinicia a variável
 		wstring temp;
 		wcout << "Insira o seu número mecanográfico: ";
 		getline(wcin, temp);
-		num = convert_Str_2_INT(temp);
 
-		if (num == INT_MIN)
+		if (temp.compare(L"admin") == 0)
+		{
+			wcout << "Insira a password de admin: ";
+			getline(wcin, pass);
+			if (pass.compare(L"aminhapass") == 0)
+			{
+				wcout << "Benvindo administrador!" << endl;
+				admin = true;
+				return true;
+			}
+			notAdmin = true;
+		}
+
+		num = convert_Str_2_INT(temp);
+		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas não meteu a pass correcta, logo não faz sentido pedir novamente a pass
 		{
 			wcout << "Não é um valor válido!!!" << endl;
 		}
