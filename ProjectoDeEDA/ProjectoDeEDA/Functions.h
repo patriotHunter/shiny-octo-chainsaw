@@ -158,6 +158,15 @@ int valorInvalido_inserirAluno(wstring x)
 	return num;
 }
 
+wstring PassPrompt()
+{
+	wstring Pass;
+
+
+
+	return Pass;
+}
+
 /*
 *	Cria um aluno e...
 */
@@ -266,7 +275,6 @@ int inserirAluno()
 	}
 	else
 	{
-		wcout << "Insira novamente os seus dados" << endl;
-		inserirAluno();
+		wcout << "Insira novamente os seus dados" << endl
 	}*/
 }

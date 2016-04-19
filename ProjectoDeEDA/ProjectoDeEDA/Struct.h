@@ -8,7 +8,7 @@ struct util
 	wstring nome;
 	dataNasc nasc;
 	morada morada;
-	string pass;
+	wstring pass;
 };
 
 struct dataNasc
