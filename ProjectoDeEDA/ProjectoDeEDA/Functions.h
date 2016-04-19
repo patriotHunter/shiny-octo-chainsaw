@@ -1,12 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <io.h>
-#include <fcntl.h>
-#include <string>
-#include <fstream>
-
-using namespace std;
+#include "Struct.h"
 
 /*
 *	Função para fazer clear à consola.
@@ -19,12 +13,12 @@ void clrConsole()
 /*
 *	Função que irá converter, se possível um char num inteiro.
 */
-int convert_Str_2_INT(string input)
+int convert_Str_2_INT(wstring input)
 {
 	bool possible = true;
 	int value, i;
 	int arr[10];
-	
+
 	value = 0;
 	i = 0;
 
@@ -48,14 +42,12 @@ int convert_Str_2_INT(string input)
 				arr[i] = c - 48;
 			}
 		}
-
 		i++;
 	}
 
 	if (possible)
 	{
-
-		int j = pow(10,i-1);
+		int j = pow(10, i - 1);
 		int x = 0;
 		int aux;
 
@@ -65,7 +57,6 @@ int convert_Str_2_INT(string input)
 			value += aux;
 			j /= 10;
 		}
-
 		return value;
 	}
 	else
@@ -75,11 +66,11 @@ int convert_Str_2_INT(string input)
 }
 
 /*
-*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador. 
+*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
 */
 int printMainMenu(bool logged)
 {
-	string resposta;
+	wstring resposta;
 	int resposta_int;
 	bool quit = false;
 
@@ -111,7 +102,7 @@ int printMainMenu(bool logged)
 		wcout << "12. Listar refeções por dia.\n\n" << endl;
 
 		//	Obtém resposta do utilizador.
-		getline(cin, resposta);
+		getline(wcin, resposta);
 
 		resposta_int = convert_Str_2_INT(resposta);
 
@@ -126,4 +117,178 @@ int printMainMenu(bool logged)
 		}
 	}
 	return resposta_int;
+}
+
+/*
+*	Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
+*/
+int valorInvalido_inserirAluno(wstring x)
+{
+	bool repeat = true;
+	char answer;
+	int num;
+	wstring temp;
+
+	while (repeat)
+	{
+		wcout << "O valor inserido não é válido, quer continuar a inserção de aluno? (S/N)" << endl;
+		cin >> answer;
+
+		if (answer == 'n' || answer == 'N')
+		{
+			return -1;
+		}
+		wcout << endl << x << endl << endl;
+		getline(wcin, temp);
+		num = convert_Str_2_INT(temp);
+
+		if (num != INT_MAX)
+		{
+			repeat = false;
+		}
+		clrConsole();
+	}
+	return num;
+}
+
+wstring PassPrompt()
+{
+	wstring Pass, tempPass;
+	bool repeat = true;
+	clrConsole();
+
+	while (repeat)
+	{
+		wcout << "Insira a sua password: " << endl << endl;
+		getline(wcin, tempPass);
+		clrConsole();
+
+		wcout << "Insira novamente a sua password: " << endl << endl;
+		getline(wcin, Pass);
+		clrConsole();
+
+		if (Pass.compare(tempPass) == 0)
+		{
+			repeat = false;
+		}
+		else
+		{
+			wcout << "As passwords não coincidem!" << endl << endl;
+		}
+	}
+	clrConsole();
+
+	return Pass;
+}
+
+/*
+*	Cria um aluno e...
+*/
+int inserirAluno()
+{
+	wstring nome, temp;
+	int num, dia, mes, ano;
+
+
+	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: " << endl << endl;
+	getline(wcin, nome);
+	clrConsole();
+
+	wcout << endl << endl << "Número Mecanográfico: " << endl << endl;
+	getline(wcin, temp);
+	num = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (num == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+	}
+
+	wcout << endl << endl << "Data de nascimento" << endl << "Dia: " << endl << endl;
+	getline(wcin, temp);
+	dia = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (dia == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Dia: ");
+	}
+
+	wcout << endl << "Mês(número): " << endl << endl;
+	getline(wcin, temp);
+	mes = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (mes == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Mês(número): ");
+	}
+
+	wcout << endl << "Ano: ";
+	getline(wcin, temp);
+	ano = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (ano == INT_MAX)
+	{
+		valorInvalido_inserirAluno(L"Ano: ");
+	}
+
+	dataNasc date;
+
+	date.ano = ano;
+	date.mes = mes;
+	date.dia = dia;
+
+	wcout << endl << endl << "Morada" << endl << "Rua: " << endl << endl;
+	wstring rua, codPost, numPorta;
+	getline(wcin, rua);
+	clrConsole();
+
+	wcout << endl << "Nº da porta: " << endl << endl;
+	getline(wcin, numPorta);
+	clrConsole();
+
+	wcout << endl << "Código Postal: " << endl << endl;
+	getline(wcin, codPost);
+	clrConsole();
+
+	morada mora;
+
+	mora.codPost = codPost;
+	mora.rua = rua;
+	mora.numPorta = numPorta;
+
+	wstring Pass = PassPrompt();
+
+	utilizador aluno;
+
+	//PUT USER DATA CONFIRMATION FUNCTION HERE!!!!!!!!!!!
+
+	aluno.morada = mora;
+	aluno.nasc = date;
+	aluno.nome = nome;
+	aluno.numero = num;
+	aluno.pass = Pass;
+
+	char conf;
+
+	wcout << "Confirmação de Dados" << endl;
+	wcout << "Número Mecanográfico: " << num << endl;
+	wcout << "Nome Completo: " << nome << endl;
+	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
+	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl << endl;
+	wcout << "Confirma estes dados?(S/N) ";
+	cin >> conf;
+	if (conf == 'S' || conf == 's')
+	{
+		wcout << "YAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+		return 0;
+	}
+	else
+	{
+		//alterar dados function...
+	}
+
+	return 0;
 }
