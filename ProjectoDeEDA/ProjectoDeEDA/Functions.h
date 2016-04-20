@@ -52,9 +52,9 @@ int convert_Str_2_INT(wstring input)
 		i++;
 	}
 
-	if (possible)
+	if (possible)												//Se a string passada é um número...
 	{
-		int j = pow(10, i - 1);
+		double j = pow(10, i - 1);								//j = 10^(i-1)
 		int x = 0;
 		int aux;
 
@@ -219,14 +219,6 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 
 	utilizador aluno;
 
-	//PUT USER DATA CONFIRMATION FUNCTION HERE!!!!!!!!!!!
-
-	aluno.morada = mora;
-	aluno.nasc = date;
-	aluno.nome = nome;
-	aluno.numero = num;
-	aluno.pass = Pass;
-
 	char conf;
 
 	wcout << "Confirmação de Dados" << endl;
@@ -238,13 +230,56 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	cin >> conf;
 	if (conf == 'S' || conf == 's')
 	{
-		wcout << "YAY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+		//coloca o aluno no array!!!!
 		return 0;
 	}
 	else
 	{
-		//alterar dados function...
+		bool repeat = true;
+		int answer;
+		while (repeat)
+		{
+			clrConsole();
+			wcout << "O que deseja alterar?" << endl;
+			wcout << "1) Número Mecanográfico" << endl;
+			wcout << "2) Nome Completo" << endl;
+			wcout << "3) Data de Nascimento" << endl;
+			wcout << "4) Morada" << endl;
+			wcout << "0) Cancelar" << endl;
+			wcout << endl << "Insira o valor da opção pretendida: ";
+			getline(wcin, temp);
+
+			answer = convert_Str_2_INT(temp);
+
+			if (answer < 0 || answer > 4)
+			{
+				wcout << endl << endl << "O valor inserido não é válido!";
+				Sleep(1000);
+			}
+			else
+			{
+				switch (answer)
+				{
+					case 0:
+						wcout << endl << "Deseja mesmo sair da edição de aluno? (S/N) ";
+						wchar_t answer;
+						wcin >> answer;
+						if (answer == 'n' || answer == L'N')
+						{
+							repeat = false;
+						}
+						break;
+				}
+			}
+		}
 	}
+
+	aluno.morada = mora;
+	aluno.nasc = date;
+	aluno.nome = nome;
+	aluno.numero = num;
+	aluno.pass = Pass;
+
 
 	return 0;
 }
