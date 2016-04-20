@@ -391,6 +391,10 @@ void printMainMenu()
 		{
 			wcout << "1. Logout." << endl;
 		}
+
+		//TODO: stuff correspondente aos utilizadores especificos 
+
+
 		//	Obtém resposta do utilizador.
 		getline(wcin, resposta);
 
