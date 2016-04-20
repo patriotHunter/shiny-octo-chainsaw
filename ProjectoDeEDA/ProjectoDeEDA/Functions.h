@@ -249,47 +249,6 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	return 0;
 }
 
-/*
-*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
-*/
-int printMainMenu(bool logged)
-{
-	wstring resposta;
-	int resposta_int;
-	bool quit = false;
-
-	clrConsole();
-
-	while (!quit)
-	{
-		//	Imprime texto no ecrã.
-		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
-		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
-		if (!logged)
-		{
-			wcout << "1. Login." << endl;
-		}
-		else
-		{
-			wcout << "1. Logout." << endl;
-		}
-		//	Obtém resposta do utilizador.
-		getline(wcin, resposta);
-
-		resposta_int = convert_Str_2_INT(resposta);
-
-		//	Verifica se a resposta do utilizado é válida.
-		if (resposta_int == INT_MIN)
-		{
-			wcout << "O que foi inserido não é uma opção válida." << endl;
-		}
-		else
-		{
-			quit = true;
-		}
-	}
-	return resposta_int;
-}
 
 /*
 *	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
@@ -324,6 +283,7 @@ bool login_logout()
 			getline(wcin, pass);
 			if (pass.compare(L"aminhapass") == 0)
 			{
+				clrConsole();
 				wcout << "Benvindo administrador!" << endl;
 				admin = true;
 				Util_logged = INT_MIN;
@@ -347,6 +307,7 @@ bool login_logout()
 			{
 				if (num == array_util[i].numero && array_util[i].pass.compare(pass) == 0)
 				{
+					clrConsole();
 					wcout << "Benvindo " << array_util[i].nome << "!" << endl;
 					Sleep(3000);
 					Util_logged = num;
@@ -370,3 +331,50 @@ bool login_logout()
 	}
 	return false;											//Indica que não ocorreu um login correcto
 }
+
+/*
+*	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
+*/
+void printMainMenu()
+{
+	wstring resposta;
+	int resposta_int;
+	bool quit = false;
+
+	clrConsole();
+
+	while (!quit)
+	{
+		//	Imprime texto no ecrã.
+		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
+		wcout << "\n\nEscolha a opção pretendida.\n" << endl;
+		if (!logged)
+		{
+			wcout << "1. Login." << endl;
+		}
+		else
+		{
+			wcout << "1. Logout." << endl;
+		}
+		//	Obtém resposta do utilizador.
+		getline(wcin, resposta);
+
+		resposta_int = convert_Str_2_INT(resposta);
+
+		//	Verifica se a resposta do utilizado é válida.
+		if (resposta_int == INT_MIN)
+		{
+			wcout << "O que foi inserido não é uma opção válida." << endl;
+		}
+		else
+		{
+			switch (resposta_int)
+			{
+				case 1:
+					logged = login_logout();
+					break;
+			}
+		}
+	}
+}
+
