@@ -392,6 +392,27 @@ void printMainMenu()
 			wcout << "1. Logout." << endl;
 		}
 
+		if (admin && logged) // se o utilizador que estiver logged in for um admin
+		{
+			wcout << "2. Inserir alunos\n"
+				<< "3. Pesquisar pelo Primeiro Nome\n"
+				<< "4. Pesquisar pelo Número\n"
+				<< "5. Lista alunos por Ordem Alfabetica\n"
+				<< "6. Alterar alunos\n"
+				<< "7. Remover alunos\n"
+				<< "8. Remover Refeicão\n"
+				<< "9. Listar refeições\n"
+				<< "10. Listar refeições num determinado dia\n"
+				<< "Opção: ";
+		}
+		else if (!admin && logged) // se o utilizador n estiver logged in n no admin
+		{
+			wcout << "2. Encomendar refeição\n"
+				<< "3. Carregar plafond\n"
+				<< "Opção: ";
+		}
+
+
 		//TODO: stuff correspondente aos utilizadores especificos 
 
 
@@ -407,12 +428,103 @@ void printMainMenu()
 		}
 		else
 		{
-			switch (resposta_int)
+
+			if (resposta_int == 1) // está dependente de tudo
 			{
-				case 1:
-					logged = login_logout();
-					break;
+				logged = login_logout();
+				clrConsole();
 			}
+			else if (resposta_int == 2 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Inserir aluno\n";
+				Sleep(3000);
+				clrConsole();
+				inserirAluno();
+			}
+			else if (resposta_int == 2 && logged && !admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Encomendar refeição\n";
+				Sleep(3000);
+				clrConsole();
+
+			}
+			else if (resposta_int == 3 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Pesquisar pelo primeiro nome\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 3 && logged && !admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Carregar plafond";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 4 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Pesquisar pelo número\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 5 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Listar alunos por Ordem Alfabética\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 6 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Alterar alunos\n";
+				Sleep(3000);
+				clrConsole();
+			}
+
+			else if (resposta_int == 7 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Remover alunos\n";
+				Sleep(3000);
+				clrConsole();
+			}
+
+			else if (resposta_int == 8 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Remover refeição\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 9 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Listar refeições\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else if (resposta_int == 10 && logged && admin)
+			{
+				clrConsole();
+				wcout << "Escolheu Listar refeições num determinado dia\n";
+				Sleep(3000);
+				clrConsole();
+			}
+			else
+			{
+				clrConsole();
+				wcout << "Escolheu a opção errada\n"
+					<< "Por favor escolha a(s) opção/opções disponíveis\n";
+				Sleep(3000);
+				clrConsole();
+			}
+
+
 		}
 	}
 }
