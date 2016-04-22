@@ -3,8 +3,11 @@
 
 
 int main(){
-	wfstream BD("BaseDados", ios::in);
-	Utiarray(BD);
+	wfstream BD("BaseDados", ios::in | ios::out);
+	wchar_t x[500];
+	BD.read(x,500);
+	BD.close;
+	Utiarray(x);
 	int i = 0;
 	while (i<TAMANHO){
 		if (array_util[i].numero == 0){
@@ -19,6 +22,7 @@ int main(){
 			wcout << array_util[i].morada.rua << endl;
 			wcout << array_util[i].morada.numPorta << endl;
 			wcout << array_util[i].morada.codPost << endl;
+			wcout << array_util[i].pass << endl;
 		}
 	}
 	return 0;

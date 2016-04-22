@@ -29,19 +29,17 @@ void ErroConv(int i){
 
 
 
-void Utiarray(wfstream & BD){
+void Utiarray(wchar_t x[500]){
 	wstring num, nome, dia, mes, ano, rua, nump, codpostal, pass;
 	int u = 0;
 	int lu;
 	int i = 0;
-	BD.clear();
-	BD.seekg(ios::beg);
 	while (u < TAMANHO){
 		while ( lu < 9)
 		{
 			lu = 0;
 			if (lu == 0){
-				BD >> num;
+				num = x[i];
 				if (num.compare(L"\n") == 0){
 					u = TAMANHO;
 				}
@@ -51,43 +49,43 @@ void Utiarray(wfstream & BD){
 				}
 			}
 			if (lu == 1){
-				BD >> nome;
+				nome = x[i];
 				array_util[u].nome = nome;
 			}
 			if (lu == 2){
-				BD >> dia;
+				dia = x[i];
 				ErroConv(convert_Str_2_INT(dia));
 				array_util[u].nasc.dia = convert_Str_2_INT(dia);
 			}
 			if (lu == 3){
-				BD >> mes;
+				mes = x[i];
 				ErroConv(convert_Str_2_INT(mes));
 				array_util[u].nasc.mes = convert_Str_2_INT(mes);
 			}
 			if (lu == 4){
-				BD >> ano;
+				ano = x[i];
 				ErroConv(convert_Str_2_INT(ano));
 				array_util[u].nasc.ano = convert_Str_2_INT(ano);
 			}
 			if (lu == 5){
-				BD >> rua;
+				rua = x[i];
 				array_util[u].morada.rua = rua;
 			}
 			if (lu == 6){
-				BD >> nump;
+				nump = x[i];
 				array_util[u].morada.numPorta = nump;
 			}
 			if (lu == 7){
-				BD >> codpostal;
+				codpostal = x[i];
 				array_util[u].morada.codPost = codpostal;
 			}
-			if (lu == 6){
-				BD >> pass;
+			if (lu == 8){
+				pass = x[i];
 				array_util[u].pass = pass;
 			}
 			lu++;
 			i++;
 			}
+		u++;
 		}
-			u++;
 	}
