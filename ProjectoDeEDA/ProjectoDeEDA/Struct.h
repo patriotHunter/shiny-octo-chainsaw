@@ -1,12 +1,11 @@
 #pragma once
 
+#include <Windows.h>
 #include <iostream>
 #include <io.h>
 #include <fcntl.h>
 #include <string>
 #include <fstream>
-#include <Windows.h>
-
 using namespace std;
 
 struct dataNasc

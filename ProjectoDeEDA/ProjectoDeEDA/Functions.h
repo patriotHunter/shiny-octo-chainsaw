@@ -8,6 +8,7 @@ int respostaMainMenu;
 int const TAMANHO = 500;
 int Util_logged;
 utilizador array_util[TAMANHO];
+wchar_t filename[500] = L"C:\\Users\\m4rc3\\Source\\Repos\\shiny-octo-chainsaw\\ProjectoDeEDA\\ProjectoDeEDA\\BaseDados.txt";
 
 /*
 *	Função para fazer clear à consola.
@@ -284,7 +285,6 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	return 0;
 }
 
-
 /*
 *	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
 */
@@ -368,6 +368,107 @@ bool login_logout()
 }
 
 /*
+*	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
+*/
+void fillArrayBlankUtil(int i)
+{
+	while (i < TAMANHO)
+	{
+		array_util[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+*	Suposto ler ficheiro de dados de utilizador e carregar os dados num array
+*/
+void leDadosUtilizadores() 
+{
+	wstring temp;
+
+	int aux;
+
+	wfstream file;
+
+	file.open(filename, ios::in);
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+
+	file.clear();
+	file.seekg(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
+
+		if (aux != INT_MIN)												// Se aux == INT_MIN significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
+		{
+			array_util[i].numero = aux;
+
+			getline(file, temp);
+			array_util[i].nome = temp;
+
+			getline(file, temp);
+			array_util[i].nasc.dia = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].nasc.mes = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].nasc.ano = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].morada.rua = temp;
+
+			getline(file, temp);
+			array_util[i].morada.numPorta = temp;
+
+			getline(file, temp);
+			array_util[i].morada.codPost = temp;
+
+			getline(file, temp);
+			array_util[i].pass = temp;
+
+			i++;
+		}
+		else
+		{
+			fillArrayBlankUtil(i);
+			i = TAMANHO;
+		}
+	}
+	file.close();
+}
+
+void escreveDadosUtilizadores()
+{
+	wfstream file;
+
+	file.open(filename, ios::out);
+
+}
+
+void printUsers()
+{
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		wcout << "PASS: " << array_util[i].pass << " NUM: " << array_util[i].numero << endl;
+		i++;
+	}
+}
+
+/*
 *	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
@@ -375,6 +476,8 @@ void printMainMenu()
 	wstring resposta;
 	int resposta_int;
 	bool quit = false;
+
+	leDadosUtilizadores();
 
 	clrConsole();
 
@@ -411,10 +514,6 @@ void printMainMenu()
 				<< "3. Carregar plafond\n"
 				<< "Opção: ";
 		}
-
-
-		//TODO: stuff correspondente aos utilizadores especificos 
-
 
 		//	Obtém resposta do utilizador.
 		getline(wcin, resposta);
@@ -476,6 +575,7 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu Listar alunos por Ordem Alfabética\n";
 				Sleep(3000);
+				printUsers();
 				clrConsole();
 			}
 			else if (resposta_int == 6 && logged && admin)
