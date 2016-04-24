@@ -8,7 +8,7 @@ int respostaMainMenu;
 int const TAMANHO = 500;
 int Util_logged;
 utilizador array_util[TAMANHO];
-wchar_t filename[500] = L"C:\\Users\\m4rc3\\Source\\Repos\\shiny-octo-chainsaw\\ProjectoDeEDA\\ProjectoDeEDA\\BaseDados.txt";
+wchar_t filename[50] = L"BaseDados.txt";
 
 /*
 *	Função para fazer clear à consola.
@@ -71,6 +71,127 @@ int convert_Str_2_INT(wstring input)
 	{
 		return INT_MIN;
 	}
+}
+
+/*
+Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
+*/
+void fillArrayBlankUtil(int i)
+{
+	while (i < TAMANHO)
+	{
+		array_util[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+Lê ficheiro de dados de utilizador e carrega os dados num array
+*/
+void leDadosUtilizadores()
+{
+	wstring temp;
+
+	int aux;
+
+	wfstream file;
+
+	file.open(filename, ios::in);
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
+
+		if (aux != INT_MIN)												// Se aux == INT_MIN significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
+		{
+			array_util[i].numero = aux;
+
+			getline(file, temp);
+			array_util[i].nome = temp;
+
+			getline(file, temp);
+			array_util[i].nasc.dia = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].nasc.mes = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].nasc.ano = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_util[i].morada.rua = temp;
+
+			getline(file, temp);
+			array_util[i].morada.numPorta = temp;
+
+			getline(file, temp);
+			array_util[i].morada.codPost = temp;
+
+			getline(file, temp);
+			array_util[i].pass = temp;
+
+			i++;
+		}
+		else
+		{
+			fillArrayBlankUtil(i);
+			i = TAMANHO;
+		}
+	}
+	file.close();
+}
+
+/*
+Escreve os dados de utilizadores nos ficheiros
+*/
+void escreveDadosUtilizadores()
+{
+	wfstream file;
+
+	file.open(filename, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekp(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		if (array_util[i].numero != INT_MIN)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
+		{
+			file << array_util[i].numero << endl;
+			file << array_util[i].nome << endl;
+			file << array_util[i].nasc.dia << endl;
+			file << array_util[i].nasc.mes << endl;
+			file << array_util[i].nasc.ano << endl;
+			file << array_util[i].morada.rua << endl;
+			file << array_util[i].morada.numPorta << endl;
+			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].pass << endl;
+		}
+		i++;
+	}
+	file.close();
 }
 
 /*
@@ -141,7 +262,7 @@ wstring PassPrompt()
 /*
 *	Cria um aluno e...
 */
-int inserirAluno(/*utilizador array_util[], int tamanho*/)
+int inserirAluno()
 {
 	wstring nome, temp;
 	int num, dia, mes, ano;
@@ -229,12 +350,7 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl << endl;
 	wcout << "Os dados estão correctos?(S/N) ";
 	cin >> conf;
-	if (conf == 'S' || conf == 's')
-	{
-		//coloca o aluno no array!!!!
-		return 0;
-	}
-	else
+	if (conf == 'N' || conf == 'n')
 	{
 		bool repeat = true;
 		int answer;
@@ -281,12 +397,25 @@ int inserirAluno(/*utilizador array_util[], int tamanho*/)
 	aluno.numero = num;
 	aluno.pass = Pass;
 
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		if (array_util[i].numero == INT_MIN)
+		{
+			array_util[i] = aluno;
+			break;
+		}
+		i++;
+	}
+
+	escreveDadosUtilizadores();
 
 	return 0;
 }
 
 /*
-*	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
+	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
 */
 bool login_logout()
 {
@@ -367,96 +496,6 @@ bool login_logout()
 	return false;											//Indica que não ocorreu um login correcto
 }
 
-/*
-*	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-*/
-void fillArrayBlankUtil(int i)
-{
-	while (i < TAMANHO)
-	{
-		array_util[i].numero = INT_MIN;
-		i++;
-	}
-}
-
-/*
-*	Suposto ler ficheiro de dados de utilizador e carregar os dados num array
-*/
-void leDadosUtilizadores() 
-{
-	wstring temp;
-
-	int aux;
-
-	wfstream file;
-
-	file.open(filename, ios::in);
-
-	if (!file)
-	{
-		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
-		cin.sync();
-		cin.get();
-		exit(1);
-	}
-
-	file.clear();
-	file.seekg(ios::beg);
-
-	int i = 0;
-
-	while (i < TAMANHO)
-	{
-		getline(file, temp);
-
-		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
-
-		if (aux != INT_MIN)												// Se aux == INT_MIN significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
-		{
-			array_util[i].numero = aux;
-
-			getline(file, temp);
-			array_util[i].nome = temp;
-
-			getline(file, temp);
-			array_util[i].nasc.dia = convert_Str_2_INT(temp);
-
-			getline(file, temp);
-			array_util[i].nasc.mes = convert_Str_2_INT(temp);
-
-			getline(file, temp);
-			array_util[i].nasc.ano = convert_Str_2_INT(temp);
-
-			getline(file, temp);
-			array_util[i].morada.rua = temp;
-
-			getline(file, temp);
-			array_util[i].morada.numPorta = temp;
-
-			getline(file, temp);
-			array_util[i].morada.codPost = temp;
-
-			getline(file, temp);
-			array_util[i].pass = temp;
-
-			i++;
-		}
-		else
-		{
-			fillArrayBlankUtil(i);
-			i = TAMANHO;
-		}
-	}
-	file.close();
-}
-
-void escreveDadosUtilizadores()
-{
-	wfstream file;
-
-	file.open(filename, ios::out);
-
-}
 
 void printUsers()
 {
