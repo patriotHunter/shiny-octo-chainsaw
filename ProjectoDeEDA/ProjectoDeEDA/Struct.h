@@ -1,11 +1,11 @@
 #pragma once
 
+#include <Windows.h>
 #include <iostream>
 #include <io.h>
 #include <fcntl.h>
 #include <string>
 #include <fstream>
-
 using namespace std;
 
 struct dataNasc
@@ -29,6 +29,15 @@ struct utilizador
 	dataNasc nasc;
 	morada morada;
 	wstring pass;
+};
+
+struct refeicao
+{
+	dataNasc data;
+	bool entrada;
+	bool carne;
+	bool peixe;
+	bool vegie;
 };
 
 

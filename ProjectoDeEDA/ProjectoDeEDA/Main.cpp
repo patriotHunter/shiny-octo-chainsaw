@@ -1,26 +1,19 @@
 #include "Functions.h"
-#include <Windows.h>
-
-bool logged = false;
-int respostaMainMenu;
 
 /*
 **	Main Function \(^.^ )/
 */
 int main()
 {
-	SetConsoleCP(1252);
-	SetConsoleOutputCP(1252);
-	//_setmode(_fileno(stdout), _O_U16TEXT);
-	/*while (true)
-	{
-		respostaMainMenu = printMainMenu(logged);
-	}*/
+	SetConsoleCP(1252);									//Define a consola de modo a ler carateres especiais
+	SetConsoleOutputCP(1252);							//Define a consola de modo a escrever carateres especiais
 
-	inserirAluno();
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	
+	while (true)
+	{
+		printMainMenu();
+	}
 
 	return 0;
-	/*
-	*	paofdnvaojvnaedvfojaeodv+ifndfvjandfvsafdvsgbsfhn
-	*/
 }
