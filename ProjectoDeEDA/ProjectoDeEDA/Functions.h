@@ -474,6 +474,7 @@ void criarRefeição() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 	reservaDia.mes = mes;
 	reservaDia.ano = ano;
 
+
 	while (repete)
 	{
 		wcout << "Deseja um almoço (Insira s/S ou n/N): ";
@@ -485,92 +486,17 @@ void criarRefeição() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 			wcout << "Então deseja o almoço\n";
 			Sleep(3000);
 			clrConsole();
+			goto Pratos;
 
-			int opcao;						// arranja-se logo uma int para fazer a escolha
-			repete = true;					// força a variavel repete como true para fazer a escolha
+			// temos que abrir algum ficheiro para mostrar a informação dos pratos seguintes no que dia que for escolhido
+			// caso não exista ficheiro para verificar o dia, aparecerá um aviso para o programador para reparar esta zona
+			// 1. Prato de Entrada X 
+			// 2. Prato de Carne X
+			// 3. Prato de Peixe X
+			// 4. Prato Vegie X
 
-											// temos que abrir algum ficheiro para mostrar a informação dos pratos seguintes no que dia que for escolhido
-											// caso não exista ficheiro para verificar o dia, aparecerá um aviso para o programador para reparar esta zona
-											// 1. Prato de Entrada X 
-											// 2. Prato de Carne X
-											// 3. Prato de Peixe X
-											// 4. Prato Vegie X
-
-			do {
-				wcout << "Tens 3 pratos para escolher( a entrada é opcional).\n"
-					<< "1. Prato de Carne X\n"
-					<< "2. Prato de Peixe X\n"
-					<< "3. Prato de Veggie X\n"
-					<< "Escolha uma opção: ";
-
-				cin >> opcao;
-				switch (opcao)
-				{
-				case 1:
-					repete = false;
-					carne = true;
-					peixe = false;
-					veggie = false;
-					break;
-
-				case 2:
-					repete = false;
-					peixe = true;
-					carne = false;
-					veggie = false;
-					break;
-
-				case 3:
-					repete = false;
-					carne = false;
-					peixe = false;
-					veggie = true;
-					break;
-
-				default:
-					wcout << "\nOpção errada";
-					Sleep(1000);
-					clrConsole();
-					repete;
-				}
-			} while (repete);
-
-			repete = true; // força outra vez a true para que o programa pergunte ao utilizador se quer Entrada;
-						   // mantem aberto o ficheiro para analisar o prato de entrada desse dia,
-						   // caso acontece alguma coisa indica ao programador para rever este problema
-
-			wcout << " O utilizador deseja prato de Entrada X\n";  // O X vai ser o prato TODO: arranjar um txt pra fazer isto
-			wcout << " Insira uma resposta ( s/S  ou n/N): ";
-			cin >> resposta;
-
-			wcout << " O utilizador deseja prato de Entrada X\n";  // O X vai ser o prato TODO: arranjar um txt pra fazer isto
-			wcout << " Insira uma resposta ( s/S  ou n/N): ";
-			cin >> resposta;
-
-			while (repete)
-			{
-				if (resposta == 's' || resposta == 'S')
-				{
-					entrada = true;
-					repete = false;
-				}
-				else if (resposta == 'n' || resposta == 'N')
-				{
-					entrada = false;
-					repete = false;
-				}
-				else {
-					repete;
-					clrConsole();
-					wcout << "Por insira a resposta correcta" << endl;
-					wcout << "O utilizador deseja prato de Entrada X\n"; // TODO: inserir o nome do prato
-					wcout << "Insira uma resposta ( s/S  ou n/N): ";
-				}
-			}
-
-
-			goto FIM; // método jump para o latche FIM
 		}
+
 
 		else if (resposta == 'n' || resposta == 'N')
 		{
@@ -589,12 +515,8 @@ void criarRefeição() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 			repete;
 		}
 	}
-	Sleep(3000);
-	clrConsole();
-	repete = true; // força a true para fazer verificar se o utilizador cometeu nalgum erro quando faz a decisão do jantar
 
-
-
+	repete = true; // força a true para decidir o jantar
 
 	while (repete)
 	{
@@ -605,94 +527,25 @@ void criarRefeição() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 			jantar = true;
 			repete = false;
 
-			wcout << "Então deseja o almoço\n";
+			wcout << "Então deseja o jantar\n";
 			Sleep(3000);
 			clrConsole();
 
-			int opcao;						// arranja-se logo uma int para fazer a escolha
-			repete = true;					// força a variavel repete como true para fazer a escolha
+			goto Pratos;
 
-											// temos que abrir algum ficheiro para mostrar a informação dos pratos seguintes no que dia que for escolhido
-											// caso não exista ficheiro para verificar o dia, aparecerá um aviso para o programador para reparar esta zona
-											// 1. Prato de Carne X
-											// 2. Prato de Peixe X
-											// 3. Prato Vegie X
+			// temos que abrir algum ficheiro para mostrar a informação dos pratos seguintes no que dia que for escolhido
+			// caso não exista ficheiro para verificar o dia, aparecerá um aviso para o programador para reparar esta zona
+			// 1. Prato de Carne X
+			// 2. Prato de Peixe X
+			// 3. Prato Vegie X
 
-			do {
-				wcout << "Tens 3 pratos para escolher( a entrada é opcional).\n"
-					<< "1. Prato de Carne X\n"
-					<< "2. Prato de Peixe X\n"
-					<< "3. Prato de Veggie X\n"
-					<< "Escolha uma opção: ";
-
-				cin >> opcao;
-				switch (opcao)
-				{
-				case 1:
-					repete = false;
-					carne = true;
-					peixe = false;
-					veggie = false;
-					break;
-
-				case 2:
-					repete = false;
-					peixe = true;
-					carne = false;
-					veggie = false;
-					break;
-
-				case 3:
-					repete = false;
-					veggie = true;
-					carne = false;
-					peixe = false;
-					break;
-
-				default:
-					wcout << "\nOpção errada";
-					Sleep(1000);
-					clrConsole();
-					repete;
-				}
-			} while (repete);
-
-			repete = true; // força outra vez a true para que o programa pergunte ao utilizador se quer Entrada;
-						   // mantem aberto o ficheiro para analisar o prato de entrada desse dia,
-						   // caso acontece alguma coisa indica ao programador para rever este problema
-
-			wcout << " O utilizador deseja prato de Entrada X\n";  // O X vai ser o prato TODO: arranjar um txt pra fazer isto
-			wcout << " Insira uma resposta ( s/S  ou n/N): ";
-			cin >> resposta;
-
-			while (repete)
-			{
-				if (resposta == 's' || resposta == 'S')
-				{
-					entrada = true;
-					repete = false;
-				}
-				else if (resposta == 'n' || resposta == 'N')
-				{
-					entrada = false;
-					repete = false;
-				}
-				else {
-					repete;
-					clrConsole();
-					wcout << "Por insira a resposta correcta" << endl;
-					wcout << " O utilizador deseja prato de Entrada X\n"; // TODO: inserir o nome do prato
-					wcout << " Insira uma resposta ( s/S  ou n/N): ";
-				}
-			}
-
-			goto FIM; // método jump para o latche FIM
 		}
 
 		else if (resposta == 'n' || resposta == 'N')
 		{
-			almoco = false;
+			jantar = false;
 			repete = false;
+			goto Cancelar;
 		}
 
 		else
@@ -702,21 +555,97 @@ void criarRefeição() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 			repete;
 		}
 	}
-	Sleep(3000);
-	clrConsole();
-	repete = true;
 
-	wcout << "Compreendido" << endl;
-	Sleep(3000);
-	clrConsole();
-	goto Cancelar;
+Cancelar:
 
-
-FIM:
 	clrConsole();
-	cout << "Pedido Feito!" << endl;
+	wcout << "Pedido cancelado\n";
 	Sleep(1000);
+	carne = false;
+	peixe = false;
+	entrada = false;
+	veggie = false;
 
+	goto Voltar;
+
+
+
+Pratos:
+	int opcao;						// arranja-se logo uma int para fazer a escolha
+	bool pratos = true;				// variavel pratos para fazer a escolha dos pratos principais
+
+	do {
+		wcout << "Tens 3 pratos para escolher\n"
+			<< "1. Prato de Carne X\n"
+			<< "2. Prato de Peixe X\n"
+			<< "3. Prato de Veggie X\n"
+			<< "Escolha uma opção: ";
+
+		cin >> opcao;
+		switch (opcao)
+		{
+		case 1:
+			pratos = false;
+			carne = true;
+			peixe = false;
+			veggie = false;
+			break;
+
+		case 2:
+			pratos = false;
+			peixe = true;
+			carne = false;
+			veggie = false;
+			break;
+
+		case 3:
+			pratos = false;
+			carne = false;
+			peixe = false;
+			veggie = true;
+			break;
+
+		default:
+			wcout << "\nOpção errada";
+			Sleep(1000);
+			clrConsole();
+			pratos;
+		}
+	} while (pratos);
+
+	bool extra = true;				// variavel extra para fazer a escolha do prato de entrada
+	while (extra)
+	{
+		wcout << "Deseja o prato de entrada?\n"
+			<< "Indica s/S ou n/N: ";
+		cin >> resposta;
+
+		if (resposta == 's' || resposta == 'S')
+		{
+			extra = false;
+			entrada = true;
+		}
+		else if (resposta == 'n' || resposta == 'N')
+		{
+			extra = false;
+			entrada = false;
+		}
+		else {
+			clrConsole();
+			wcout << "Por favor insira a resposta correcta\n";
+			Sleep(1000);
+			clrConsole();
+		}
+	}
+
+	wcout << "Pedido feito\n";
+	Sleep(3000);
+	clrConsole();
+
+Voltar:
+	wcout << "Voltando ao Menu...\n";
+	Sleep(1000);
+	clrConsole();
 
 	refeicao refeicao;
 
@@ -725,19 +654,6 @@ FIM:
 	refeicao.carne = carne;
 	refeicao.peixe = peixe;
 	refeicao.vegie = veggie;
-
-	goto Voltar;
-
-
-Cancelar:
-	clrConsole();
-	wcout << "Pedido cancelado\n";
-	Sleep(1000);
-
-Voltar:
-	wcout << "Voltando ao Menu...\n";
-	Sleep(1000);
-	clrConsole();
 
 }
 
