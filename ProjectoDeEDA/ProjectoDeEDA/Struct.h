@@ -31,13 +31,19 @@ struct utilizador
 	wstring pass;
 };
 
-struct refeicao
+//struct refeicao
+//{
+//	dataNasc data;
+//	bool entrada;
+//	bool carne;
+//	bool peixe;
+//	bool vegie;
+//};
+
+struct plafond
 {
-	dataNasc data;
-	bool entrada;
-	bool carne;
-	bool peixe;
-	bool vegie;
+	int numero;
+	int money;
 };
 
 

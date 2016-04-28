@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "Struct.h"
 
@@ -8,10 +8,12 @@ int respostaMainMenu;
 int const TAMANHO = 500;
 int Util_logged;
 utilizador array_util[TAMANHO];
-wchar_t filename[50] = L"BaseDados.txt";
+plafond array_plafond[TAMANHO];
+wchar_t dadU[50] = L"BaseDados.txt";
+wchar_t dadP[50] = L"Plafond.txt";
 
 /*
-	FunÁ„o para fazer clear ‡ consola.
+	Fun√ß√£o para fazer clear √† consola.
 */
 void clrConsole()
 {
@@ -19,7 +21,7 @@ void clrConsole()
 }
 
 /*
-	FunÁ„o que ir· converter, se possÌvel um char num inteiro.
+	Fun√ß√£o que ir√° converter, se poss√≠vel um char num inteiro.
 */
 int convert_Str_2_INT(wstring input)
 {
@@ -34,13 +36,13 @@ int convert_Str_2_INT(wstring input)
 	{
 		wchar_t c = input[i];
 
-		if (c == 10 || c == 0 || c == 32) // verificaÁ„o se o char equivale a \n, \0 ou espaÁo.
+		if (c == 10 || c == 0 || c == 32) // verifica√ß√£o se o char equivale a \n, \0 ou espa√ßo.
 		{
 			break;
 		}
 		else
 		{
-			if (c < 48 || c > 57 || i == 10) // verificaÁ„o se o char Ò È um n˙mero.
+			if (c < 48 || c > 57 || i == 10) // verifica√ß√£o se o char √± √© um n√∫mero.
 			{
 				possible = false;
 				break;
@@ -53,7 +55,7 @@ int convert_Str_2_INT(wstring input)
 		i++;
 	}
 
-	if (possible)												//Se a string passada È um n˙mero...
+	if (possible)												//Se a string passada √© um n√∫mero...
 	{
 		double j = pow(10, i - 1);								//j = 10^(i-1)
 		int x = 0;
@@ -74,7 +76,7 @@ int convert_Str_2_INT(wstring input)
 }
 
 /*
-	Preenche o resto dos utilizadores com informaÁ„o que seja f·cil para nÛs descartarmos esse utilizador como inv·lido
+	Preenche o resto dos utilizadores com informa√ß√£o que seja f√°cil para n√≥s descartarmos esse utilizador como inv√°lido
 */
 void fillArrayBlankUtil(int i)
 {
@@ -86,9 +88,21 @@ void fillArrayBlankUtil(int i)
 }
 
 /*
-	LÍ ficheiro de dados de utilizador e carrega os dados num array
+Preenche o resto dos utilizadores com informa√ß√£o que seja f√°cil para n√≥s descartarmos esse utilizador como inv√°lido
 */
-void leDadosUtilizadores()
+void fillArrayBlankPlafond(int i)
+{
+	while (i < TAMANHO)
+	{
+		array_plafond[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+	Le dados do ficheiro contendo os plafonds
+*/
+void leDadosPlafonds()
 {
 	wstring temp;
 
@@ -96,7 +110,7 @@ void leDadosUtilizadores()
 
 	wfstream file;
 
-	file.open(filename, ios::in);
+	file.open(dadP, ios::in);
 	if (!file)
 	{
 		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
@@ -115,7 +129,91 @@ void leDadosUtilizadores()
 
 		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
 
-		if (aux != INT_MIN)												// Se aux == INT_MIN significa que n„o h· utilizadores por criar pois o que foi lido j· n„o È um valor v·lido
+		if (aux != INT_MIN)												// Se aux == INT_MIN significa que n√£o h√° utilizadores por criar pois o que foi lido j√° n√£o √© um valor v√°lido
+		{
+			array_plafond[i].numero = aux;
+
+			getline(file, temp);
+			array_plafond[i].money = convert_Str_2_INT(temp);
+
+			getline(file, temp);										// retira a separa√ß√£o...
+
+			i++;
+		}
+		else
+		{
+			fillArrayBlankPlafond(i);
+			i = TAMANHO;
+		}
+	}
+	file.close();
+}
+
+/*
+	Escreve os dados de plafonds nos ficheiros
+*/
+void escreveDadosPlafonds()
+{
+	wfstream file;
+
+	file.open(dadP, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que √© para come√ßar o ficheiro como se fosse um novo ficheiro, apagando o conte√∫do presente anteriormente
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nN√£o √© poss√≠vel guardar dados!!!\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekp(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		if (array_plafond[i].numero != INT_MIN)			// Se for um utilizador v√°lido guarda caso contr√°rio passa ao pr√≥ximo utilizador
+		{
+			file << array_plafond[i].numero << endl;
+			file << array_plafond[i].money << endl;
+			file << "-\n";
+		}
+		i++;
+	}
+	file.close();
+}
+
+/*
+	L√™ ficheiro de dados de utilizador e carrega os dados num array
+*/
+void leDadosUtilizadores()
+{
+	wstring temp;
+
+	int aux;
+
+	wfstream file;
+
+	file.open(dadU, ios::in);
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
+
+		if (aux != INT_MIN)												// Se aux == INT_MIN significa que n√£o h√° utilizadores por criar pois o que foi lido j√° n√£o √© um valor v√°lido
 		{
 			array_util[i].numero = aux;
 
@@ -161,11 +259,11 @@ void escreveDadosUtilizadores()
 {
 	wfstream file;
 
-	file.open(filename, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que È para comeÁar o ficheiro como se fosse um novo ficheiro, apagando o conte˙do presente anteriormente
+	file.open(dadU, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que √© para come√ßar o ficheiro como se fosse um novo ficheiro, apagando o conte√∫do presente anteriormente
 
 	if (!file)
 	{
-		wcout << "\nErro, ficheiros corruptos.\nN„o È possÌvel guardar dados!!!\n";
+		wcout << "\nErro, ficheiros corruptos.\nN√£o √© poss√≠vel guardar dados!!!\n";
 		cin.sync();
 		cin.get();
 		exit(1);
@@ -177,7 +275,7 @@ void escreveDadosUtilizadores()
 
 	while (i < TAMANHO)
 	{
-		if (array_util[i].numero != INT_MIN)			// Se for um utilizador v·lido guarda caso contr·rio passa ao prÛximo utilizador
+		if (array_util[i].numero != INT_MIN)			// Se for um utilizador v√°lido guarda caso contr√°rio passa ao pr√≥ximo utilizador
 		{
 			file << array_util[i].numero << endl;
 			file << array_util[i].nome << endl;
@@ -195,7 +293,7 @@ void escreveDadosUtilizadores()
 }
 
 /*
-	Indica que o valor inserido n„o È v·lido e pede um novo valor se o utilizador desejar continuar.
+	Indica que o valor inserido n√£o √© v√°lido e pede um novo valor se o utilizador desejar continuar.
 */
 int valorInvalido_inserirAluno(wstring x)
 {
@@ -206,7 +304,7 @@ int valorInvalido_inserirAluno(wstring x)
 
 	while (repeat)
 	{
-		wcout << "O valor inserido n„o È v·lido, quer continuar a inserÁ„o de aluno? (S/N)" << endl;
+		wcout << "O valor inserido n√£o √© v√°lido, quer continuar a inser√ß√£o de aluno? (S/N)" << endl;
 		wcin >> answer;
 		cin.sync();
 		cin.get();										//Retira um ghost "ENTER"
@@ -252,7 +350,7 @@ wstring PassPrompt()
 		}
 		else
 		{
-			wcout << "As passwords n„o coincidem!" << endl << endl;
+			wcout << "As passwords n√£o coincidem!" << endl << endl;
 		}
 	}
 	clrConsole();
@@ -273,14 +371,14 @@ int inserirAluno()
 	getline(wcin, nome);
 	clrConsole();
 
-	wcout << "N˙mero Mecanogr·fico: ";
+	wcout << "N√∫mero Mecanogr√°fico: ";
 	getline(wcin, temp);
 	num = convert_Str_2_INT(temp);
 	clrConsole();
 
 	if (num == INT_MIN)
 	{
-		num = valorInvalido_inserirAluno(L"N˙mero Mecanogr·fico: ");
+		num = valorInvalido_inserirAluno(L"N√∫mero Mecanogr√°fico: ");
 		if (num == -1)
 		{
 			return -1;
@@ -301,14 +399,14 @@ int inserirAluno()
 		}
 	}
 
-	wcout << "MÍs(n˙mero): ";
+	wcout << "M√™s(n√∫mero): ";
 	getline(wcin, temp);
 	mes = convert_Str_2_INT(temp);
 	clrConsole();
 
 	if (mes == INT_MIN)
 	{
-		mes = valorInvalido_inserirAluno(L"MÍs(n˙mero): ");
+		mes = valorInvalido_inserirAluno(L"M√™s(n√∫mero): ");
 		if (mes == -1)
 		{
 			return -1;
@@ -339,11 +437,11 @@ int inserirAluno()
 	getline(wcin, rua);
 	clrConsole();
 
-	wcout << "N∫ da porta: ";
+	wcout << "N¬∫ da porta: ";
 	getline(wcin, numPorta);
 	clrConsole();
 
-	wcout << "CÛdigo Postal: ";
+	wcout << "C√≥digo Postal: ";
 	getline(wcin, codPost);
 	clrConsole();
 
@@ -359,12 +457,12 @@ int inserirAluno()
 
 	wchar_t conf;
 
-	wcout << "ConfirmaÁ„o de Dados" << endl;
-	wcout << "N˙mero Mecanogr·fico: " << num << endl;
+	wcout << "Confirma√ß√£o de Dados" << endl;
+	wcout << "N√∫mero Mecanogr√°fico: " << num << endl;
 	wcout << "Nome Completo: " << nome << endl;
 	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
-	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", CÛdigo postal: " << mora.codPost << endl << endl;
-	wcout << "Os dados est„o correctos?(S/N) ";
+	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", C√≥digo postal: " << mora.codPost << endl << endl;
+	wcout << "Os dados est√£o correctos?(S/N) ";
 	wcin >> conf;
 	cin.sync();
 	cin.get();										//Retira um ghost "ENTER"
@@ -376,19 +474,19 @@ int inserirAluno()
 		{
 			clrConsole();
 			wcout << "O que deseja alterar?" << endl;
-			wcout << "1) N˙mero Mecanogr·fico" << endl;
+			wcout << "1) N√∫mero Mecanogr√°fico" << endl;
 			wcout << "2) Nome Completo" << endl;
 			wcout << "3) Data de Nascimento" << endl;
 			wcout << "4) Morada" << endl;
-			wcout << "0) Terminar ediÁ„o" << endl;
-			wcout << endl << "Insira o valor da opÁ„o pretendida: ";
+			wcout << "0) Terminar edi√ß√£o" << endl;
+			wcout << endl << "Insira o valor da op√ß√£o pretendida: ";
 			getline(wcin, temp);
 
 			answer = convert_Str_2_INT(temp);
 
 			if (answer < 0 || answer > 4)
 			{
-				wcout << endl << endl << "O valor inserido n„o È v·lido!";
+				wcout << endl << endl << "O valor inserido n√£o √© v√°lido!";
 				Sleep(1000);
 			}
 			else
@@ -397,7 +495,7 @@ int inserirAluno()
 				switch (answer)
 				{
 					case 0:
-						wcout << endl << "Deseja mesmo sair da ediÁ„o de aluno? (S/N) ";
+						wcout << endl << "Deseja mesmo sair da edi√ß√£o de aluno? (S/N) ";
 						char answer;
 						cin >> answer;
 						if (answer == 'n' || answer == 'N')
@@ -406,13 +504,13 @@ int inserirAluno()
 						}
 						break;
 					case 1:
-						wcout << endl << "Reinsira o n˙mero mecanogr·fico: ";
+						wcout << endl << "Reinsira o n√∫mero mecanogr√°fico: ";
 						getline(wcin, temp);
 						num = convert_Str_2_INT(temp);
 
 						if (num == INT_MIN)
 						{
-							num = valorInvalido_inserirAluno(L"N˙mero Mecanogr·fico: ");
+							num = valorInvalido_inserirAluno(L"N√∫mero Mecanogr√°fico: ");
 						}
 						break;
 					case 2:
@@ -430,14 +528,14 @@ int inserirAluno()
 							dia = valorInvalido_inserirAluno(L"Dia: ");
 						}
 
-						wcout << endl << "MÍs(n˙mero): ";
+						wcout << endl << "M√™s(n√∫mero): ";
 						getline(wcin, temp);
 						mes = convert_Str_2_INT(temp);
 						clrConsole();
 
 						if (mes == INT_MIN)
 						{
-							mes = valorInvalido_inserirAluno(L"MÍs(n˙mero): ");
+							mes = valorInvalido_inserirAluno(L"M√™s(n√∫mero): ");
 						}
 
 						wcout << endl << "Ano: ";
@@ -458,11 +556,11 @@ int inserirAluno()
 						getline(wcin, rua);
 						clrConsole();
 
-						wcout << endl << "N∫ da porta: " << endl << endl;
+						wcout << endl << "N¬∫ da porta: " << endl << endl;
 						getline(wcin, numPorta);
 						clrConsole();
 
-						wcout << endl << "CÛdigo Postal: " << endl << endl;
+						wcout << endl << "C√≥digo Postal: " << endl << endl;
 						getline(wcin, codPost);
 						clrConsole();
 						break;
@@ -496,15 +594,15 @@ int inserirAluno()
 
 /*
 	Cria a refeicao
-*/
-void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas de um determinado dia escolhido
+*
+void criarRefei√ß√£o() // TODO: fazer um ficheiro txt para inspecionar as ementas de um determinado dia escolhido
 {
 	bool repete = true;					// mecanismo de repeticao, caso cometa algum erro
 	bool entrada, carne, peixe, veggie; // escolhas do tipo de prato
 	bool almoco, jantar;				// escolha de turno
 	char resposta;						// respostas por parte das escolhas dos almocos /jantares
 	wstring temp;						// reposta para converter a string em numero
-	int dia, mes, ano, num;					// indicar o dia para faÁa o pedido
+	int dia, mes, ano, num;					// indicar o dia para fa√ßa o pedido
 	bool verifica = true;
 	char sair;
 
@@ -512,30 +610,30 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 
 	while (verifica)
 	{
-		wcout << "Por favor insira o n˙mero do aluno: "; // aqui suposto a por o nome do aluno completo, ou talvez o primeiro nome
+		wcout << "Por favor insira o n√∫mero do aluno: "; // aqui suposto a por o nome do aluno completo, ou talvez o primeiro nome
 		getline(wcin, temp);
 		num = convert_Str_2_INT(temp);
 		if (num == INT_MIN)
 		{
 			// insert number search function here
-			wcout << endl << "Escolha o dia: ";						 // neste momento podemos escolher o prÛprio dia
+			wcout << endl << "Escolha o dia: ";						 // neste momento podemos escolher o pr√≥prio dia
 			getline(wcin, temp);
 			dia = convert_Str_2_INT(temp);
 			clrConsole();
 
 			if (dia == INT_MIN)
 			{
-				valorInvalido_inserirAluno(L"Escolha o dia: "); // mudar ou criar uma nova funÁao pois esta funÁ„o faz parte da insercao do aluno
+				valorInvalido_inserirAluno(L"Escolha o dia: "); // mudar ou criar uma nova fun√ßao pois esta fun√ß√£o faz parte da insercao do aluno
 			}
 
-			wcout << "Escolha o mÍs(n˙mero): ";
+			wcout << "Escolha o m√™s(n√∫mero): ";
 			getline(wcin, temp);
 			mes = convert_Str_2_INT(temp);
 			clrConsole();
 
 			if (mes == INT_MIN)
 			{
-				valorInvalido_inserirAluno(L"Escolha o mÍs: "); // mudar ou criar uma nova funÁao pois esta funÁ„o faz parte da insercao do aluno
+				valorInvalido_inserirAluno(L"Escolha o m√™s: "); // mudar ou criar uma nova fun√ßao pois esta fun√ß√£o faz parte da insercao do aluno
 			}
 
 			wcout << "Escolha o ano: ";
@@ -545,11 +643,11 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 
 			if (ano == INT_MIN)
 			{
-				valorInvalido_inserirAluno(L"Escolha o ano: "); // mudar ou criar uma nova funÁao pois esta funÁ„o faz parte da insercao do aluno
+				valorInvalido_inserirAluno(L"Escolha o ano: "); // mudar ou criar uma nova fun√ßao pois esta fun√ß√£o faz parte da insercao do aluno
 			}
 
 			wcout << "Confirmado o dia aluno(a) X\n"			//temos que actualizar o nome
-				<< " A(s) refeiÁ„o(ıes) ser· feita nesta data: "
+				<< " A(s) refei√ß√£o(√µes) ser√° feita nesta data: "
 				<< dia << " /" << mes << " /" << ano << endl;
 			Sleep(3000);
 			clrConsole();
@@ -563,19 +661,19 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 
 			while (repete)
 			{
-				wcout << "Deseja um almoÁo (Insira s/S ou n/N): ";
+				wcout << "Deseja um almo√ßo (Insira s/S ou n/N): ";
 				cin >> resposta;
 				if (resposta == 's' || resposta == 'S')
 				{
 					almoco = true;
 					repete = false;
-					wcout << "Ent„o deseja o almoÁo\n";
+					wcout << "Ent√£o deseja o almo√ßo\n";
 					Sleep(3000);
 					clrConsole();
 					goto Pratos;
 
-					// temos que abrir algum ficheiro para mostrar a informaÁ„o dos pratos seguintes no que dia que for escolhido
-					// caso n„o exista ficheiro para verificar o dia, aparecer· um aviso para o programador para reparar esta zona
+					// temos que abrir algum ficheiro para mostrar a informa√ß√£o dos pratos seguintes no que dia que for escolhido
+					// caso n√£o exista ficheiro para verificar o dia, aparecer√° um aviso para o programador para reparar esta zona
 					// 1. Prato de Entrada X 
 					// 2. Prato de Carne X
 					// 3. Prato de Peixe X
@@ -602,7 +700,7 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 				}
 			}
 
-			repete = true; // forÁa a true para decidir o jantar
+			repete = true; // for√ßa a true para decidir o jantar
 
 			while (repete)
 			{
@@ -613,14 +711,14 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 					jantar = true;
 					repete = false;
 
-					wcout << "Ent„o deseja o jantar\n";
+					wcout << "Ent√£o deseja o jantar\n";
 					Sleep(3000);
 					clrConsole();
 
 					goto Pratos;
 
-					// temos que abrir algum ficheiro para mostrar a informaÁ„o dos pratos seguintes no que dia que for escolhido
-					// caso n„o exista ficheiro para verificar o dia, aparecer· um aviso para o programador para reparar esta zona
+					// temos que abrir algum ficheiro para mostrar a informa√ß√£o dos pratos seguintes no que dia que for escolhido
+					// caso n√£o exista ficheiro para verificar o dia, aparecer√° um aviso para o programador para reparar esta zona
 					// 1. Prato de Carne X
 					// 2. Prato de Peixe X
 					// 3. Prato Vegie X
@@ -665,7 +763,7 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 					<< "1. Prato de Carne X\n"
 					<< "2. Prato de Peixe X\n"
 					<< "3. Prato de Veggie X\n"
-					<< "Escolha uma opÁ„o: ";
+					<< "Escolha uma op√ß√£o: ";
 
 				cin >> opcao;
 				switch (opcao)
@@ -692,7 +790,7 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 					break;
 
 				default:
-					wcout << "\nOpÁ„o errada";
+					wcout << "\nOp√ß√£o errada";
 					Sleep(1000);
 					clrConsole();
 					pratos;
@@ -743,7 +841,7 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 		}
 		else
 		{
-			wcout << "O n˙mero inserido n„o È v·lido." << endl;
+			wcout << "O n√∫mero inserido n√£o √© v√°lido." << endl;
 			wcout << "Deseja tentar novamente? (S/N) ";
 			cin >> sair;
 			if (sair == 'n' || sair == 'N')
@@ -754,9 +852,9 @@ void criarRefeiÁ„o() // TODO: fazer um ficheiro txt para inspecionar as ementas 
 	}
 
 }
-
+*/
 /*
-	Coloca os utilizadores no array por ordem alfabÈtica
+	Coloca os utilizadores no array por ordem alfab√©tica
 */
 void organizearray_bynames()
 {
@@ -765,24 +863,30 @@ void organizearray_bynames()
 	wstring aux_str, aux_string;
 	while (i < TAMANHO)
 	{
-		aux_str = array_util[i].nome;
-		j = i + 1;
-		while (j < TAMANHO)
+		if (array_util[i].numero != INT_MIN)
 		{
-			aux_string = array_util[j].nome;
-			if (aux_string.compare(aux_str) < 0)
+			aux_str = array_util[i].nome;
+			j = i + 1;
+			while (j < TAMANHO)
 			{
-				swap(array_util[j], array_util[i]);
-				j = TAMANHO;
+				if (array_util[j].numero != INT_MIN)
+				{
+					aux_string = array_util[j].nome;
+					if (aux_string.compare(aux_str) > 0)
+					{
+						swap(array_util[j], array_util[i]);
+						j = TAMANHO;
+					}
+				}
+				j++;
 			}
-			j++;
 		}
 		i++;
 	}
 }
 
 /*
-	Realiza o login se a informaÁ„o do utilizador constar na base de dados e o n˙mero e a pass estiverem correctos
+	Realiza o login se a informa√ß√£o do utilizador constar na base de dados e o n√∫mero e a pass estiverem correctos
 */
 bool login_logout()
 {
@@ -804,9 +908,9 @@ bool login_logout()
 
 	while (repeat)
 	{
-		notAdmin = false;									//Reinicia a vari·vel
+		notAdmin = false;									//Reinicia a vari√°vel
 		wstring temp;
-		wcout << "Insira o seu n˙mero mecanogr·fico: ";
+		wcout << "Insira o seu n√∫mero mecanogr√°fico: ";
 		getline(wcin, temp);
 
 		if (temp.compare(L"admin") == 0)
@@ -825,9 +929,9 @@ bool login_logout()
 		}
 
 		num = convert_Str_2_INT(temp);
-		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas n„o meteu a pass correcta, logo n„o faz sentido pedir novamente a pass
+		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas n√£o meteu a pass correcta, logo n√£o faz sentido pedir novamente a pass
 		{
-			wcout << "N„o È um valor v·lido!!!" << endl;
+			wcout << "N√£o √© um valor v√°lido!!!" << endl;
 			Sleep(1000);
 		}
 		else
@@ -835,7 +939,7 @@ bool login_logout()
 			wcout << "Insira a sua password: ";
 			getline(wcin, pass);
 			i = 0;
-			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informaÁ„o que foi passada pelo utilizador do programa
+			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informa√ß√£o que foi passada pelo utilizador do programa
 			{
 				if (num == array_util[i].numero && array_util[i].pass.compare(pass) == 0)
 				{
@@ -855,36 +959,118 @@ bool login_logout()
 			wcin >> answer;
 			if (answer == 'n' || answer == 'N')
 			{
-				return false;								//Indica que n„o ocorreu um login correcto
+				return false;								//Indica que n√£o ocorreu um login correcto
 			}
 			cin.sync();
 			cin.get();										//Retira um ghost "ENTER"
 		}
 	}
-	return false;											//Indica que n„o ocorreu um login correcto
+	return false;											//Indica que n√£o ocorreu um login correcto
 }
 
 /*
-	Imprime users por ordem alfabÈtica
+	Imprime users por ordem alfab√©tica
 */
 void printUsers()
 {
 	organizearray_bynames();
-	int i = 0;
-	while (i < TAMANHO)
+	organizearray_bynames();			//por alguma raz√£o √†s vezes n√£o ordena corretamente √† primeira
+	int i = TAMANHO - 1;
+	while (i >= 0)
 	{
 		if (array_util[i].numero != INT_MIN)
 		{
 			wcout << "Nome: " << array_util[i].nome << " NUM: " << array_util[i].numero << endl;
 		}
-		i++;
+		i--;
 	}
 	cin.sync();
 	cin.get();
 }
 
 /*
-	Coloca o menu principal no ecr„ e devolve valores consoante a opÁ„o escolhida pelo utilizador.
+	Permite carregar plafond
+*/
+int carregarPlafond()
+{
+	clrConsole();
+	int i = 0;
+	int aux;
+	bool repeat = true;
+	wstring temp;
+	while (i < TAMANHO && repeat)
+	{
+		if (array_plafond[i].numero == Util_logged)
+		{
+			repeat = false;
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	if (i < 500)
+	{
+		wcout << "Neste momento vo√ß√™ possui " << array_plafond[i].money << "‚Ç¨." << endl;
+	}
+
+	repeat = true;
+	while (repeat)
+	{
+		wcout << "Quanto deseja carregar?? (Insira \"0\" para cancelar)\n\nValor: ";
+		getline(wcin, temp);
+		wcout << endl;
+		aux = convert_Str_2_INT(temp);
+		if (aux != INT_MIN)
+		{
+			if (aux == 0)				//Utilizador escolheu terminar
+			{
+				return 0;
+			}
+			wcout << "Tem a certeza que quer carregar " << aux << "‚Ç¨?(S/N)" << endl;
+			wchar_t c;
+			wcin >> c;
+			cin.sync();
+			cin.get();
+			if (c == L's' || c == L'S')
+			{
+				repeat = false;
+			}
+		}
+		else
+		{
+			wcout << "Valor inv√°lido!!!!";
+			Sleep(500);
+		}
+		clrConsole();
+	}
+
+	if (i == 500)				//N√£o conseguiu encontrar
+	{
+		i = 0;
+		while (i < TAMANHO)
+		{
+			if (array_plafond[i].numero == INT_MIN)
+			{
+				array_plafond[i].numero = Util_logged;
+				array_plafond[i].money = aux;
+				escreveDadosPlafonds();
+				return 0;
+			}
+			i++;
+		}
+	}
+	else
+	{
+		array_plafond[i].money += aux;
+		escreveDadosPlafonds();
+	}
+	return 0;
+}
+
+/*
+	Coloca o menu principal no ecr√£ e devolve valores consoante a op√ß√£o escolhida pelo utilizador.
 */
 void printMainMenu()
 {
@@ -893,16 +1079,28 @@ void printMainMenu()
 	bool quit = false;
 
 	leDadosUtilizadores();
+	leDadosPlafonds();
+	
+	int i = 0;
+
+	while (i < 500)
+	{
+		wcout << array_plafond[i].numero << endl;
+		i++;
+	}
+
+	cin.sync();
+	cin.get();
 
 	while (!quit)
 	{
 		clrConsole();
-		//	Imprime texto no ecr„.
+		//	Imprime texto no ecr√£.
 		wcout << "Bem vindo ao primeiro projecto de EDA." << endl;
-		wcout << "\nEscolha a opÁ„o pretendida.\n" << endl;
+		wcout << "\nEscolha a op√ß√£o pretendida.\n" << endl;
 		if (!logged)
 		{
-			wcout << "1. Login.\n\nOpc„o: ";
+			wcout << "1. Login.\n\nOpc√£o: ";
 		}
 		else
 		{
@@ -913,36 +1111,36 @@ void printMainMenu()
 		{
 			wcout << "2. Inserir alunos\n"
 				<< "3. Pesquisar pelo Primeiro Nome\n"
-				<< "4. Pesquisar pelo N˙mero\n"
+				<< "4. Pesquisar pelo N√∫mero\n"
 				<< "5. Lista alunos por Ordem Alfabetica\n"
 				<< "6. Alterar alunos\n"
 				<< "7. Remover alunos\n"
-				<< "8. Remover Refeic„o\n"
-				<< "9. Listar refeiÁıes\n"
-				<< "10. Listar refeiÁıes num determinado dia\n"
-				<< "\nOpÁ„o: ";
+				<< "8. Remover Refeic√£o\n"
+				<< "9. Listar refei√ß√µes\n"
+				<< "10. Listar refei√ß√µes num determinado dia\n"
+				<< "\nOp√ß√£o: ";
 		}
 		else if (!admin && logged) // se o utilizador n estiver logged in n no admin
 		{
-			wcout << "2. Encomendar refeiÁ„o\n"
+			wcout << "2. Encomendar refei√ß√£o\n"
 				<< "3. Carregar plafond\n"
-				<< "\nOpÁ„o: ";
+				<< "\nOp√ß√£o: ";
 		}
 
-		//	ObtÈm resposta do utilizador.
+		//	Obt√©m resposta do utilizador.
 		getline(wcin, resposta);
 
 		resposta_int = convert_Str_2_INT(resposta);
 
-		//	Verifica se a resposta do utilizado È v·lida.
+		//	Verifica se a resposta do utilizado √© v√°lida.
 		if (resposta_int == INT_MIN)
 		{
-			wcout << "O que foi inserido n„o È uma opÁ„o v·lida." << endl;
+			wcout << "O que foi inserido n√£o √© uma op√ß√£o v√°lida." << endl;
 		}
 		else
 		{
 
-			if (resposta_int == 1) // est· dependente de tudo
+			if (resposta_int == 1) // est√° dependente de tudo
 			{
 				logged = login_logout();
 				clrConsole();
@@ -958,10 +1156,10 @@ void printMainMenu()
 			else if (resposta_int == 2 && logged && !admin)
 			{
 				clrConsole();
-				wcout << "Escolheu encomendar refeiÁ„o\n";
+				wcout << "Escolheu encomendar refei√ß√£o\n";
 				Sleep(1000);
 				clrConsole();
-				criarRefeiÁ„o();
+				//criarRefei√ß√£o();
 
 			}
 			else if (resposta_int == 3 && logged && admin)
@@ -976,19 +1174,20 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu carregar plafond";
 				Sleep(1000);
+				carregarPlafond();
 				clrConsole();
 			}
 			else if (resposta_int == 4 && logged && admin)
 			{
 				clrConsole();
-				wcout << "Escolheu pesquisar pelo n˙mero\n";
+				wcout << "Escolheu pesquisar pelo n√∫mero\n";
 				Sleep(1000);
 				clrConsole();
 			}
 			else if (resposta_int == 5 && logged && admin)
 			{
 				clrConsole();
-				wcout << "Escolheu listar alunos por ordem alfabÈtica\n";
+				wcout << "Escolheu listar alunos por ordem alfab√©tica\n";
 				Sleep(1000);
 				printUsers();
 				clrConsole();
@@ -1012,28 +1211,28 @@ void printMainMenu()
 			else if (resposta_int == 8 && logged && admin)
 			{
 				clrConsole();
-				wcout << "Escolheu remover refeiÁ„o\n";
+				wcout << "Escolheu remover refei√ß√£o\n";
 				Sleep(1000);
 				clrConsole();
 			}
 			else if (resposta_int == 9 && logged && admin)
 			{
 				clrConsole();
-				wcout << "Escolheu listar refeiÁıes\n";
+				wcout << "Escolheu listar refei√ß√µes\n";
 				Sleep(1000);
 				clrConsole();
 			}
 			else if (resposta_int == 10 && logged && admin)
 			{
 				clrConsole();
-				wcout << "Escolheu listar refeiÁıes num determinado dia\n";
+				wcout << "Escolheu listar refei√ß√µes num determinado dia\n";
 				Sleep(1000);
 				clrConsole();
 			}
 			else
 			{
 				clrConsole();
-				wcout << "Escolheu a opÁ„o errada\nPor favor escolha a(s) opÁ„o/opÁıes disponÌveis\n";
+				wcout << "Escolheu a op√ß√£o errada\nPor favor escolha a(s) op√ß√£o/op√ß√µes dispon√≠veis\n";
 				Sleep(1000);
 				clrConsole();
 			}
