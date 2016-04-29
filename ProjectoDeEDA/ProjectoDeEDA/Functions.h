@@ -1074,7 +1074,7 @@ int carregarPlafond()
 }
 
 /*
-Remover alunos
+	Remover alunos
 */
 void removerAluno()
 {
@@ -1163,6 +1163,37 @@ void removerAluno()
 }
 
 /*
+	Pesquisar pelo primeiro nome
+*/
+void primNome()
+{
+	wstring aux, nomeP;
+	int i = 0;
+	int j = 0;
+	int r = 0;
+	wcout << "Qual é o nome que quer procurar (primeiro nome)? ";
+	getline(wcin, nomeP);
+
+	while (i < TAMANHO)
+	{
+		wstring primeiroNome;
+		aux = array_util[i].nome;
+		while (j < 50 && aux[j] != 32)
+		{
+			primeiroNome[j] = aux[j];
+			j++;
+		}
+		if (nomeP.compare(primeiroNome))
+		{
+			wcout << "Número: " << array_util[i].numero << endl << "Nome: " << array_util[i].nome << endl << endl;
+			r++;
+		}
+		i++;
+	}
+	wcout << "Número de resultados encontrados: " << r;
+}
+
+/*
 	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
@@ -1245,6 +1276,7 @@ void printMainMenu()
 				Sleep(1000);
 				clrConsole();
 				inserirAluno();
+				clrConsole();
 			}
 			else if (resposta_int == 2 && logged && !admin)
 			{
@@ -1260,6 +1292,8 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu pesquisar pelo primeiro nome\n";
 				Sleep(1000);
+				primNome();
+				Sleep(500);
 				clrConsole();
 			}
 			else if (resposta_int == 3 && logged && !admin)
