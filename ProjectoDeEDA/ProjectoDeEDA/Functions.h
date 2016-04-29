@@ -25,6 +25,10 @@ void clrConsole()
 */
 int convert_Str_2_INT(wstring input)
 {
+	if (input.compare(L"") == 0)
+	{
+		return INT_MIN;
+	}
 	bool possible = true;
 	int value, i;
 	int arr[10];
@@ -1070,6 +1074,95 @@ int carregarPlafond()
 }
 
 /*
+Remover alunos
+*/
+void removerAluno()
+{
+	int numAluno;
+	wstring aux;
+	wchar_t val;
+	bool verd = true;
+	while (verd)
+	{
+		wcout << "Qual o número do aluno que pretende eliminar: ";
+		getline(wcin, aux);
+		numAluno = convert_Str_2_INT(aux);
+		if (numAluno != INT_MIN)
+		{
+			verd = false;
+		}
+		else
+		{
+			wcout << "O número introduzido não é válido." << endl;
+			wcout << "Deseja tentar novamente?(S/N)";
+			wcin >> val;
+			cin.sync();
+			cin.get();
+			if (val != L's' || val != L'S')
+			{
+				return;
+			}
+		}
+	}
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		if (numAluno == array_util[i].numero)
+		{
+			break;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	if (i < TAMANHO)
+	{
+		wcout << "Tem a certeza que quer eliminar o aluno nº " << numAluno << "?(S/N)";
+		wcin >> val;
+		cin.sync();
+		cin.get();
+		if (val == L's' || val == L'S')
+		{
+			utilizador utilizador_remove;
+			utilizador_remove.numero = INT_MIN;
+			array_util[i] = utilizador_remove;
+			escreveDadosUtilizadores();
+			i = 0;
+			while (i < TAMANHO)
+			{
+				if (numAluno == array_plafond[i].numero)
+				{
+					break;
+				}
+				else
+				{
+					i++;
+				}
+			}
+			if (i < TAMANHO)
+			{
+				plafond plafond_remove;
+				plafond_remove.numero = INT_MIN;
+				array_plafond[i] = plafond_remove;
+				escreveDadosPlafonds();
+			}
+			return;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		wcout << "O utilizador com o nº " << numAluno << " não foi encontrado" << endl;
+		Sleep(500);
+		return;
+	}
+}
+
+/*
 	Coloca o menu principal no ecrã e devolve valores consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
@@ -1205,6 +1298,7 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu remover alunos\n";
 				Sleep(1000);
+				removerAluno();
 				clrConsole();
 			}
 

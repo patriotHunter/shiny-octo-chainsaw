@@ -28,6 +28,7 @@ struct utilizador
 	wstring nome;
 	dataNasc nasc;
 	morada morada;
+	wstring curso;
 	wstring pass;
 };
 
