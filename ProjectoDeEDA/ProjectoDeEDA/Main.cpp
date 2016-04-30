@@ -15,9 +15,8 @@ int main()
 	//	printMainMenu();
 	//}
 
-	wstring s = L"PUTAS";
 
-	wcout << tolower(s);
+	wcout << currentDate() << endl;
 
 	return 0;
 }

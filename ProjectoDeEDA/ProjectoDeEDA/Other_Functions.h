@@ -140,17 +140,25 @@ wstring PassPrompt()
 	return Pass;
 }
 
-string currentDate()
+wstring currentDate()
 {
+	time_t t = time(0);   // Obtém o tempo atual
+	struct tm now;
+	localtime_s(&now, &t);	// atribui à struct tm o tempo atual
 
-	time_t rawtime;
-	tm* timeinfo;
-	char buffer[80];
+	int dia, mes, ano;
 
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
+	ano = now.tm_year + 1900;		//O ano 2016 devolve 116
+	mes = now.tm_mon + 1;			//Os meses começam em 0 até 11
+	dia = now.tm_mday;
 
-	strftime(buffer, 80, "%Y-%m-%d", timeinfo);
-
-	return buffer;
+	if (mes < 10)
+	{
+		return to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+	else
+	{
+		return to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+	
 }
