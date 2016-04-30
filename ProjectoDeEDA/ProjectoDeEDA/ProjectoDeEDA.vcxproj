@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="Other_Functions.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
