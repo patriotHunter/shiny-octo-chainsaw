@@ -366,7 +366,7 @@ int inserirAluno()
 
 	if (ano == INT_MIN)
 	{
-		ano = valorInvalido_inserirAluno(L"Dia: ");
+		ano = valorInvalido_inserirAluno(L"Ano: ");
 		if (ano == -1)
 		{
 			return -1;
@@ -396,7 +396,7 @@ int inserirAluno()
 
 	if (dia == INT_MIN)
 	{
-		dia = valorInvalido_inserirAluno(L"Ano: ");
+		dia = valorInvalido_inserirAluno(L"Dia: ");
 		if (dia == -1)
 		{
 			return -1;
@@ -980,6 +980,190 @@ void listarRefeicao()
 		}
 		wcout << "Número total de refeições encontradas: " << r << endl << endl;
 		wcout << "Pressione a tecla Enter para prosseguir...";
+	}
+}
+
+/*
+	Encomendar Refeições
+*/
+
+void encomendarRefeicao()
+{
+	wstring aux;
+	int num;
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		if (array_plafond[i].numero == Util_logged)
+		{
+			if (array_plafond[i].money < 3)
+			{
+				wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+				wcout << "Pressione a tecla Enter para prosseguir...";
+				cin.sync();
+				cin.get();
+				return;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			i++;
+		}
+	}
+	if (i == TAMANHO)
+	{
+		wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+		wcout << "Pressione a tecla Enter para prosseguir...";
+		cin.sync();
+		cin.get();
+		return;
+	}
+	else
+	{
+		bool repeat = true;
+		while (repeat)
+		{
+			wcout << "Qual a quantidade de refeições que quer encomendar? (Insira 0 para sair) ";
+			getline(wcin, aux);
+			num = convert_Str_2_INT(aux);
+			if (num < 0)
+			{
+				wcout << "o valor incerido é inválido.";
+				Sleep(500);
+				clrConsole();
+			}
+			else if (num == 0)
+			{
+				return;
+			}
+			else
+			{
+				if (array_plafond[i].money < (num * 3))
+				{
+					wcout << "O seu plafond não premite encomendar " << num << " refeições." << endl;
+					Sleep(500);
+					clrConsole();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		int j = 0;
+		wstring temp;
+		int ano, mes, dia;
+		while (j < num)
+		{
+			//Pede a data de nascimento começando pelo ano
+			wcout << "Data da refeição nº " << j + 1 << endl << "Ano: ";
+			getline(wcin, temp);
+			ano = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (ano == INT_MIN)
+			{
+				ano = valorInvalido_inserirAluno(L"Ano: ");
+				if (ano == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o mes de nascimento
+			wcout << "Mês(número): ";
+			getline(wcin, temp);
+			mes = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (mes == INT_MIN)
+			{
+				mes = valorInvalido_inserirAluno(L"Mês(número): ");
+				if (mes == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o dia do nascimento
+			wcout << "Dia: ";
+			getline(wcin, temp);
+			dia = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (dia == INT_MIN)
+			{
+				dia = valorInvalido_inserirAluno(L"Dia: ");
+				if (dia == -1)
+				{
+					return;
+				}
+			}
+
+			if (dateValid(ano, mes, dia))
+			{
+				bool jantar;
+				repeat = true;
+
+				clrConsole();
+
+				while (repeat)
+				{
+					wcout << "1 - Almoço" << endl;
+					wcout << "2 - Jantar" << endl;
+					wcout << "Opção: ";
+					getline(wcin, aux);
+					if (convert_Str_2_INT(aux) == 1)
+					{
+						jantar = false;
+						repeat = false;
+					}
+					else if (convert_Str_2_INT(aux) == 2)
+					{
+						jantar = true;
+						repeat = false;
+					}
+					else
+					{
+						wcout << "Opção Inválida" << endl;
+						Sleep(500);
+						clrConsole();
+					}
+				}
+
+				refeicao food;
+				food.data.ano = ano;
+				food.data.mes = mes;
+				food.data.dia = dia;
+				food.numero = Util_logged;
+				food.jantar = jantar;
+
+				j = 0;
+
+				while (j < (TAMANHO * 10))
+				{
+					if (array_refeicao[j].numero == INT_MIN)
+					{
+						array_refeicao[j] = food;
+						numRefeicoes++;
+						array_plafond[i].money -= 3;
+						break;
+					}
+					j++;
+				}
+				if (j == (TAMANHO * 10))
+				{
+					wcout << "Não é possível encomendar mais refeições." endl;
+					Sleep(500);
+					clrConsole();
+					return;
+				}
+			}
+		}
 	}
 }
 
