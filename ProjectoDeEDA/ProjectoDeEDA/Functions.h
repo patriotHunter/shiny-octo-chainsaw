@@ -2,15 +2,16 @@
 
 #include "Struct.h"
 
-bool logged = false;
-bool admin = false;
-int respostaMainMenu;
-int const TAMANHO = 500;
-int Util_logged;
-utilizador array_util[TAMANHO];
-plafond array_plafond[TAMANHO];
-wchar_t dadU[50] = L"BaseDados.txt";
-wchar_t dadP[50] = L"Plafond.txt";
+bool logged = false;							// O utilizador esta logged in ou não
+bool admin = false;								// O utilizador é funcionário ou não
+int const TAMANHO = 500;						// Tamanho dos arrays
+int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logged in
+utilizador array_util[TAMANHO];					// Array de utilizadores
+plafond array_plafond[TAMANHO];					// Array de plafonds
+wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
+wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
+int numUtils = 0;								// Numero total de utilizadores
+int numPlafonds = 0;							// Numero total de utilizadores com plafond
 
 /*
 	Função para fazer clear à consola.
@@ -133,15 +134,14 @@ void leDadosPlafonds()
 
 		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
 
-		if (aux != INT_MIN)												// Se aux == INT_MIN significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
+		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
 		{
 			array_plafond[i].numero = aux;
 
 			getline(file, temp);
 			array_plafond[i].money = convert_Str_2_INT(temp);
 
-			getline(file, temp);										// retira a separação...
-
+			numPlafonds++;
 			i++;
 		}
 		else
@@ -174,13 +174,21 @@ void escreveDadosPlafonds()
 
 	int i = 0;
 
-	while (i < TAMANHO)
+	int plafonds_guardados = 0;
+
+	while (i < TAMANHO && plafonds_guardados != numPlafonds)
 	{
-		if (array_plafond[i].numero != INT_MIN)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
+		if (array_plafond[i].numero != INT_MIN && plafonds_guardados < numPlafonds)			// Se for um plafond válido guarda caso contrário passa ao próximo plafond
 		{
 			file << array_plafond[i].numero << endl;
 			file << array_plafond[i].money << endl;
-			file << "-\n";
+
+			plafonds_guardados++;
+		}
+		else if (array_plafond[i].numero != INT_MIN && plafonds_guardados == numPlafonds)		// Se for o último plafond válido guarda sem colocar uma linha em branco no fim do ficheiro
+		{
+			file << array_plafond[i].numero << endl;
+			file << array_plafond[i].money << endl;
 		}
 		i++;
 	}
@@ -217,7 +225,7 @@ void leDadosUtilizadores()
 
 		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
 
-		if (aux != INT_MIN)												// Se aux == INT_MIN significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
+		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
 		{
 			array_util[i].numero = aux;
 
@@ -245,6 +253,7 @@ void leDadosUtilizadores()
 			getline(file, temp);
 			array_util[i].pass = temp;
 
+			numUtils++;
 			i++;
 		}
 		else
@@ -276,10 +285,11 @@ void escreveDadosUtilizadores()
 	file.seekp(ios::beg);
 
 	int i = 0;
+	int utilizadores_guardados = 0;
 
-	while (i < TAMANHO)
+	while (i < TAMANHO && utilizadores_guardados != numUtils)
 	{
-		if (array_util[i].numero != INT_MIN)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
+		if (array_util[i].numero != INT_MIN && utilizadores_guardados < numUtils)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
 		{
 			file << array_util[i].numero << endl;
 			file << array_util[i].nome << endl;
@@ -290,6 +300,20 @@ void escreveDadosUtilizadores()
 			file << array_util[i].morada.numPorta << endl;
 			file << array_util[i].morada.codPost << endl;
 			file << array_util[i].pass << endl;
+
+			utilizadores_guardados++;
+		}
+		else if (array_util[i].numero != INT_MIN && utilizadores_guardados == numUtils)		// Se for o último utilizador a guardar, guarda informação no ficheiro sem colocar uma linha em branco no fim
+		{
+			file << array_util[i].numero << endl;
+			file << array_util[i].nome << endl;
+			file << array_util[i].nasc.dia << endl;
+			file << array_util[i].nasc.mes << endl;
+			file << array_util[i].nasc.ano << endl;
+			file << array_util[i].morada.rua << endl;
+			file << array_util[i].morada.numPorta << endl;
+			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].pass;
 		}
 		i++;
 	}
@@ -601,6 +625,7 @@ int inserirAluno()
 		if (array_util[i].numero == INT_MIN)
 		{
 			array_util[i] = aluno;
+			numUtils++;
 			break;
 		}
 		i++;
@@ -689,7 +714,7 @@ bool login_logout()
 			if (pass.compare(L"aminhapass") == 0)
 			{
 				clrConsole();
-				wcout << "Benvindo administrador!" << endl;
+				wcout << "Bem vindo administrador!" << endl;
 				admin = true;
 				Util_logged = INT_MIN;
 				return true;
@@ -724,7 +749,7 @@ bool login_logout()
 		if (repeat)
 		{
 			clrConsole();
-			wcout << "Pretende tentar novamente? (S/N): ";
+			wcout << "Não foi possível encontrar um utilizador com a informação que disponibilizou!!\n\nPretende tentar novamente? (S/N): ";
 			wcin >> answer;
 			if (answer == 'n' || answer == 'N')
 			{
@@ -732,6 +757,7 @@ bool login_logout()
 			}
 			cin.sync();
 			cin.get();										//Retira um ghost "ENTER"
+			clrConsole();
 		}
 	}
 	return false;											//Indica que não ocorreu um login correcto
@@ -850,6 +876,7 @@ void removerAluno()
 	wstring aux;
 	wchar_t val;
 	bool verd = true;
+
 	while (verd)
 	{
 		wcout << "Qual o número do aluno que pretende eliminar: ";
@@ -884,7 +911,7 @@ void removerAluno()
 			i++;
 		}
 	}
-	if (i < TAMANHO)
+	if (i < TAMANHO)						// Se encontrar um aluno com este numero...
 	{
 		wcout << "Tem a certeza que quer eliminar o aluno nº " << numAluno << "?(S/N)";
 		wcin >> val;
@@ -895,6 +922,7 @@ void removerAluno()
 			utilizador utilizador_remove;
 			utilizador_remove.numero = INT_MIN;
 			array_util[i] = utilizador_remove;
+			numUtils--;
 			escreveDadosUtilizadores();
 			i = 0;
 			while (i < TAMANHO)
@@ -913,6 +941,7 @@ void removerAluno()
 				plafond plafond_remove;
 				plafond_remove.numero = INT_MIN;
 				array_plafond[i] = plafond_remove;
+				numPlafonds--;
 				escreveDadosPlafonds();
 			}
 			return;
@@ -978,18 +1007,23 @@ void printMainMenu()
 	leDadosUtilizadores();
 	leDadosPlafonds();
 
+	wcout << numPlafonds << endl << numUtils;
+	cin.sync();
+	cin.get();
+
 	while (!quit)
 	{
 		clrConsole();
 		//	Imprime texto no ecrã.
-		wcout << "Bem vindo ao primeiro projecto de EDA." << endl;
-		wcout << "\nEscolha a opção pretendida.\n" << endl;
 		if (!logged)
 		{
+			wcout << "Bem vindo ao primeiro projecto de EDA." << endl;
+			wcout << "\nEscolha a opção pretendida.\n" << endl;
 			wcout << "1. Login.\n\nOpcão: ";
 		}
 		else
 		{
+			wcout << "Escolha a opção pretendida.\n" << endl;
 			wcout << "1. Logout." << endl;
 		}
 
