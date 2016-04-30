@@ -136,6 +136,13 @@ void escreveDadosPlafonds()
 	file.close();
 }
 
+void leDadosRefeicoes()
+{
+
+	//			HERE JOSUE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+}
+
 /*
 Escreve os dados de refeicoes nos ficheiros
 */
@@ -172,6 +179,9 @@ void escreveDadosRefeicoes()
 			{
 				file << "false" << endl;
 			}
+			file << array_refeicao[i].data.ano << endl;
+			file << array_refeicao[i].data.mes << endl;
+			file << array_refeicao[i].data.dia << endl;
 
 			refeicoes_guardadas++;
 		}
@@ -186,6 +196,9 @@ void escreveDadosRefeicoes()
 			{
 				file << "false" << endl;
 			}
+			file << array_refeicao[i].data.ano << endl;
+			file << array_refeicao[i].data.mes << endl;
+			file << array_refeicao[i].data.dia;
 		}
 		i++;
 	}
