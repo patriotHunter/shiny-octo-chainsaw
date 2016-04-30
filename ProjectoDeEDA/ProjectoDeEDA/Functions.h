@@ -924,6 +924,53 @@ void primNome()
 }
 
 /*
+	Listar Refeições
+*/
+void listarRefeicao()
+{
+	wstring aux;
+	int num, i;
+	int r = 0;
+	wcout << "Deseja listar as refeições de que aluno? (Número Mecanográfico ou 0 para todos os alunos) ";
+	getline(wcin, aux);
+	num = convert_Str_2_INT(aux);
+
+	if (num != INT_MIN)
+	{
+		if (num == 0)
+		{
+			i = 0;
+			while (i < TAMANHO)
+			{
+				if (array_refeicao[i].numero != INT_MIN)
+				{
+					wcout << "Número: " << array_refeicao[i].numero << "  Refeição: " << array_refeicao[i].jantar << "  Data: "
+					<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl << endl;
+					r++;
+				}
+				i++;
+			}
+		}
+		else
+		{
+			i = 0;
+			while (i < TAMANHO)
+			{
+				if (num == array_refeicao[i].numero)
+				{
+					wcout << "Número: " << array_refeicao[i].numero << "  Refeição: " << array_refeicao[i].jantar << "  Data: "
+					<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl << endl;
+					r++;
+				}
+				i++;
+			}
+		}
+		wcout << "Número total de refeições encontradas: " << r << endl << endl;
+		wcout << "Pressione a tecla Enter para prosseguir...";
+	}
+}
+
+/*
 	Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
@@ -1070,6 +1117,8 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu listar refeições.\n";
 				Sleep(1000);
+				listarRefeicao();
+				Sleep(500);
 				clrConsole();
 			}
 			//else if (resposta_int == 10 && logged && admin)	// se tiver um admin logado isto é uma opção válida para o administrador
