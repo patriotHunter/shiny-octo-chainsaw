@@ -1157,7 +1157,7 @@ void encomendarRefeicao()
 				}
 				if (j == (TAMANHO * 10))
 				{
-					wcout << "Não é possível encomendar mais refeições." endl;
+					wcout << "Não é possível encomendar mais refeições." << endl;
 					Sleep(500);
 					clrConsole();
 					return;
