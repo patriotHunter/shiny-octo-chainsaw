@@ -965,35 +965,32 @@ void removerAluno()
 */
 void primNome()
 {
-	wstring aux, nomeP;
+	wstring temp, aux, nomeP;
 	int i = 0;
-	int j = 0;
 	int r = 0;
 	wcout << "Qual é o nome que quer procurar (primeiro nome)? ";
 	getline(wcin, nomeP);
-
 	while (i < TAMANHO)
 	{
-		
 		if (array_util[i].numero != INT_MIN)
 		{
-			j = 0;
-			wstring primeiroNome;
 			aux = array_util[i].nome;
-			while (j < 50 && aux[j] != 32)
+			wstring::size_type pos = aux.find(' ');
+			if (pos != string::npos)
 			{
-				primeiroNome[j] = aux[j];
-				j++;
-			}
-			if (nomeP.compare(primeiroNome) == 0)
-			{
-				wcout << "Número: " << array_util[i].numero << endl << "Nome: " << array_util[i].nome << endl << endl;
-				r++;
+				temp = aux.substr(0, pos);
+				if (temp.compare(nomeP) == 0)
+				{
+					wcout << endl << "Número: " << array_util[i].numero << "  Nome: " << array_util[i].nome << endl << endl;
+					r++;
+				}
 			}
 		}
 		i++;
 	}
 	wcout << "Número de resultados encontrados: " << r;
+	cin.sync();
+	cin.get();
 }
 
 /*

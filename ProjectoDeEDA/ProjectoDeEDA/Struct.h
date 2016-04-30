@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <string>
 #include <fstream>
+#include <cstddef>
 using namespace std;
 
 struct dataNasc
