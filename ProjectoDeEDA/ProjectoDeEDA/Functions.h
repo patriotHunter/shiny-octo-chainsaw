@@ -1,6 +1,11 @@
 ﻿#pragma once
 
 #include "Struct.h"
+#include "Other_Functions.h"
+
+/*
+	ATENÇÂO:	Neste ficheiro encontram-se todas as funções que necessitem de variáveis globais!!!
+*/
 
 bool logged = false;							// O utilizador esta logged in ou não
 bool admin = false;								// O utilizador é funcionário ou não
@@ -11,75 +16,10 @@ plafond array_plafond[TAMANHO];					// Array de plafonds
 refeicao array_refeicao[TAMANHO * 10];			// Array de refeicoes
 wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
 wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
+wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos plafonds
 int numUtils = 0;								// Numero total de utilizadores
 int numPlafonds = 0;							// Numero total de utilizadores com plafond
-
-/*
-	Função para fazer clear à consola.
-*/
-void clrConsole()
-{
-	system("cls");
-}
-
-/*
-	Função que irá converter, se possível um char num inteiro.
-*/
-int convert_Str_2_INT(wstring input)
-{
-	if (input.compare(L"") == 0)
-	{
-		return INT_MIN;
-	}
-	bool possible = true;
-	int value, i;
-	int arr[10];
-
-	value = 0;
-	i = 0;
-
-	while (i < sizeof(input))
-	{
-		wchar_t c = input[i];
-
-		if (c == 10 || c == 0 || c == 32) // verificação se o char equivale a \n, \0 ou espaço.
-		{
-			break;
-		}
-		else
-		{
-			if (c < 48 || c > 57 || i == 10) // verificação se o char ñ é um número.
-			{
-				possible = false;
-				break;
-			}
-			else
-			{
-				arr[i] = c - 48;
-			}
-		}
-		i++;
-	}
-
-	if (possible)												//Se a string passada é um número...
-	{
-		double j = pow(10, i - 1);								//j = 10^(i-1)
-		int x = 0;
-		int aux;
-
-		for (x; x < i; x++)
-		{
-			aux = arr[x] * (int)j;
-			value += aux;
-			j /= 10;
-		}
-		return value;
-	}
-	else
-	{
-		return INT_MIN;
-	}
-}
+int numRefeicoes = 0;							// Numero total de refeicoes
 
 /*
 	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
@@ -189,7 +129,63 @@ void escreveDadosPlafonds()
 		else if (array_plafond[i].numero != INT_MIN && plafonds_guardados == numPlafonds)		// Se for o último plafond válido guarda sem colocar uma linha em branco no fim do ficheiro
 		{
 			file << array_plafond[i].numero << endl;
-			file << array_plafond[i].money << endl;
+			file << array_plafond[i].money;
+		}
+		i++;
+	}
+	file.close();
+}
+
+/*
+Escreve os dados de refeicoes nos ficheiros
+*/
+void escreveDadosRefeicoes()
+{
+	wfstream file;
+
+	file.open(dadR, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekp(ios::beg);
+
+	int i = 0;
+
+	int refeicoes_guardadas = 0;
+
+	while (i < TAMANHO && refeicoes_guardadas != numPlafonds)
+	{
+		if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas < numRefeicoes)			// Se for uma refeicao válida guarda caso contrário passa à próxima refeicao
+		{
+			file << array_refeicao[i].numero << endl;
+			if (array_refeicao[i].jantar)
+			{
+				file << "true" << endl;
+			}
+			else
+			{
+				file << "false" << endl;
+			}
+
+			refeicoes_guardadas++;
+		}
+		else if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas == numRefeicoes)		// Se for a última refeicao válida guarda sem colocar uma linha em branco no fim do ficheiro
+		{
+			file << array_refeicao[i].numero << endl;
+			if (array_refeicao[i].jantar)
+			{
+				file << "true" << endl;
+			}
+			else
+			{
+				file << "false" << endl;
+			}
 		}
 		i++;
 	}
@@ -319,72 +315,6 @@ void escreveDadosUtilizadores()
 		i++;
 	}
 	file.close();
-}
-
-/*
-	Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
-*/
-int valorInvalido_inserirAluno(wstring x)
-{
-	bool repeat = true;
-	wchar_t answer;
-	int num;
-	wstring temp;
-
-	while (repeat)
-	{
-		wcout << "O valor inserido não é válido, quer continuar a inserção de aluno? (S/N)" << endl;
-		wcin >> answer;
-		cin.sync();
-		cin.get();										//Retira um ghost "ENTER"
-		if (answer == L'n' || answer == L'N')
-		{
-			return -1;
-		}
-		wcout << endl << x << endl << endl;
-		getline(wcin, temp);
-		num = convert_Str_2_INT(temp);
-
-		if (num != INT_MIN)
-		{
-			repeat = false;
-		}
-		clrConsole();
-	}
-	return num;
-}
-
-/*
-	Password input e confirmation!
-*/
-wstring PassPrompt()
-{
-	wstring Pass, tempPass;
-	bool repeat = true;
-	clrConsole();
-
-	while (repeat)	// Enquanto o utilizador não inserir duas vezes a mesma pass 
-	{
-		wcout << "Insira a sua password: " << endl << endl;
-		getline(wcin, tempPass);
-		clrConsole();
-
-		wcout << "Insira novamente a sua password: " << endl << endl;
-		getline(wcin, Pass);
-		clrConsole();
-
-		if (Pass.compare(tempPass) == 0)				// Compara para ver se o que foi inserido coincide
-		{
-			repeat = false;
-		}
-		else
-		{
-			wcout << "As passwords não coincidem!" << endl << endl;
-		}
-	}
-	clrConsole();
-
-	return Pass;
 }
 
 /*
