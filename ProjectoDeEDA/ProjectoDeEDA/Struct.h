@@ -32,6 +32,13 @@ struct utilizador
 	wstring pass;
 };
 
+struct refeicao
+{
+	int numero;
+	bool jantar;
+	dataNasc data;
+};
+
 struct plafond
 {
 	int numero;

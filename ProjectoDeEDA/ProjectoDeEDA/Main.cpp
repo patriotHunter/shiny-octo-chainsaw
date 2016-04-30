@@ -1,7 +1,7 @@
 #include "Functions.h"
 
 /*
-**	Main Function \(^.^ )/
+	Main Function \(^.^ )/
 */
 int main()
 {
@@ -10,7 +10,7 @@ int main()
 
 	//_setmode(_fileno(stdout), _O_U16TEXT);
 	
-	while (true)
+	while (true)										//A maquina so irá parar de executar o programa se este for forçado a terminar
 	{
 		printMainMenu();
 	}

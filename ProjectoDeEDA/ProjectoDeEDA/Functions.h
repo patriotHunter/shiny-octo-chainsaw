@@ -8,6 +8,7 @@ int const TAMANHO = 500;						// Tamanho dos arrays
 int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logged in
 utilizador array_util[TAMANHO];					// Array de utilizadores
 plafond array_plafond[TAMANHO];					// Array de plafonds
+refeicao array_refeicao[TAMANHO * 10];			// Array de refeicoes
 wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
 wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
 int numUtils = 0;								// Numero total de utilizadores
@@ -787,7 +788,7 @@ void printUsers()
 }
 
 /*
-	Permite carregar plafond
+	Permite carregar plafond se nao houver informaçao cria um novo plafond na lista
 */
 int carregarPlafond()
 {
@@ -1035,7 +1036,7 @@ void printMainMenu()
 				<< "4. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
 				//<< "6. Alterar alunos\n"
 				<< "6. Remover alunos\n"						//O mesmo que acima	
-				<< "7. Remover Refeicão\n"						//O mesmo que acima	
+				<< "7. Consumir Refeicão\n"						//O mesmo que acima	
 				<< "8. Listar refeições\n"						//O mesmo que acima	
 				//<< "10. Listar refeições num determinado dia\n"
 				<< "\nOpção: ";
