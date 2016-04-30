@@ -138,9 +138,40 @@ void escreveDadosPlafonds()
 
 void leDadosRefeicoes()
 {
+	wfstream file;
+	file.open(dadR, ios::in);
+	wstring temp;
+	int dia, mes, ano;
 
-	//			HERE JOSUE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
 
+
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		if (array_refeicao[i].numero != INT_MIN)
+		{
+			getline(file, temp);
+			array_refeicao[i].data.ano = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.mes = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.dia = convert_Str_2_INT(temp);
+		}
+	}
+	file.close();
 }
 
 /*
