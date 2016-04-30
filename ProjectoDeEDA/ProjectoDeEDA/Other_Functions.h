@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Struct.h"
+#include <ctime>
 
 /*
 	ATENÇÂO:	Neste ficheiro encontram-se funções que não necessitem de variáveis globais!!!
@@ -137,4 +138,19 @@ wstring PassPrompt()
 	clrConsole();
 
 	return Pass;
+}
+
+string currentDate()
+{
+
+	time_t rawtime;
+	tm* timeinfo;
+	char buffer[80];
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, 80, "%Y-%m-%d", timeinfo);
+
+	return buffer;
 }

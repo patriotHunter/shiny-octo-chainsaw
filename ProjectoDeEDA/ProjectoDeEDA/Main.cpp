@@ -10,10 +10,14 @@ int main()
 
 	//_setmode(_fileno(stdout), _O_U16TEXT);
 	
-	while (true)										//A maquina so irá parar de executar o programa se este for forçado a terminar
-	{
-		printMainMenu();
-	}
+	//while (true)										//A maquina so irá parar de executar o programa se este for forçado a terminar
+	//{
+	//	printMainMenu();
+	//}
+
+	wstring s = L"PUTAS";
+
+	wcout << tolower(s);
 
 	return 0;
 }

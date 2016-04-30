@@ -159,7 +159,7 @@ void escreveDadosRefeicoes()
 
 	int refeicoes_guardadas = 0;
 
-	while (i < TAMANHO && refeicoes_guardadas != numPlafonds)
+	while (i < TAMANHO && refeicoes_guardadas != numRefeicoes)
 	{
 		if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas < numRefeicoes)			// Se for uma refeicao válida guarda caso contrário passa à próxima refeicao
 		{
