@@ -8,7 +8,7 @@
 */
 
 /*
-Função para fazer clear à consola.
+	Função para fazer clear à consola.
 */
 void clrConsole()
 {
@@ -16,7 +16,7 @@ void clrConsole()
 }
 
 /*
-Função que irá converter, se possível um char num inteiro.
+	Função que irá converter, se possível um char num inteiro.
 */
 int convert_Str_2_INT(wstring input)
 {
@@ -75,7 +75,7 @@ int convert_Str_2_INT(wstring input)
 }
 
 /*
-Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
+	Indica que o valor inserido não é válido e pede um novo valor se o utilizador desejar continuar.
 */
 int valorInvalido_inserirAluno(wstring x)
 {
@@ -108,7 +108,7 @@ int valorInvalido_inserirAluno(wstring x)
 }
 
 /*
-Password input e confirmation!
+	Password input e confirmation!
 */
 wstring PassPrompt()
 {
@@ -161,4 +161,123 @@ wstring currentDate()
 		return to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
 	}
 	
+}
+
+bool dateValid(int ano, int mes, int dia)
+{
+	if (ano >= 2016)
+	{
+		if (mes > 0 || mes <= 12)
+		{
+			switch (mes)
+			{
+			case 1:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 2:
+				if (dia < 1 || dia > 29)
+				{
+					return false;
+				}
+				else if ((ano % 4) != 0 && dia == 29)
+				{
+					return false;
+				}
+			case 3:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 4:
+				if (dia < 1 || dia > 30)
+				{
+					return false;
+				}
+				break;
+			case 5:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 6:
+				if (dia < 1 || dia > 30)
+				{
+					return false;
+				}
+				break;
+			case 7:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 8:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 9:
+				if (dia < 1 || dia > 30)
+				{
+					return false;
+				}
+				break;
+			case 10:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			case 11:
+				if (dia < 1 || dia > 30)
+				{
+					return false;
+				}
+				break;
+			case 12:
+				if (dia < 1 || dia > 31)
+				{
+					return false;
+				}
+				break;
+			default:
+				return false;
+				break;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+	
+	wstring data;
+
+	if (mes < 10)
+	{
+		data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+	else
+	{
+		data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+
+	if (data.compare(currentDate()) >= 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
