@@ -33,5 +33,6 @@
   <ItemGroup>
     <Text Include="BaseDados.txt" />
     <Text Include="Plafond.txt" />
+    <Text Include="Refeicoes.txt" />
   </ItemGroup>
 </Project>
