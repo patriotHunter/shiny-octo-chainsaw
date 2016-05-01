@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <string>
 #include <fstream>
+#include <cstddef>
 using namespace std;
 
 struct dataNasc
@@ -28,16 +29,21 @@ struct utilizador
 	wstring nome;
 	dataNasc nasc;
 	morada morada;
+	wstring curso;
 	wstring pass;
 };
 
 struct refeicao
 {
+	int numero;
+	bool jantar;
 	dataNasc data;
-	bool entrada;
-	bool carne;
-	bool peixe;
-	bool vegie;
+};
+
+struct plafond
+{
+	int numero;
+	int money;
 };
 
 

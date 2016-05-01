@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="Other_Functions.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="BaseDados.txt" />
+    <Text Include="Plafond.txt" />
+    <Text Include="Refeicoes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
