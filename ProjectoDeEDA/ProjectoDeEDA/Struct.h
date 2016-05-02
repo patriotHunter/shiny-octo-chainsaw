@@ -6,8 +6,13 @@
 #include <fcntl.h>
 #include <string>
 #include <fstream>
+#include <cstddef>
+
 using namespace std;
 
+/*
+	Estrutura que define o que é uma data...
+*/
 struct dataNasc
 {
 	int ano;
@@ -15,6 +20,9 @@ struct dataNasc
 	int dia;
 };
 
+/*
+	Estrutura que define a composição de uma morada...
+*/
 struct morada
 {
 	wstring rua;
@@ -22,22 +30,36 @@ struct morada
 	wstring codPost;
 };
 
+/*
+	Estrutura que define qual a informação necessária para termos um utilizador
+*/
 struct utilizador
 {
 	int numero;
 	wstring nome;
 	dataNasc nasc;
 	morada morada;
+	wstring curso;
 	wstring pass;
 };
 
+/*
+	Estrutura que define o que é uma refeição
+*/
 struct refeicao
 {
+	int numero;
+	bool jantar;
 	dataNasc data;
-	bool entrada;
-	bool carne;
-	bool peixe;
-	bool vegie;
+};
+
+/*
+	Estrutura que define o que é o plafond
+*/
+struct plafond
+{
+	int numero;
+	int money;
 };
 
 

@@ -1,80 +1,28 @@
-#pragma once
+﻿#pragma once
 
 #include "Struct.h"
-
-bool logged = false;
-bool admin = false;
-int respostaMainMenu;
-int const TAMANHO = 500;
-int Util_logged;
-utilizador array_util[TAMANHO];
-wchar_t filename[50] = L"BaseDados.txt";
+#include "Other_Functions.h"
 
 /*
-*	Fun��o para fazer clear � consola.
+	ATENÇÂO:	Neste ficheiro encontram-se todas as funções que necessitem de variáveis globais!!!
 */
-void clrConsole()
-{
-	system("cls");
-}
+
+bool logged = false;							// O utilizador esta logged in ou não
+bool admin = false;								// O utilizador é funcionário ou não
+int const TAMANHO = 500;						// Tamanho dos arrays
+int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logged in
+utilizador array_util[TAMANHO];					// Array de utilizadores
+plafond array_plafond[TAMANHO];					// Array de plafonds
+refeicao array_refeicao[TAMANHO * 10];			// Array de refeicoes
+wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
+wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
+wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos plafonds
+int numUtils = 0;								// Numero total de utilizadores
+int numPlafonds = 0;							// Numero total de utilizadores com plafond
+int numRefeicoes = 0;							// Numero total de refeicoes
 
 /*
-*	Fun��o que ir� converter, se poss�vel um char num inteiro.
-*/
-int convert_Str_2_INT(wstring input)
-{
-	bool possible = true;
-	int value, i;
-	int arr[10];
-
-	value = 0;
-	i = 0;
-
-	while (i < sizeof(input))
-	{
-		char c = input[i];
-
-		if (c == 10 || c == 0 || c == 32) // verifica��o se o char equivale a \n, \0 ou espa�o.
-		{
-			break;
-		}
-		else
-		{
-			if (c < 48 || c > 57 || i == 10) // verifica��o se o char � � um n�mero.
-			{
-				possible = false;
-				break;
-			}
-			else
-			{
-				arr[i] = c - 48;
-			}
-		}
-		i++;
-	}
-
-	if (possible)												//Se a string passada � um n�mero...
-	{
-		double j = pow(10, i - 1);								//j = 10^(i-1)
-		int x = 0;
-		int aux;
-
-		for (x; x < i; x++)
-		{
-			aux = arr[x] * j;
-			value += aux;
-			j /= 10;
-		}
-		return value;
-	}
-	else
-	{
-		return INT_MIN;
-	}
-}
-
-/*
-Preenche o resto dos utilizadores com informa��o que seja f�cil para n�s descartarmos esse utilizador como inv�lido
+	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
 */
 void fillArrayBlankUtil(int i)
 {
@@ -86,9 +34,33 @@ void fillArrayBlankUtil(int i)
 }
 
 /*
-L� ficheiro de dados de utilizador e carrega os dados num array
+	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
 */
-void leDadosUtilizadores()
+void fillArrayBlankPlafond(int i)
+{
+	while (i < TAMANHO)
+	{
+		array_plafond[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
+*/
+void fillArrayBlankRefeicoes(int i)
+{
+	while (i < (TAMANHO * 10))
+	{
+		array_refeicao[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+	Le dados do ficheiro contendo os plafonds
+*/
+void leDadosPlafonds()
 {
 	wstring temp;
 
@@ -96,7 +68,7 @@ void leDadosUtilizadores()
 
 	wfstream file;
 
-	file.open(filename, ios::in);
+	file.open(dadP, ios::in);
 	if (!file)
 	{
 		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
@@ -115,7 +87,243 @@ void leDadosUtilizadores()
 
 		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
 
-		if (aux != INT_MIN)												// Se aux == INT_MIN significa que n�o h� utilizadores por criar pois o que foi lido j� n�o � um valor v�lido
+		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
+		{
+			array_plafond[i].numero = aux;
+
+			getline(file, temp);
+			array_plafond[i].money = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+
+			numPlafonds++;
+			i++;
+		}
+		else
+		{
+			fillArrayBlankPlafond(i);
+			i = TAMANHO;
+		}
+	}
+	file.close();
+}
+
+/*
+	Escreve os dados de plafonds nos ficheiros
+*/
+void escreveDadosPlafonds()
+{
+	wfstream file;
+
+	file.open(dadP, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekp(ios::beg);
+
+	int i = 0;
+
+	int plafonds_guardados = 0;
+
+	while (i < TAMANHO && plafonds_guardados != numPlafonds)
+	{
+		if (array_plafond[i].numero != INT_MIN && plafonds_guardados < numPlafonds)			// Se for um plafond válido guarda caso contrário passa ao próximo plafond
+		{
+			file << array_plafond[i].numero << endl;
+			file << array_plafond[i].money << endl;
+			file << "-" << endl;
+
+			plafonds_guardados++;
+		}
+		else if (array_plafond[i].numero != INT_MIN && plafonds_guardados == numPlafonds)		// Se for o último plafond válido guarda sem colocar uma linha em branco no fim do ficheiro
+		{
+			file << array_plafond[i].numero << endl;
+			file << array_plafond[i].money << endl;
+			file << "-";
+		}
+		i++;
+	}
+	file.close();
+}
+
+/*
+	Le a informação relativa às refeições e coloca-a no array respectivo
+*/
+void leDadosRefeicoes()
+{
+	wfstream file;
+	file.open(dadR, ios::in);
+
+	wstring temp;
+	int aux;
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
+
+
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);
+
+		if (aux != INT_MIN && aux != 0)
+		{
+			array_refeicao[i].numero = aux;
+
+			getline(file, temp);
+
+			if (convert_Str_2_INT(temp) == 1)
+			{
+				array_refeicao[i].jantar = true;
+			}
+			else
+			{
+				array_refeicao[i].jantar = false;
+			}
+
+			getline(file, temp);
+			array_refeicao[i].data.ano = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.mes = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.dia = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+
+			//Se for uma data anterior à atual descarta-a 
+			if (dateValid(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+			{
+				numRefeicoes++;
+				i++;
+			}
+			else
+			{
+				refeicao ref;
+				ref.numero = INT_MIN;
+				array_refeicao[i] = ref;	//Substitui por refeição inválida e irá fazer overwrite desta informação se ainda faltar refeições por meter no array
+			}
+		}
+		else
+		{
+			fillArrayBlankRefeicoes(i);
+			i = TAMANHO * 10;
+		}
+	}
+	file.close();
+}
+
+/*
+Escreve os dados de refeicoes nos ficheiros
+*/
+void escreveDadosRefeicoes()
+{
+	wfstream file;
+
+	file.open(dadR, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
+
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekp(ios::beg);
+
+	int i = 0;
+
+	int refeicoes_guardadas = 0;
+
+	while (i < TAMANHO && refeicoes_guardadas != numRefeicoes)
+	{
+		if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas < numRefeicoes)			// Se for uma refeicao válida guarda caso contrário passa à próxima refeicao
+		{
+			file << array_refeicao[i].numero << endl;
+			if (array_refeicao[i].jantar)
+			{
+				file << 1 << endl;
+			}
+			else
+			{
+				file << 0 << endl;
+			}
+			file << array_refeicao[i].data.ano << endl;
+			file << array_refeicao[i].data.mes << endl;
+			file << array_refeicao[i].data.dia << endl;
+			file << "-" << endl;
+
+			refeicoes_guardadas++;
+		}
+		else if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas == numRefeicoes)		// Se for a última refeicao válida guarda sem colocar uma linha em branco no fim do ficheiro
+		{
+			file << array_refeicao[i].numero << endl;
+			if (array_refeicao[i].jantar)
+			{
+				file << 1 << endl;
+			}
+			else
+			{
+				file << 0 << endl;
+			}
+			file << array_refeicao[i].data.ano << endl;
+			file << array_refeicao[i].data.mes << endl;
+			file << array_refeicao[i].data.dia << endl;
+			file << "-";
+		}
+		i++;
+	}
+	file.close();
+}
+
+/*
+	Lê ficheiro de dados de utilizador e carrega os dados num array
+*/
+void leDadosUtilizadores()
+{
+	wstring temp;
+
+	int aux;
+
+	wfstream file;
+
+	file.open(dadU, ios::in);
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
+
+	int i = 0;
+
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
+
+		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
 		{
 			array_util[i].numero = aux;
 
@@ -141,8 +349,12 @@ void leDadosUtilizadores()
 			array_util[i].morada.codPost = temp;
 
 			getline(file, temp);
+			array_util[i].curso = temp;
+
+			getline(file, temp);
 			array_util[i].pass = temp;
 
+			numUtils++;
 			i++;
 		}
 		else
@@ -155,17 +367,17 @@ void leDadosUtilizadores()
 }
 
 /*
-Escreve os dados de utilizadores nos ficheiros
+	Escreve os dados de utilizadores nos ficheiros
 */
 void escreveDadosUtilizadores()
 {
 	wfstream file;
 
-	file.open(filename, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que � para come�ar o ficheiro como se fosse um novo ficheiro, apagando o conte�do presente anteriormente
+	file.open(dadU, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
 
 	if (!file)
 	{
-		wcout << "\nErro, ficheiros corruptos.\nN�o � poss�vel guardar dados!!!\n";
+		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
 		cin.sync();
 		cin.get();
 		exit(1);
@@ -174,10 +386,11 @@ void escreveDadosUtilizadores()
 	file.seekp(ios::beg);
 
 	int i = 0;
+	int utilizadores_guardados = 0;
 
-	while (i < TAMANHO)
+	while (i < TAMANHO && utilizadores_guardados != numUtils)
 	{
-		if (array_util[i].numero != INT_MIN)			// Se for um utilizador v�lido guarda caso contr�rio passa ao pr�ximo utilizador
+		if (array_util[i].numero != INT_MIN && utilizadores_guardados < numUtils)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
 		{
 			file << array_util[i].numero << endl;
 			file << array_util[i].nome << endl;
@@ -187,7 +400,23 @@ void escreveDadosUtilizadores()
 			file << array_util[i].morada.rua << endl;
 			file << array_util[i].morada.numPorta << endl;
 			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].curso << endl;
 			file << array_util[i].pass << endl;
+
+			utilizadores_guardados++;
+		}
+		else if (array_util[i].numero != INT_MIN && utilizadores_guardados == numUtils)		// Se for o último utilizador a guardar, guarda informação no ficheiro sem colocar uma linha em branco no fim
+		{
+			file << array_util[i].numero << endl;
+			file << array_util[i].nome << endl;
+			file << array_util[i].nasc.dia << endl;
+			file << array_util[i].nasc.mes << endl;
+			file << array_util[i].nasc.ano << endl;
+			file << array_util[i].morada.rua << endl;
+			file << array_util[i].morada.numPorta << endl;
+			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].curso << endl;
+			file << array_util[i].pass;
 		}
 		i++;
 	}
@@ -195,121 +424,76 @@ void escreveDadosUtilizadores()
 }
 
 /*
-*	Indica que o valor inserido n�o � v�lido e pede um novo valor se o utilizador desejar continuar.
-*/
-int valorInvalido_inserirAluno(wstring x)
-{
-	bool repeat = true;
-	char answer;
-	int num;
-	wstring temp;
-
-	while (repeat)
-	{
-		wcout << "O valor inserido n�o � v�lido, quer continuar a inser��o de aluno? (S/N)" << endl;
-		cin >> answer;
-
-		if (answer == 'n' || answer == 'N')
-		{
-			return -1;
-		}
-		wcout << endl << x << endl << endl;
-		getline(wcin, temp);
-		num = convert_Str_2_INT(temp);
-
-		if (num != INT_MAX)
-		{
-			repeat = false;
-		}
-		clrConsole();
-	}
-	return num;
-}
-
-/*
-*	Password input e confirmation!
-*/
-wstring PassPrompt()
-{
-	wstring Pass, tempPass;
-	bool repeat = true;
-	clrConsole();
-
-	while (repeat)
-	{
-		wcout << "Insira a sua password: " << endl << endl;
-		getline(wcin, tempPass);
-		clrConsole();
-
-		wcout << "Insira novamente a sua password: " << endl << endl;
-		getline(wcin, Pass);
-		clrConsole();
-
-		if (Pass.compare(tempPass) == 0)
-		{
-			repeat = false;
-		}
-		else
-		{
-			wcout << "As passwords n�o coincidem!" << endl << endl;
-		}
-	}
-	clrConsole();
-
-	return Pass;
-}
-
-/*
-*	Cria um aluno e...
+	Cria um aluno e insere-o na lista de alunos, não é feito a confirmação de alguns dados visto esta operação só poder ser realizada por funcionários
 */
 int inserirAluno()
 {
-	wstring nome, temp;
+	wstring nome, temp, rua, codPost, numPorta;
 	int num, dia, mes, ano;
 
-
-	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo: " << endl << endl;
+	//Pede o Nome
+	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo (Sem colocar acentos ou cedilhas): ";
 	getline(wcin, nome);
 	clrConsole();
 
-	wcout << endl << endl << "N�mero Mecanogr�fico: " << endl << endl;
+	//Pede o Numero
+	wcout << "Número Mecanográfico: ";
 	getline(wcin, temp);
 	num = convert_Str_2_INT(temp);
 	clrConsole();
 
 	if (num == INT_MIN)
 	{
-		valorInvalido_inserirAluno(L"N�mero Mecanogr�fico: ");
+		num = valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+		if (num == -1)
+		{
+			return -1;
+		}
 	}
 
-	wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
-	getline(wcin, temp);
-	dia = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (dia == INT_MIN)
-	{
-		valorInvalido_inserirAluno(L"Dia: ");
-	}
-
-	wcout << endl << "M�s(n�mero): ";
-	getline(wcin, temp);
-	mes = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (mes == INT_MIN)
-	{
-		valorInvalido_inserirAluno(L"M�s(n�mero): ");
-	}
-
-	wcout << endl << "Ano: ";
+	//Pede a data de nascimento começando pelo ano
+	wcout << "Data de nascimento" << endl << "Ano: ";
 	getline(wcin, temp);
 	ano = convert_Str_2_INT(temp);
 	clrConsole();
 
 	if (ano == INT_MIN)
 	{
-		valorInvalido_inserirAluno(L"Ano: ");
+		ano = valorInvalido_inserirAluno(L"Ano: ");
+		if (ano == -1)
+		{
+			return -1;
+		}
+	}
+
+	//Pede o mes de nascimento
+	wcout << "Mês(número): ";
+	getline(wcin, temp);
+	mes = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (mes == INT_MIN)
+	{
+		mes = valorInvalido_inserirAluno(L"Mês(número): ");
+		if (mes == -1)
+		{
+			return -1;
+		}
+	}
+
+	//Pede o dia do nascimento
+	wcout << "Dia: ";
+	getline(wcin, temp);
+	dia = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (dia == INT_MIN)
+	{
+		dia = valorInvalido_inserirAluno(L"Dia: ");
+		if (dia == -1)
+		{
+			return -1;
+		}
 	}
 
 	dataNasc date;
@@ -318,16 +502,18 @@ int inserirAluno()
 	date.mes = mes;
 	date.dia = dia;
 
-	wcout << endl << endl << "Morada" << endl << "Rua: " << endl << endl;
-	wstring rua, codPost, numPorta;
+	//Pede a rua da morada
+	wcout << "Morada" << endl << "Rua: ";
 	getline(wcin, rua);
 	clrConsole();
 
-	wcout << endl << "N� da porta: " << endl << endl;
+	//Pede a porta da morada
+	wcout << "Nº da porta: ";
 	getline(wcin, numPorta);
 	clrConsole();
 
-	wcout << endl << "C�digo Postal: " << endl << endl;
+	//Pede o codigo postal da morada
+	wcout << "Código Postal: ";
 	getline(wcin, codPost);
 	clrConsole();
 
@@ -337,20 +523,32 @@ int inserirAluno()
 	mora.rua = rua;
 	mora.numPorta = numPorta;
 
+	wstring curso;
+
+	//Pede o Curso
+	wcout << "Curso: ";
+	getline(wcin, curso);
+	clrConsole();
+
 	wstring Pass = PassPrompt();
 
 	utilizador aluno;
 
-	char conf;
+	wchar_t conf;
 
-	wcout << "Confirma��o de Dados" << endl;
-	wcout << "N�mero Mecanogr�fico: " << num << endl;
+	//insere os dados no ecrã excepto a password para confirmação
+	wcout << "Confirmação de Dados" << endl;
+	wcout << "Número Mecanográfico: " << num << endl;
 	wcout << "Nome Completo: " << nome << endl;
 	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
-	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", C�digo postal: " << mora.codPost << endl << endl;
-	wcout << "Os dados est�o correctos?(S/N) ";
-	cin >> conf;
-	if (conf == 'N' || conf == 'n')
+	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl;
+	wcout << "Curso: " << curso << endl << endl;
+	wcout << "Os dados estão correctos?(S/N) ";
+	wcin >> conf;
+	cin.sync();
+	cin.get();										//Retira um ghost "ENTER"
+	//Se o utilizador quiser editar os seus dados
+	if (conf == L'N' || conf == L'n')
 	{
 		bool repeat = true;
 		int answer;
@@ -358,33 +556,111 @@ int inserirAluno()
 		{
 			clrConsole();
 			wcout << "O que deseja alterar?" << endl;
-			wcout << "1) N�mero Mecanogr�fico" << endl;
+			wcout << "1) Número Mecanográfico" << endl;
 			wcout << "2) Nome Completo" << endl;
 			wcout << "3) Data de Nascimento" << endl;
 			wcout << "4) Morada" << endl;
-			wcout << "0) Cancelar" << endl;
-			wcout << endl << "Insira o valor da op��o pretendida: ";
+			wcout << "5) Curso" << endl;
+			wcout << "0) Terminar edição" << endl;
+			wcout << endl << "Insira o valor da opção pretendida: ";
 			getline(wcin, temp);
 
 			answer = convert_Str_2_INT(temp);
 
 			if (answer < 0 || answer > 4)
 			{
-				wcout << endl << endl << "O valor inserido n�o � v�lido!";
+				wcout << endl << endl << "O valor inserido não é válido!";
 				Sleep(1000);
 			}
 			else
 			{
+				clrConsole();
 				switch (answer)
 				{
+					//Sair da edição
 					case 0:
-						wcout << endl << "Deseja mesmo sair da edi��o de aluno? (S/N) ";
-						wchar_t answer;
-						wcin >> answer;
-						if (answer == 'n' || answer == L'N')
+						wcout << endl << "Deseja mesmo sair da edição de aluno? (S/N) ";
+						char answer;
+						cin >> answer;
+						if (answer == 'n' || answer == 'N')
 						{
 							repeat = false;
 						}
+						break;
+					//Alterar nº mecanografico
+					case 1:
+						wcout << endl << "Reinsira o número mecanográfico: ";
+						getline(wcin, temp);
+						num = convert_Str_2_INT(temp);
+
+						if (num == INT_MIN)
+						{
+							num = valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+						}
+						break;
+					//alterar o nome
+					case 2:
+						wcout << endl << "Reinsira o nome: ";
+						getline(wcin, nome);
+						break;
+					//alterar a data de nascimento
+					case 3:
+						wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
+						getline(wcin, temp);
+						dia = convert_Str_2_INT(temp);
+						clrConsole();
+
+						if (dia == INT_MIN)
+						{
+							dia = valorInvalido_inserirAluno(L"Dia: ");
+						}
+
+						wcout << endl << "Mês(número): ";
+						getline(wcin, temp);
+						mes = convert_Str_2_INT(temp);
+						clrConsole();
+
+						if (mes == INT_MIN)
+						{
+							mes = valorInvalido_inserirAluno(L"Mês(número): ");
+						}
+
+						wcout << endl << "Ano: ";
+						getline(wcin, temp);
+						ano = convert_Str_2_INT(temp);
+						clrConsole();
+
+						if (ano == INT_MIN)
+						{
+							ano = valorInvalido_inserirAluno(L"Ano: ");
+						}
+						date.ano = ano;
+						date.mes = mes;
+						date.dia = dia;
+						break;
+					//alterar a morada
+					case 4:
+						wcout << endl << endl << "Morada" << endl << "Rua: " << endl << endl;
+						getline(wcin, rua);
+						clrConsole();
+
+						wcout << endl << "Nº da porta: " << endl << endl;
+						getline(wcin, numPorta);
+						clrConsole();
+
+						wcout << endl << "Código Postal: " << endl << endl;
+						getline(wcin, codPost);
+						clrConsole();
+						break;
+					//alterar o curso
+					case 5:
+						wcout << endl << "Reinsira o curso: ";
+						getline(wcin, curso);
+						break;
+					//default: corre quando não for um valor esperado
+					default:
+						wcout << "Valor inválido!!!!";
+						Sleep(500);
 						break;
 				}
 			}
@@ -395,30 +671,77 @@ int inserirAluno()
 	aluno.nasc = date;
 	aluno.nome = nome;
 	aluno.numero = num;
+	aluno.curso = curso;
 	aluno.pass = Pass;
 
 	int i = 0;
 
+	//procura um espaço vazio no array para colocar este utilizador
 	while (i < TAMANHO)
 	{
 		if (array_util[i].numero == INT_MIN)
 		{
 			array_util[i] = aluno;
+			numUtils++;
 			break;
 		}
 		i++;
 	}
 
-	escreveDadosUtilizadores();
+	if (i < TAMANHO)
+	{
+		escreveDadosUtilizadores();		//Atualiza a informação da base de dados para conter este novo aluno
+	}
+	else
+	{
+		clrConsole();
+		wcout << "ERRO!!!\n\nA base de dados encontra-se cheia!!!\n\nPresione a tecla Enter para prosseguir...";
+		cin.sync();
+		cin.get();
+	}
+	
 
 	return 0;
 }
 
 /*
-	Realiza o login se a informa��o do utilizador constar na base de dados e o n�mero e a pass estiverem correctos
+	Coloca os utilizadores no array por ordem alfabética para facilitar a colocação dos utilizadores no ecrã por ordem alfabética
+*/
+void organizearray_bynames()
+{
+	int i = 0;
+	int j;
+	wstring aux_str, aux_string;
+	while (i < TAMANHO)
+	{
+		if (array_util[i].numero != INT_MIN)
+		{
+			aux_str = array_util[i].nome;
+			j = i + 1;
+			while (j < TAMANHO)
+			{
+				if (array_util[j].numero != INT_MIN)
+				{
+					aux_string = array_util[j].nome;
+					if (aux_string.compare(aux_str) > 0)
+					{
+						swap(array_util[j], array_util[i]);
+						j = TAMANHO;
+					}
+				}
+				j++;
+			}
+		}
+		i++;
+	}
+}
+
+/*
+	Realiza o login se a informação do utilizador constar na base de dados e o número e a pass estiverem correctos
 */
 bool login_logout()
 {
+	clrConsole();
 	if (logged)
 	{
 		wcout << "Logout realizado com sucesso!" << endl;
@@ -436,9 +759,9 @@ bool login_logout()
 
 	while (repeat)
 	{
-		notAdmin = false;									//Reinicia a vari�vel
+		notAdmin = false;									//Reinicia a variável
 		wstring temp;
-		wcout << "Insira o seu n�mero mecanogr�fico: ";
+		wcout << "Insira o seu número mecanográfico: ";
 		getline(wcin, temp);
 
 		if (temp.compare(L"admin") == 0)
@@ -448,7 +771,7 @@ bool login_logout()
 			if (pass.compare(L"aminhapass") == 0)
 			{
 				clrConsole();
-				wcout << "Benvindo administrador!" << endl;
+				wcout << "Bem vindo administrador!" << endl;
 				admin = true;
 				Util_logged = INT_MIN;
 				return true;
@@ -457,9 +780,9 @@ bool login_logout()
 		}
 
 		num = convert_Str_2_INT(temp);
-		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas n�o meteu a pass correcta, logo n�o faz sentido pedir novamente a pass
+		if (num == INT_MIN || notAdmin)						//notAdmin significa que alguem tentou entrar como admin mas não meteu a pass correcta, logo não faz sentido pedir novamente a pass
 		{
-			wcout << "N�o � um valor v�lido!!!" << endl;
+			wcout << "Não é um valor válido!!!" << endl;
 			Sleep(1000);
 		}
 		else
@@ -467,12 +790,12 @@ bool login_logout()
 			wcout << "Insira a sua password: ";
 			getline(wcin, pass);
 			i = 0;
-			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informa��o que foi passada pelo utilizador do programa
+			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informação que foi passada pelo utilizador do programa
 			{
 				if (num == array_util[i].numero && array_util[i].pass.compare(pass) == 0)
 				{
 					clrConsole();
-					wcout << "Benvindo " << array_util[i].nome << "!" << endl;
+					wcout << "Bem vindo " << array_util[i].nome << "!" << endl;
 					Sleep(3000);
 					Util_logged = num;
 					return true;							//Indica que ocorreu login
@@ -483,32 +806,579 @@ bool login_logout()
 		if (repeat)
 		{
 			clrConsole();
-			wcout << "Pretende tentar novamente? (S/N): ";
+			wcout << "Não foi possível encontrar um utilizador com a informação que disponibilizou!!\n\nPretende tentar novamente? (S/N): ";
 			wcin >> answer;
 			if (answer == 'n' || answer == 'N')
 			{
-				return false;								//Indica que n�o ocorreu um login correcto
+				return false;								//Indica que não ocorreu um login correcto
 			}
 			cin.sync();
 			cin.get();										//Retira um ghost "ENTER"
+			clrConsole();
 		}
 	}
-	return false;											//Indica que n�o ocorreu um login correcto
+	return false;											//Indica que não ocorreu um login correcto
 }
 
-
+/*
+	Imprime users por ordem alfabética
+*/
 void printUsers()
 {
+	organizearray_bynames();
+	//organizearray_bynames();			//por alguma razão às vezes não ordena corretamente à primeira NON ISSUE
+	int i = TAMANHO - 1;
+	while (i >= 0)
+	{
+		if (array_util[i].numero != INT_MIN)
+		{
+			wcout << "Nome: " << array_util[i].nome << " NUM: " << array_util[i].numero << endl;
+		}
+		i--;
+	}
+
+	wcout << "\n\nPrima a tecla Enter para prosseguir...";
+
+	cin.sync();
+	cin.get();
+}
+
+/*
+	Permite carregar plafond se nao houver informaçao cria um novo plafond na lista
+*/
+int carregarPlafond()
+{
+	clrConsole();
+	int i = 0;
+	int aux;
+	bool repeat = true;
+	wstring temp;
+	while (i < TAMANHO && repeat)
+	{
+		if (array_plafond[i].numero == Util_logged)
+		{
+			repeat = false;
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	if (i < 500)
+	{
+		wcout << "Neste momento voçê possui " << array_plafond[i].money << "€." << endl;
+	}
+
+	repeat = true;
+	while (repeat)
+	{
+		wcout << "Quanto deseja carregar?? (Insira \"0\" para cancelar)\n\nValor: ";
+		getline(wcin, temp);
+		wcout << endl;
+		aux = convert_Str_2_INT(temp);
+		if (aux != INT_MIN)
+		{
+			if (aux == 0)				//Utilizador escolheu terminar
+			{
+				return 0;
+			}
+			wcout << "Tem a certeza que quer carregar " << aux << "€?(S/N)" << endl;
+			wchar_t c;
+			wcin >> c;
+			cin.sync();
+			cin.get();
+			if (c == L's' || c == L'S')
+			{
+				repeat = false;
+			}
+		}
+		else
+		{
+			wcout << "Valor inválido!!!!";
+			Sleep(500);
+		}
+		clrConsole();
+	}
+
+	if (i == 500)				//Não conseguiu encontrar
+	{
+		i = 0;
+		while (i < TAMANHO)
+		{
+			if (array_plafond[i].numero == INT_MIN)
+			{
+				array_plafond[i].numero = Util_logged;
+				array_plafond[i].money = aux;
+				escreveDadosPlafonds();
+				return 0;
+			}
+			i++;
+		}
+	}
+	else
+	{
+		array_plafond[i].money += aux;
+		escreveDadosPlafonds();
+		wcout << "Após o caregamento ficou com: " << array_plafond[i].money << "€." << endl;
+		Sleep(500);
+	}
+	return 0;
+}
+
+/*
+	Remover alunos
+*/
+void removerAluno()
+{
+	int numAluno;
+	wstring aux;
+	wchar_t val;
+	bool verd = true;
+
+	while (verd)
+	{
+		wcout << "Qual o número do aluno que pretende eliminar: ";
+		getline(wcin, aux);
+		numAluno = convert_Str_2_INT(aux);
+		if (numAluno != INT_MIN)
+		{
+			verd = false;
+		}
+		else
+		{
+			wcout << "O número introduzido não é válido." << endl;
+			wcout << "Deseja tentar novamente?(S/N)";
+			wcin >> val;
+			cin.sync();
+			cin.get();
+			if (val != L's' || val != L'S')
+			{
+				return;
+			}
+		}
+	}
 	int i = 0;
 	while (i < TAMANHO)
 	{
-		wcout << "PASS: " << array_util[i].pass << " NUM: " << array_util[i].numero << endl;
-		i++;
+		if (numAluno == array_util[i].numero)
+		{
+			break;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	if (i < TAMANHO)						// Se encontrar um aluno com este numero...
+	{
+		wcout << "Tem a certeza que quer eliminar o aluno nº " << numAluno << "?(S/N)";
+		wcin >> val;
+		cin.sync();
+		cin.get();
+		if (val == L's' || val == L'S')
+		{
+			utilizador utilizador_remove;
+			utilizador_remove.numero = INT_MIN;
+			array_util[i] = utilizador_remove;
+			numUtils--;
+			escreveDadosUtilizadores();
+			i = 0;
+			while (i < TAMANHO)
+			{
+				if (numAluno == array_plafond[i].numero)
+				{
+					break;
+				}
+				else
+				{
+					i++;
+				}
+			}
+			if (i < TAMANHO)
+			{
+				plafond plafond_remove;
+				plafond_remove.numero = INT_MIN;
+				array_plafond[i] = plafond_remove;
+				numPlafonds--;
+				escreveDadosPlafonds();
+			}
+			return;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		wcout << "O utilizador com o nº " << numAluno << " não foi encontrado" << endl;
+		Sleep(500);
+		return;
 	}
 }
 
 /*
-*	Coloca o menu principal no ecr� e devolve valores consoante a op��o escolhida pelo utilizador.
+	Pesquisar pelo primeiro nome
+*/
+void primNome()
+{
+	wstring temp, aux, nomeP;
+	int i = 0;														// Inicializa i a zero
+	int r = 0;														// Inicializa r a zero
+	wcout << "Qual é o nome que quer procurar (primeiro nome)? ";	// Pede ao utilizador o nome que pretende procurar
+	getline(wcin, nomeP);											// Guarda em momeP o nome inserido pelo utilizador
+	while (i < TAMANHO)												// Enquanto o tamanho do array for menor...
+	{
+		if (array_util[i].numero != INT_MIN)						// Verifica se o número é válido
+		{
+			aux = array_util[i].nome;								// Coloca em aux o nome do utilizador
+			wstring::size_type pos = aux.find(' ');					// Guarda em pos a posição do primeiro ' '(espaço)
+			if (pos != string::npos)								// Se a posição do espaço for diferente da última posição da string...
+			{
+				temp = aux.substr(0, pos);							// Guarda em temp o primeiro nome do aluno, que vai da posição 0 até à posição do espaço, guardado em pos
+				if (temp.compare(nomeP) == 0)						// Se o nome guardado em temp for igual ao nome inserido...
+				{
+					wcout << endl << "Número: " << array_util[i].numero << "  Nome: " << array_util[i].nome << endl << endl;
+					r++;											// Incrementa a varíavel que dá a quantidade de registos encontrados
+				}
+			}
+		}
+		i++;														// Passa para o aluno seguinte
+	}
+	wcout << "Número de resultados encontrados: " << r << endl << endl;
+	wcout << "Para prosseguir pressione Enter. ";
+	cin.sync();														// Sincroniza o teclado
+	cin.get();														// Detecta o utilizador a pressionar a tecla Enter
+}
+
+/*
+	Listar Refeições
+*/
+void listarRefeicao()
+{
+	wstring aux;
+	int num, i;
+	int r = 0;														// Inicializa i a zero
+	wcout << "Deseja listar as refeições de que aluno? (Número Mecanográfico ou 0 para todos os alunos) ";
+	getline(wcin, aux);												// Guarda em aux o valor inserido
+	num = convert_Str_2_INT(aux);									// Converte a string em int
+
+	if (num != INT_MIN)												// Se a int inserida for válida, isto é, se for realmente um valor númérico...
+	{
+		if (num == 0)												// Se o valor for zero...
+		{
+			i = 0;													// Inicializa i a zero
+			while (i < TAMANHO)										// Enquanto i for menor que o tamanho do array...
+			{
+				if (array_refeicao[i].numero != INT_MIN)			// Se existe uma refeição válida para aquele aluno...
+				{
+					if (array_refeicao[i].jantar)					// Se a refeição é jantar...
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					else
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					r++;											// Incrementa o número de refeições encontradas
+				}
+				i++;												// Incrementa a posição do array
+			}
+		}
+		else														// Se foi inserido um número mecanográfico...
+		{
+			i = 0;													// Inicializa i a zero
+			while (i < TAMANHO)										// Enquanto i for menor que o tamanho do array...
+			{
+				if (num == array_refeicao[i].numero)				// Se existe uma refeição encomendada pelo aluno cujo número foi inserido...
+				{
+					if (array_refeicao[i].jantar)					// Se for jantar...
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					else
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					r++;											// Incrementa a quantidade de refeições encontradas para o aluno
+				}
+				i++;												// Incrementa a posição do array
+			}
+		}
+		wcout << "\nNúmero total de refeições encontradas: " << r << endl << endl;
+		wcout << "Pressione a tecla Enter para prosseguir...";
+		cin.sync();													// Sincroniza o teclado
+		cin.get();													// Detecta o utilizador a pressionar a tecla Enter
+	}
+}
+
+/*
+	Encomendar Refeições
+*/
+void encomendarRefeicao()
+{
+	wstring aux;
+	int num;
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		if (array_plafond[i].numero == Util_logged)
+		{
+			if (array_plafond[i].money < 3)
+			{
+				wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+				wcout << "Pressione a tecla Enter para prosseguir...";
+				cin.sync();
+				cin.get();
+				return;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			i++;
+		}
+	}
+	if (i == TAMANHO)
+	{
+		wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+		wcout << "Pressione a tecla Enter para prosseguir...";
+		cin.sync();
+		cin.get();
+		return;
+	}
+	else
+	{
+		bool repeat = true;
+		while (repeat)
+		{
+			wcout << "Qual a quantidade de refeições que quer encomendar? (Insira 0 para sair) ";
+			getline(wcin, aux);
+			num = convert_Str_2_INT(aux);
+			if (num < 0)
+			{
+				wcout << "o valor incerido é inválido.";
+				Sleep(500);
+				clrConsole();
+			}
+			else if (num == 0)
+			{
+				return;
+			}
+			else
+			{
+				if (array_plafond[i].money < (num * 3))
+				{
+					wcout << "O seu plafond não premite encomendar " << num << " refeições." << endl;
+					Sleep(500);
+					clrConsole();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		int j = 0;
+		wstring temp;
+		int ano, mes, dia;
+		while (j < num)
+		{
+			//Pede a data de nascimento começando pelo ano
+			wcout << "Data da refeição nº " << j + 1 << endl << "Ano: ";
+			getline(wcin, temp);
+			ano = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (ano == INT_MIN)
+			{
+				ano = valorInvalido_inserirAluno(L"Ano: ");
+				if (ano == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o mes de nascimento
+			wcout << "Mês(número): ";
+			getline(wcin, temp);
+			mes = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (mes == INT_MIN)
+			{
+				mes = valorInvalido_inserirAluno(L"Mês(número): ");
+				if (mes == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o dia do nascimento
+			wcout << "Dia: ";
+			getline(wcin, temp);
+			dia = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (dia == INT_MIN)
+			{
+				dia = valorInvalido_inserirAluno(L"Dia: ");
+				if (dia == -1)
+				{
+					return;
+				}
+			}
+
+			if (dateValid(ano, mes, dia))
+			{
+				bool jantar;
+				repeat = true;
+
+				clrConsole();
+
+				while (repeat)
+				{
+					wcout << "1 - Almoço" << endl;
+					wcout << "2 - Jantar" << endl;
+					wcout << "Opção: ";
+					getline(wcin, aux);
+					if (convert_Str_2_INT(aux) == 1)
+					{
+						jantar = false;
+						repeat = false;
+					}
+					else if (convert_Str_2_INT(aux) == 2)
+					{
+						jantar = true;
+						repeat = false;
+					}
+					else
+					{
+						wcout << "Opção Inválida" << endl;
+						Sleep(500);
+						clrConsole();
+					}
+				}
+
+				refeicao food;
+				food.data.ano = ano;
+				food.data.mes = mes;
+				food.data.dia = dia;
+				food.numero = Util_logged;
+				food.jantar = jantar;
+
+				j = 0;
+
+				while (j < (TAMANHO * 10))
+				{
+					if (array_refeicao[j].numero == INT_MIN)
+					{
+						array_refeicao[j] = food;
+						numRefeicoes++;
+						array_plafond[i].money -= 3;
+						escreveDadosPlafonds();
+						escreveDadosRefeicoes();
+						break;
+					}
+					j++;
+				}
+				if (j == (TAMANHO * 10))
+				{
+					wcout << "Não é possível encomendar mais refeições." << endl;
+					Sleep(500);
+					clrConsole();
+					return;
+				}
+			}
+		}
+	}
+}
+
+/*
+	Consumir Refeição
+*/
+void consumirRefeição()
+{
+	int i = 0;
+	int num, op;
+	wstring aux, temp;
+	wcout << "Nº do aluno: ";
+	getline(wcin, aux);
+	num = convert_Str_2_INT(aux);
+	if (num != INT_MIN)
+	{
+		wcout << "1 - Almoço" << endl << "2 - Jantar" << endl << "Opção: ";
+		getline(wcin, aux);
+		op = convert_Str_2_INT(aux);
+		if (op == 1)
+		{
+			while (i < (TAMANHO * 10))
+			{
+				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == false)
+				{
+					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					{
+						refeicao ref;
+						ref.numero = INT_MIN;
+						array_refeicao[i] = ref;
+						wcout << "A refeição foi removida com sucesso." << endl;
+						Sleep(500);
+						escreveDadosRefeicoes();
+					}
+					else
+					{
+						wcout << "A data dessa refeição não corresponde à do dia de hoje." << endl;
+						Sleep(500);
+					}
+				}
+				i++;
+			}
+		}
+		else if (op == 2)
+		{
+			while (i < (TAMANHO * 10))
+			{
+				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == true)
+				{
+					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					{
+						refeicao ref;
+						ref.numero = INT_MIN;
+						array_refeicao[i] = ref;
+						wcout << "A refeição foi removida com sucesso." << endl;
+						Sleep(500);
+						escreveDadosRefeicoes();
+					}
+					else
+					{
+						wcout << "A data dessa refeição não corresponde à do dia de hoje." << endl;
+						Sleep(500);
+					}
+				}
+				i++;
+			}
+		}
+		else
+		{
+			wcout << "Opção inválida.";
+		}
+	}
+	else
+	{
+		wcout << "O valor inserido não é válido. ";
+	}
+}
+
+/*
+	Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
 {
@@ -517,20 +1387,22 @@ void printMainMenu()
 	bool quit = false;
 
 	leDadosUtilizadores();
-
-	clrConsole();
+	leDadosPlafonds();
+	leDadosRefeicoes();
 
 	while (!quit)
 	{
-		//	Imprime texto no ecr�.
-		wcout << "\n\nBem vindo ao primeiro projecto de EDA." << endl;
-		wcout << "\n\nEscolha a op��o pretendida.\n" << endl;
+		clrConsole();
+		//	Imprime texto no ecrã.
 		if (!logged)
 		{
-			wcout << "1. Login." << endl;
+			wcout << "Bem vindo ao primeiro projecto de EDA." << endl;
+			wcout << "\nEscolha a opção pretendida.\n" << endl;
+			wcout << "1. Login.\n\nOpcão: ";
 		}
 		else
 		{
+			wcout << "Escolha a opção pretendida.\n" << endl;
 			wcout << "1. Logout." << endl;
 		}
 
@@ -538,128 +1410,135 @@ void printMainMenu()
 		{
 			wcout << "2. Inserir alunos\n"
 				<< "3. Pesquisar pelo Primeiro Nome\n"
-				<< "4. Pesquisar pelo N�mero\n"
-				<< "5. Lista alunos por Ordem Alfabetica\n"
-				<< "6. Alterar alunos\n"
-				<< "7. Remover alunos\n"
-				<< "8. Remover Refeic�o\n"
-				<< "9. Listar refei��es\n"
-				<< "10. Listar refei��es num determinado dia\n"
-				<< "Op��o: ";
+				//<< "4. Pesquisar pelo Número\n"
+				<< "4. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
+				//<< "6. Alterar alunos\n"
+				<< "5. Remover alunos\n"						//O mesmo que acima	
+				<< "6. Consumir Refeicão\n"						//O mesmo que acima	
+				<< "7. Listar refeições\n"						//O mesmo que acima	
+				//<< "10. Listar refeições num determinado dia\n"
+				<< "\nOpção: ";
 		}
 		else if (!admin && logged) // se o utilizador n estiver logged in n no admin
 		{
-			wcout << "2. Encomendar refei��o\n"
+			wcout << "2. Encomendar refeição\n"
 				<< "3. Carregar plafond\n"
-				<< "Op��o: ";
+				<< "\nOpção: ";
 		}
 
-		//	Obt�m resposta do utilizador.
+		//	Obtém resposta do utilizador.
 		getline(wcin, resposta);
 
 		resposta_int = convert_Str_2_INT(resposta);
 
-		//	Verifica se a resposta do utilizado � v�lida.
+		//	Verifica se a resposta do utilizado é válida.
 		if (resposta_int == INT_MIN)
 		{
-			wcout << "O que foi inserido n�o � uma op��o v�lida." << endl;
+			wcout << "O que foi inserido não é uma opção válida." << endl;
 		}
 		else
 		{
 
-			if (resposta_int == 1) // est� dependente de tudo
+			if (resposta_int == 1) // Independentemente se é um admin logado ou utilizador normal ou se simplesmente não está logged in é uma opção válida
 			{
 				logged = login_logout();
 				clrConsole();
 			}
-			else if (resposta_int == 2 && logged && admin)
+			else if (resposta_int == 2 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
-				wcout << "Escolheu Inserir aluno\n";
-				Sleep(3000);
+				wcout << "Escolheu inserir aluno.\n\n";
+				Sleep(1000);
 				clrConsole();
 				inserirAluno();
-			}
-			else if (resposta_int == 2 && logged && !admin)
-			{
-				clrConsole();
-				wcout << "Escolheu Encomendar refei��o\n";
-				Sleep(3000);
-				clrConsole();
-
-			}
-			else if (resposta_int == 3 && logged && admin)
-			{
-				clrConsole();
-				wcout << "Escolheu Pesquisar pelo primeiro nome\n";
-				Sleep(3000);
 				clrConsole();
 			}
-			else if (resposta_int == 3 && logged && !admin)
+			else if (resposta_int == 2 && logged && !admin)	// Se tiver um utilizador normal logado isto é uma opção válida para ele
 			{
 				clrConsole();
-				wcout << "Escolheu Carregar plafond";
-				Sleep(3000);
+				wcout << "Escolheu encomendar refeição.\n\n";
+				Sleep(1000);
+				encomendarRefeicao();
 				clrConsole();
 			}
-			else if (resposta_int == 4 && logged && admin)
+			else if (resposta_int == 3 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
-				wcout << "Escolheu Pesquisar pelo n�mero\n";
-				Sleep(3000);
+				wcout << "Escolheu pesquisar pelo primeiro nome.\n\n";
+				Sleep(1000);
+				primNome();
+				Sleep(500);
 				clrConsole();
 			}
-			else if (resposta_int == 5 && logged && admin)
+			else if (resposta_int == 3 && logged && !admin)	// Se tiver um utilizador normal logado isto é uma opção válida para ele
 			{
 				clrConsole();
-				wcout << "Escolheu Listar alunos por Ordem Alfab�tica\n";
-				Sleep(3000);
+				wcout << "Escolheu carregar plafond.\n\n";
+				Sleep(1000);
+				carregarPlafond();
+				clrConsole();
+			}
+			/*else if (resposta_int == 4 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			{
+				clrConsole();
+				wcout << "Escolheu pesquisar pelo número\n";
+				Sleep(1000);
+				clrConsole();
+			}*/
+			else if (resposta_int == 4/*5*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			{
+				clrConsole();
+				wcout << "Escolheu listar alunos por ordem alfabética.\n\n";
+				Sleep(1000);
 				printUsers();
 				clrConsole();
 			}
-			else if (resposta_int == 6 && logged && admin)
+			/*else if (resposta_int == 6 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
-				wcout << "Escolheu Alterar alunos\n";
-				Sleep(3000);
+				wcout << "Escolheu alterar alunos\n";
+				Sleep(1000);
+				clrConsole();
+			}*/
+			else if (resposta_int == 5/*7*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			{
+				clrConsole();
+				wcout << "Escolheu remover alunos.\n";
+				Sleep(1000);
+				removerAluno();
 				clrConsole();
 			}
 
-			else if (resposta_int == 7 && logged && admin)
+			else if (resposta_int == 6/*8*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
-				wcout << "Escolheu Remover alunos\n";
-				Sleep(3000);
+				wcout << "Escolheu remover refeição.\n";
+				Sleep(1000);
+				consumirRefeição();
+				Sleep(500);
 				clrConsole();
 			}
-
-			else if (resposta_int == 8 && logged && admin)
+			else if (resposta_int == 7/*9*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
-				wcout << "Escolheu Remover refei��o\n";
-				Sleep(3000);
+				wcout << "Escolheu listar refeições.\n";
+				Sleep(1000);
+				listarRefeicao();
+				Sleep(500);
 				clrConsole();
 			}
-			else if (resposta_int == 9 && logged && admin)
+			//else if (resposta_int == 10 && logged && admin)	// se tiver um admin logado isto é uma opção válida para o administrador
+			//{
+			//	clrconsole();
+			//	wcout << "escolheu listar refeições num determinado dia.\n";
+			//	sleep(1000);
+			//	clrconsole();
+			//}
+			else													// Se a opção inserida pelo utilizador não é válida.
 			{
 				clrConsole();
-				wcout << "Escolheu Listar refei��es\n";
-				Sleep(3000);
-				clrConsole();
-			}
-			else if (resposta_int == 10 && logged && admin)
-			{
-				clrConsole();
-				wcout << "Escolheu Listar refei��es num determinado dia\n";
-				Sleep(3000);
-				clrConsole();
-			}
-			else
-			{
-				clrConsole();
-				wcout << "Escolheu a op��o errada\n"
-					<< "Por favor escolha a(s) op��o/op��es dispon�veis\n";
-				Sleep(3000);
+				wcout << "Escolheu a opção errada\nPor favor escolha a(s) opção/opções disponíveis\n";
+				Sleep(1000);
 				clrConsole();
 			}
 
