@@ -12,7 +12,7 @@
 */
 void clrConsole()
 {
-	system("cls");
+	system("cls");			//Função de sistema para limpar a consola
 }
 
 /*
@@ -56,7 +56,7 @@ int convert_Str_2_INT(wstring input)
 
 	if (possible)												//Se a string passada é um número...
 	{
-		double j = pow(10, i - 1);								//j = 10^(i-1)
+		double j = pow(10, i - 1);								//j = 10^(i-1)	por exemplo: 123 = (1 * 10^2) + (2 * 10^1) + (3 * 10^0)
 		int x = 0;
 		int aux;
 
@@ -64,7 +64,7 @@ int convert_Str_2_INT(wstring input)
 		{
 			aux = arr[x] * (int)j;
 			value += aux;
-			j /= 10;
+			j /= 10;											// Vai reduzindo as potências de 10
 		}
 		return value;
 	}
