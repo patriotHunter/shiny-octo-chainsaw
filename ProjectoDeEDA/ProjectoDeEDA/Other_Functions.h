@@ -159,13 +159,26 @@ wstring currentDate()
 	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
 	if (mes < 10)
 	{
-		return to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			return to_wstring(ano) + L"/0" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			return to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
 	else
 	{
-		return to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			return to_wstring(ano) + L"/" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			return to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
-	
 }
 
 /*
@@ -275,11 +288,25 @@ bool dateValid(int ano, int mes, int dia)
 	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
 	if (mes < 10)
 	{
-		data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
 	else
 	{
-		data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
 
 	//Compara ambas as strings e desta forma consegue verificar se a data é antes, durante ou depois de hoje.
@@ -303,11 +330,25 @@ bool dataVerifica(int ano, int mes, int dia)
 	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
 	if (mes < 10)
 	{
-		data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
 	else
 	{
-		data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		if (dia < 10)
+		{
+			data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/0" + to_wstring(dia);
+		}
+		else
+		{
+			data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+		}
 	}
 
 	//Compara ambas as strings e desta forma consegue verificar se a data é antes, durante ou depois de hoje.
