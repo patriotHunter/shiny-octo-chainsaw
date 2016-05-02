@@ -34,13 +34,25 @@ void fillArrayBlankUtil(int i)
 }
 
 /*
-Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
+	Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
 */
 void fillArrayBlankPlafond(int i)
 {
 	while (i < TAMANHO)
 	{
 		array_plafond[i].numero = INT_MIN;
+		i++;
+	}
+}
+
+/*
+Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
+*/
+void fillArrayBlankRefeicoes(int i)
+{
+	while (i < (TAMANHO * 10))
+	{
+		array_refeicao[i].numero = INT_MIN;
 		i++;
 	}
 }
@@ -81,6 +93,8 @@ void leDadosPlafonds()
 
 			getline(file, temp);
 			array_plafond[i].money = convert_Str_2_INT(temp);
+
+			getline(file, temp);
 
 			numPlafonds++;
 			i++;
@@ -123,24 +137,86 @@ void escreveDadosPlafonds()
 		{
 			file << array_plafond[i].numero << endl;
 			file << array_plafond[i].money << endl;
+			file << "-" << endl;
 
 			plafonds_guardados++;
 		}
 		else if (array_plafond[i].numero != INT_MIN && plafonds_guardados == numPlafonds)		// Se for o último plafond válido guarda sem colocar uma linha em branco no fim do ficheiro
 		{
 			file << array_plafond[i].numero << endl;
-			file << array_plafond[i].money;
+			file << array_plafond[i].money << endl;
+			file << "-";
 		}
 		i++;
 	}
 	file.close();
 }
 
+/*
+	Le a informação relativa às refeições e coloca-a no array respectivo
+*/
 void leDadosRefeicoes()
 {
+	wfstream file;
+	file.open(dadR, ios::in);
 
-	//			HERE JOSUE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	wstring temp;
+	int aux;
 
+	if (!file)
+	{
+		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
+		cin.sync();
+		cin.get();
+		exit(1);
+	}
+	file.clear();
+	file.seekg(ios::beg);
+
+
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		getline(file, temp);
+
+		aux = convert_Str_2_INT(temp);
+
+		if (aux != INT_MIN && aux != 0)
+		{
+			array_refeicao[i].numero = aux;
+
+			getline(file, temp);
+
+			if (convert_Str_2_INT(temp) == 1)
+			{
+				array_refeicao[i].jantar = true;
+			}
+			else
+			{
+				array_refeicao[i].jantar = false;
+			}
+
+			getline(file, temp);
+			array_refeicao[i].data.ano = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.mes = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+			array_refeicao[i].data.dia = convert_Str_2_INT(temp);
+
+			getline(file, temp);
+
+			numRefeicoes++;
+			i++;
+		}
+		else
+		{
+			fillArrayBlankRefeicoes(i);
+			i = TAMANHO * 10;
+		}
+	}
+	file.close();
 }
 
 /*
@@ -173,15 +249,16 @@ void escreveDadosRefeicoes()
 			file << array_refeicao[i].numero << endl;
 			if (array_refeicao[i].jantar)
 			{
-				file << "true" << endl;
+				file << 1 << endl;
 			}
 			else
 			{
-				file << "false" << endl;
+				file << 0 << endl;
 			}
 			file << array_refeicao[i].data.ano << endl;
 			file << array_refeicao[i].data.mes << endl;
 			file << array_refeicao[i].data.dia << endl;
+			file << "-" << endl;
 
 			refeicoes_guardadas++;
 		}
@@ -190,15 +267,16 @@ void escreveDadosRefeicoes()
 			file << array_refeicao[i].numero << endl;
 			if (array_refeicao[i].jantar)
 			{
-				file << "true" << endl;
+				file << 1 << endl;
 			}
 			else
 			{
-				file << "false" << endl;
+				file << 0 << endl;
 			}
 			file << array_refeicao[i].data.ano << endl;
 			file << array_refeicao[i].data.mes << endl;
-			file << array_refeicao[i].data.dia;
+			file << array_refeicao[i].data.dia << endl;
+			file << "-";
 		}
 		i++;
 	}
@@ -366,7 +444,7 @@ int inserirAluno()
 
 	if (ano == INT_MIN)
 	{
-		ano = valorInvalido_inserirAluno(L"Dia: ");
+		ano = valorInvalido_inserirAluno(L"Ano: ");
 		if (ano == -1)
 		{
 			return -1;
@@ -396,7 +474,7 @@ int inserirAluno()
 
 	if (dia == INT_MIN)
 	{
-		dia = valorInvalido_inserirAluno(L"Ano: ");
+		dia = valorInvalido_inserirAluno(L"Dia: ");
 		if (dia == -1)
 		{
 			return -1;
@@ -957,8 +1035,16 @@ void listarRefeicao()
 			{
 				if (array_refeicao[i].numero != INT_MIN)
 				{
-					wcout << "Número: " << array_refeicao[i].numero << "  Refeição: " << array_refeicao[i].jantar << "  Data: "
-					<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl << endl;
+					if (array_refeicao[i].jantar == 1)
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					else
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
 					r++;
 				}
 				i++;
@@ -971,15 +1057,210 @@ void listarRefeicao()
 			{
 				if (num == array_refeicao[i].numero)
 				{
-					wcout << "Número: " << array_refeicao[i].numero << "  Refeição: " << array_refeicao[i].jantar << "  Data: "
-					<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl << endl;
+					if (array_refeicao[i].jantar == 1)
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
+					else
+					{
+						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
+							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+					}
 					r++;
 				}
 				i++;
 			}
 		}
-		wcout << "Número total de refeições encontradas: " << r << endl << endl;
+		wcout << "\nNúmero total de refeições encontradas: " << r << endl << endl;
 		wcout << "Pressione a tecla Enter para prosseguir...";
+		cin.sync();
+		cin.get();
+	}
+}
+
+/*
+	Encomendar Refeições
+*/
+void encomendarRefeicao()
+{
+	wstring aux;
+	int num;
+	int i = 0;
+	while (i < TAMANHO)
+	{
+		if (array_plafond[i].numero == Util_logged)
+		{
+			if (array_plafond[i].money < 3)
+			{
+				wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+				wcout << "Pressione a tecla Enter para prosseguir...";
+				cin.sync();
+				cin.get();
+				return;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			i++;
+		}
+	}
+	if (i == TAMANHO)
+	{
+		wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
+		wcout << "Pressione a tecla Enter para prosseguir...";
+		cin.sync();
+		cin.get();
+		return;
+	}
+	else
+	{
+		bool repeat = true;
+		while (repeat)
+		{
+			wcout << "Qual a quantidade de refeições que quer encomendar? (Insira 0 para sair) ";
+			getline(wcin, aux);
+			num = convert_Str_2_INT(aux);
+			if (num < 0)
+			{
+				wcout << "o valor incerido é inválido.";
+				Sleep(500);
+				clrConsole();
+			}
+			else if (num == 0)
+			{
+				return;
+			}
+			else
+			{
+				if (array_plafond[i].money < (num * 3))
+				{
+					wcout << "O seu plafond não premite encomendar " << num << " refeições." << endl;
+					Sleep(500);
+					clrConsole();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		int j = 0;
+		wstring temp;
+		int ano, mes, dia;
+		while (j < num)
+		{
+			//Pede a data de nascimento começando pelo ano
+			wcout << "Data da refeição nº " << j + 1 << endl << "Ano: ";
+			getline(wcin, temp);
+			ano = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (ano == INT_MIN)
+			{
+				ano = valorInvalido_inserirAluno(L"Ano: ");
+				if (ano == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o mes de nascimento
+			wcout << "Mês(número): ";
+			getline(wcin, temp);
+			mes = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (mes == INT_MIN)
+			{
+				mes = valorInvalido_inserirAluno(L"Mês(número): ");
+				if (mes == -1)
+				{
+					return;
+				}
+			}
+
+			//Pede o dia do nascimento
+			wcout << "Dia: ";
+			getline(wcin, temp);
+			dia = convert_Str_2_INT(temp);
+			clrConsole();
+
+			if (dia == INT_MIN)
+			{
+				dia = valorInvalido_inserirAluno(L"Dia: ");
+				if (dia == -1)
+				{
+					return;
+				}
+			}
+
+			if (dateValid(ano, mes, dia))
+			{
+				bool jantar;
+				repeat = true;
+
+				clrConsole();
+
+				while (repeat)
+				{
+					wcout << "1 - Almoço" << endl;
+					wcout << "2 - Jantar" << endl;
+					wcout << "Opção: ";
+					getline(wcin, aux);
+					if (convert_Str_2_INT(aux) == 1)
+					{
+						jantar = false;
+						repeat = false;
+					}
+					else if (convert_Str_2_INT(aux) == 2)
+					{
+						jantar = true;
+						repeat = false;
+					}
+					else
+					{
+						wcout << "Opção Inválida" << endl;
+						Sleep(500);
+						clrConsole();
+					}
+				}
+
+				refeicao food;
+				food.data.ano = ano;
+				food.data.mes = mes;
+				food.data.dia = dia;
+				food.numero = Util_logged;
+				food.jantar = jantar;
+
+				j = 0;
+
+				while (j < (TAMANHO * 10))
+				{
+					if (array_refeicao[j].numero == INT_MIN)
+					{
+						array_refeicao[j] = food;
+						numRefeicoes++;
+						array_plafond[i].money -= 3;
+						escreveDadosPlafonds();
+						escreveDadosRefeicoes();
+						break;
+					}
+					j++;
+				}
+				if (j == (TAMANHO * 10))
+				{
+					wcout << "Não é possível encomendar mais refeições." << endl;
+					Sleep(500);
+					clrConsole();
+					return;
+				}
+			}
+		}
 	}
 }
 
@@ -994,8 +1275,9 @@ void printMainMenu()
 
 	leDadosUtilizadores();
 	leDadosPlafonds();
+	leDadosRefeicoes();
 
-	wcout << numPlafonds << endl << numUtils;
+	wcout << numPlafonds << endl << numUtils << endl << numRefeicoes;
 	cin.sync();
 	cin.get();
 
@@ -1022,9 +1304,9 @@ void printMainMenu()
 				//<< "4. Pesquisar pelo Número\n"
 				<< "4. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
 				//<< "6. Alterar alunos\n"
-				<< "6. Remover alunos\n"						//O mesmo que acima	
-				<< "7. Consumir Refeicão\n"						//O mesmo que acima	
-				<< "8. Listar refeições\n"						//O mesmo que acima	
+				<< "5. Remover alunos\n"						//O mesmo que acima	
+				<< "6. Consumir Refeicão\n"						//O mesmo que acima	
+				<< "7. Listar refeições\n"						//O mesmo que acima	
 				//<< "10. Listar refeições num determinado dia\n"
 				<< "\nOpção: ";
 		}
@@ -1067,8 +1349,8 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu encomendar refeição.\n\n";
 				Sleep(1000);
+				encomendarRefeicao();
 				clrConsole();
-				//criarRefeição();
 			}
 			else if (resposta_int == 3 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
@@ -1109,7 +1391,7 @@ void printMainMenu()
 				Sleep(1000);
 				clrConsole();
 			}*/
-			else if (resposta_int == 6/*7*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 5/*7*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu remover alunos.\n";
@@ -1118,14 +1400,14 @@ void printMainMenu()
 				clrConsole();
 			}
 
-			else if (resposta_int == 7/*8*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 6/*8*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu remover refeição.\n";
 				Sleep(1000);
 				clrConsole();
 			}
-			else if (resposta_int == 8/*9*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 7/*9*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu listar refeições.\n";
