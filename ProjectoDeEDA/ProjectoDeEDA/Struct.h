@@ -7,8 +7,12 @@
 #include <string>
 #include <fstream>
 #include <cstddef>
+
 using namespace std;
 
+/*
+	Estrutura que define o que é uma data...
+*/
 struct dataNasc
 {
 	int ano;
@@ -16,6 +20,9 @@ struct dataNasc
 	int dia;
 };
 
+/*
+	Estrutura que define a composição de uma morada...
+*/
 struct morada
 {
 	wstring rua;
@@ -23,6 +30,9 @@ struct morada
 	wstring codPost;
 };
 
+/*
+	Estrutura que define qual a informação necessária para termos um utilizador
+*/
 struct utilizador
 {
 	int numero;
@@ -33,6 +43,9 @@ struct utilizador
 	wstring pass;
 };
 
+/*
+	Estrutura que define o que é uma refeição
+*/
 struct refeicao
 {
 	int numero;
@@ -40,6 +53,9 @@ struct refeicao
 	dataNasc data;
 };
 
+/*
+	Estrutura que define o que é o plafond
+*/
 struct plafond
 {
 	int numero;
