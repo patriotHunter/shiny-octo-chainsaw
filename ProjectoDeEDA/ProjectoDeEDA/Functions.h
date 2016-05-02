@@ -339,6 +339,9 @@ void leDadosUtilizadores()
 			array_util[i].morada.codPost = temp;
 
 			getline(file, temp);
+			array_util[i].curso = temp;
+
+			getline(file, temp);
 			array_util[i].pass = temp;
 
 			numUtils++;
@@ -387,6 +390,7 @@ void escreveDadosUtilizadores()
 			file << array_util[i].morada.rua << endl;
 			file << array_util[i].morada.numPorta << endl;
 			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].curso << endl;
 			file << array_util[i].pass << endl;
 
 			utilizadores_guardados++;
@@ -401,6 +405,7 @@ void escreveDadosUtilizadores()
 			file << array_util[i].morada.rua << endl;
 			file << array_util[i].morada.numPorta << endl;
 			file << array_util[i].morada.codPost << endl;
+			file << array_util[i].curso << endl;
 			file << array_util[i].pass;
 		}
 		i++;
@@ -508,6 +513,13 @@ int inserirAluno()
 	mora.rua = rua;
 	mora.numPorta = numPorta;
 
+	wstring curso;
+
+	//Pede o Curso
+	wcout << "Curso: ";
+	getline(wcin, curso);
+	clrConsole();
+
 	wstring Pass = PassPrompt();
 
 	utilizador aluno;
@@ -519,7 +531,8 @@ int inserirAluno()
 	wcout << "Número Mecanográfico: " << num << endl;
 	wcout << "Nome Completo: " << nome << endl;
 	wcout << "Data de Nascimento: " << date.dia << "/" << date.mes << "/" << date.ano << endl;
-	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl << endl;
+	wcout << "Morada: " << mora.rua << ", " << mora.numPorta << ", Código postal: " << mora.codPost << endl;
+	wcout << "Curso: " << curso << endl << endl;
 	wcout << "Os dados estão correctos?(S/N) ";
 	wcin >> conf;
 	cin.sync();
@@ -537,6 +550,7 @@ int inserirAluno()
 			wcout << "2) Nome Completo" << endl;
 			wcout << "3) Data de Nascimento" << endl;
 			wcout << "4) Morada" << endl;
+			wcout << "5) Curso" << endl;
 			wcout << "0) Terminar edição" << endl;
 			wcout << endl << "Insira o valor da opção pretendida: ";
 			getline(wcin, temp);
@@ -628,6 +642,16 @@ int inserirAluno()
 						getline(wcin, codPost);
 						clrConsole();
 						break;
+					//alterar o curso
+					case 5:
+						wcout << endl << "Reinsira o curso: ";
+						getline(wcin, curso);
+						break;
+					//default: corre quando não for um valor esperado
+					default:
+						wcout << "Valor inválido!!!!";
+						Sleep(500);
+						break;
 				}
 			}
 		}
@@ -637,6 +661,7 @@ int inserirAluno()
 	aluno.nasc = date;
 	aluno.nome = nome;
 	aluno.numero = num;
+	aluno.curso = curso;
 	aluno.pass = Pass;
 
 	int i = 0;
@@ -885,6 +910,8 @@ int carregarPlafond()
 	{
 		array_plafond[i].money += aux;
 		escreveDadosPlafonds();
+		wcout << "Após o caregamento ficou com: " << array_plafond[i].money << "€." << endl;
+		Sleep(500);
 	}
 	return 0;
 }
@@ -1278,7 +1305,7 @@ void printMainMenu()
 	leDadosPlafonds();
 	leDadosRefeicoes();
 
-	wcout << numPlafonds << endl << numUtils << endl << numRefeicoes;
+	wcout << array_util[0].curso << endl;
 	cin.sync();
 	cin.get();
 
