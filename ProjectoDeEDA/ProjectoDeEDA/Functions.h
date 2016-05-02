@@ -972,6 +972,10 @@ void removerAluno()
 	}
 	if (i < TAMANHO)						// Se encontrar um aluno com este numero...
 	{
+		wcout << "Número: " << array_util[i].numero << endl << "Nome: " << array_util[i].nome << endl << "Data de Nascimento: " <<
+			array_util[i].nasc.ano << "-" << array_util[i].nasc.mes << "-" << array_util[i].nasc.dia << endl << "Morada: " <<
+			array_util[i].morada.rua << ", nº " << array_util[i].morada.numPorta << endl << "Código Postal: " << array_util[i].morada.codPost <<
+			endl << "Curso: " << array_util[i].curso << endl << endl;
 		wcout << "Tem a certeza que quer eliminar o aluno nº " << numAluno << "?(S/N)";
 		wcin >> val;
 		cin.sync();
