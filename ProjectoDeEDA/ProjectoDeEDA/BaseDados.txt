@@ -6,15 +6,17 @@ Pedrocas Ze Felize
 GOL
 47
 5874-960
+Design
 aeiou
 2055963
 Pedro Sousa Vieira
 8
 12
 1994
-Rua Putaria da Camara do Funchal e Beijadotres do Rabo do Juiz
+Rua da Camara do Funchal e do Juiz
 nº89
 9825-636
+Biologia
 helloworld
 206969
 Josue Ferreira
@@ -24,6 +26,7 @@ Josue Ferreira
 Lá para o Sante da Serra
 128
 6897-982
+Educação Básica
 blyat
 258967
 David Alguidar
@@ -33,6 +36,7 @@ David Alguidar
 Rua dos Pirralhos
 33-A
 9057-981
+CCO
 batman
 2071813
 Marcelo Ramos
@@ -42,4 +46,5 @@ Marcelo Ramos
 Rua Rua
 8
 9668-679
+Engenharia Informática
 kek
