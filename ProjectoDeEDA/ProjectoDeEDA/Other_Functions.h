@@ -292,3 +292,31 @@ bool dateValid(int ano, int mes, int dia)
 		return false;
 	}
 }
+
+/*
+	Verifica se a data é igual à introduzida
+*/
+bool dataVerifica(int ano, int mes, int dia)
+{
+	wstring data;
+
+	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
+	if (mes < 10)
+	{
+		data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+	else
+	{
+		data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
+	}
+
+	//Compara ambas as strings e desta forma consegue verificar se a data é antes, durante ou depois de hoje.
+	if (data.compare(currentDate()) == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

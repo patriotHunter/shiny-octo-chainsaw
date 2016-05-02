@@ -1303,6 +1303,81 @@ void encomendarRefeicao()
 }
 
 /*
+	Consumir Refeição
+*/
+void consumirRefeição()
+{
+	int i = 0;
+	int num, op;
+	wstring aux, temp;
+	wcout << "Nº do aluno: ";
+	getline(wcin, aux);
+	num = convert_Str_2_INT(aux);
+	if (num != INT_MIN)
+	{
+		wcout << "1 - Almoço" << endl << "2 - Jantar" << endl << "Opção: ";
+		getline(wcin, aux);
+		op = convert_Str_2_INT(aux);
+		if (op == 1)
+		{
+			while (i < (TAMANHO * 10))
+			{
+				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == false)
+				{
+					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					{
+						refeicao ref;
+						ref.numero = INT_MIN;
+						array_refeicao[i] = ref;
+						wcout << "A refeição foi removida com sucesso." << endl;
+						Sleep(500);
+						escreveDadosRefeicoes();
+					}
+					else
+					{
+						wcout << "A data dessa refeição não corresponde à do dia de hoje." << endl;
+						Sleep(500);
+					}
+				}
+				i++;
+			}
+		}
+		else if (op == 2)
+		{
+			while (i < (TAMANHO * 10))
+			{
+				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == true)
+				{
+					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					{
+						refeicao ref;
+						ref.numero = INT_MIN;
+						array_refeicao[i] = ref;
+						wcout << "A refeição foi removida com sucesso." << endl;
+						Sleep(500);
+						escreveDadosRefeicoes();
+					}
+					else
+					{
+						wcout << "A data dessa refeição não corresponde à do dia de hoje." << endl;
+						Sleep(500);
+					}
+				}
+				i++;
+			}
+		}
+		else
+		{
+			wcout << "Opção inválida.";
+		}
+	}
+	else
+	{
+		wcout << "O valor inserido não é válido. ";
+	}
+}
+
+/*
 	Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu()
@@ -1439,6 +1514,8 @@ void printMainMenu()
 				clrConsole();
 				wcout << "Escolheu remover refeição.\n";
 				Sleep(1000);
+				consumirRefeição();
+				Sleep(500);
 				clrConsole();
 			}
 			else if (resposta_int == 7/*9*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
