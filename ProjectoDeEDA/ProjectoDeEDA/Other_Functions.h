@@ -12,7 +12,7 @@
 */
 void clrConsole()
 {
-	system("cls");
+	system("cls");			//Função de sistema para limpar a consola
 }
 
 /*
@@ -56,7 +56,7 @@ int convert_Str_2_INT(wstring input)
 
 	if (possible)												//Se a string passada é um número...
 	{
-		double j = pow(10, i - 1);								//j = 10^(i-1)
+		double j = pow(10, i - 1);								//j = 10^(i-1)	por exemplo: 123 = (1 * 10^2) + (2 * 10^1) + (3 * 10^0)
 		int x = 0;
 		int aux;
 
@@ -64,7 +64,7 @@ int convert_Str_2_INT(wstring input)
 		{
 			aux = arr[x] * (int)j;
 			value += aux;
-			j /= 10;
+			j /= 10;											// Vai reduzindo as potências de 10
 		}
 		return value;
 	}
@@ -140,6 +140,9 @@ wstring PassPrompt()
 	return Pass;
 }
 
+/*
+	Função para obter uma string com a data atual no formato yyyy/mm/dd
+*/
 wstring currentDate()
 {
 	time_t t = time(0);   // Obtém o tempo atual
@@ -148,10 +151,12 @@ wstring currentDate()
 
 	int dia, mes, ano;
 
+	//Vai buscar à struct tm os valores que nos interessam
 	ano = now.tm_year + 1900;		//O ano 2016 devolve 116
 	mes = now.tm_mon + 1;			//Os meses começam em 0 até 11
 	dia = now.tm_mday;
 
+	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
 	if (mes < 10)
 	{
 		return to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
@@ -163,8 +168,12 @@ wstring currentDate()
 	
 }
 
+/*
+	Verifica se a data é válida, ou seja, se esta é possível no calendário e se é após a data atual.
+*/
 bool dateValid(int ano, int mes, int dia)
 {
+	//Verificação se a data é possível no calendário...
 	if (ano >= 2016)
 	{
 		if (mes > 0 || mes <= 12)
@@ -263,6 +272,7 @@ bool dateValid(int ano, int mes, int dia)
 	
 	wstring data;
 
+	//Para ficar algo do género yyyy/04/dd em vez de yyyy/4/dd....
 	if (mes < 10)
 	{
 		data = to_wstring(ano) + L"/0" + to_wstring(mes) + L"/" + to_wstring(dia);
@@ -272,6 +282,7 @@ bool dateValid(int ano, int mes, int dia)
 		data = to_wstring(ano) + L"/" + to_wstring(mes) + L"/" + to_wstring(dia);
 	}
 
+	//Compara ambas as strings e desta forma consegue verificar se a data é antes, durante ou depois de hoje.
 	if (data.compare(currentDate()) >= 0)
 	{
 		return true;
