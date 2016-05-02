@@ -207,8 +207,18 @@ void leDadosRefeicoes()
 
 			getline(file, temp);
 
-			numRefeicoes++;
-			i++;
+			//Se for uma data anterior à atual descarta-a 
+			if (dateValid(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+			{
+				numRefeicoes++;
+				i++;
+			}
+			else
+			{
+				refeicao ref;
+				ref.numero = INT_MIN;
+				array_refeicao[i] = ref;	//Substitui por refeição inválida e irá fazer overwrite desta informação se ainda faltar refeições por meter no array
+			}
 		}
 		else
 		{
@@ -1304,10 +1314,6 @@ void printMainMenu()
 	leDadosUtilizadores();
 	leDadosPlafonds();
 	leDadosRefeicoes();
-
-	wcout << array_util[0].curso << endl;
-	cin.sync();
-	cin.get();
 
 	while (!quit)
 	{
