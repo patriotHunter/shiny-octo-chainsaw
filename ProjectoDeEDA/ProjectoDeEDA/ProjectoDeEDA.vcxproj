@@ -151,7 +151,9 @@
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Other_Functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="BaseDados.txt" />
