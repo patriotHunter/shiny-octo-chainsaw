@@ -28,7 +28,7 @@ struct morada
 	wstring rua;
 	wstring numPorta;
 	wstring codPost;
-};
+};	
 
 /*
 	Estrutura que define qual a informação necessária para termos um utilizador
