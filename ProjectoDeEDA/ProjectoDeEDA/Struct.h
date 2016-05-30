@@ -37,6 +37,7 @@ struct utilizador
 {
 	int numero;
 	wstring nome;
+	int money;
 	dataNasc nasc;
 	morada morada;
 	wstring curso;
@@ -56,10 +57,10 @@ struct refeicao
 /*
 	Estrutura que define o que é o plafond
 */
-struct plafond
-{
-	int numero;
-	int money;
-};
+//struct plafond
+//{
+//	int numero;
+//	int money;
+//};
 
 
