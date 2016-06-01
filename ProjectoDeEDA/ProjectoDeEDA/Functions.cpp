@@ -1552,12 +1552,150 @@ void printMainMenu()
 	}
 }
 
-/* Mecanismo de listar refeicoes num determinada dia */
-/* Ideia: Escolher o dia e usar uma tecnica semelhante como foi feito o mecanismo de listar refeicoes*/
-void verListaDiaDeterminado()
+bool vazio(filaUtilizadores& fila)
+{
+	return (fila.ultimoAluno == 0);
+}
+int insereAluno(filaUtilizadores& fila)
+{
+	filaUtilizadores::Utilizador *aux = new filaUtilizadores::Utilizador();
+
+	wstring nome, temp, rua, codPost, numPorta;
+	int num, dia, mes, ano;
+
+	//Pede o Nome
+	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo (Sem colocar acentos ou cedilhas): ";
+	getline(wcin, nome);
+	clrConsole();
+
+	//Pede o Numero
+	wcout << "Número Mecanográfico: ";
+	getline(wcin, temp);
+	num = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (num == INT_MIN)
+	{
+		num = valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+		if (num == -1)
+		{
+			return -1;
+		}
+	}
+
+	//Pede a data de nascimento começando pelo ano
+	wcout << "Data de nascimento" << endl << "Ano: ";
+	getline(wcin, temp);
+	ano = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (ano == INT_MIN)
+	{
+		ano = valorInvalido_inserirAluno(L"Ano: ");
+		if (ano == -1)
+		{
+			return -1;
+		}
+	}
+
+	//Pede o mes de nascimento
+	wcout << "Mês(número): ";
+	getline(wcin, temp);
+	mes = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (mes == INT_MIN)
+	{
+		mes = valorInvalido_inserirAluno(L"Mês(número): ");
+		if (mes == -1)
+		{
+			return -1;
+		}
+	}
+
+	//Pede o dia do nascimento
+	wcout << "Dia: ";
+	getline(wcin, temp);
+	dia = convert_Str_2_INT(temp);
+	clrConsole();
+
+	if (dia == INT_MIN)
+	{
+		dia = valorInvalido_inserirAluno(L"Dia: ");
+		if (dia == -1)
+		{
+			return -1;
+		}
+	}
+
+	dataNasc date;
+
+	date.ano = ano;
+	date.mes = mes;
+	date.dia = dia;
+
+	//Pede a rua da morada
+	wcout << "Morada" << endl << "Rua: ";
+	getline(wcin, rua);
+	clrConsole();
+
+	//Pede a porta da morada
+	wcout << "Nº da porta: ";
+	getline(wcin, numPorta);
+	clrConsole();
+
+	//Pede o codigo postal da morada
+	wcout << "Código Postal: ";
+	getline(wcin, codPost);
+	clrConsole();
+
+	morada mora;
+
+	mora.codPost = codPost;
+	mora.rua = rua;
+	mora.numPorta = numPorta;
+
+	wstring curso;
+
+	//Pede o Curso
+	wcout << "Curso: ";
+	getline(wcin, curso);
+	clrConsole();
+
+	wstring Pass = PassPrompt();
+
+	utilizador aluno;
+	aluno.morada = mora;
+	aluno.nasc = date;
+	aluno.nome = nome;
+	aluno.numero = num;
+	aluno.curso = curso;
+	aluno.pass = Pass;
+
+	aux->util = aluno;
+	aux->proximo = fila.ultimoAluno;
+	fila.ultimoAluno = aux;
+}
+void mostrar(filaUtilizadores& fila)
+{
+	filaUtilizadores::Utilizador *aux = new filaUtilizadores::Utilizador();
+
+	if (vazio(fila)) cout << "ERRO: Lista Vazia";
+	else {
+		while (aux != NULL)
+		{
+			wcout << aux->util.numero << endl;
+			wcout << aux->util.nome << endl;
+			wcout << aux->util.money << endl;
+			wcout << aux->util.curso << endl;
+			//wcout << aux->util.nasc << endl;   //mostrar de outra maneira..
+			//wcout << aux->util.morada << endl; //mostrar de outra maneira..
+			wcout << aux->util.pass << endl;
+			aux = aux->proximo;
+		}
+	}
+}
+void retira(filaUtilizadores& fila)
 {
 
 }
-
-
-
