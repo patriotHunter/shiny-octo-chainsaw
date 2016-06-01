@@ -55,12 +55,23 @@ struct refeicao
 };
 
 /*
-	Estrutura que define o que é o plafond
+Método de pilhas como na ficha 8
 */
-//struct plafond
-//{
-//	int numero;
-//	int money;
-//};
+
+struct filaUtilizadores {
+	struct Utilizador {
+		utilizador util;
+		Utilizador *proximo;
+	};
+	Utilizador *ultimoAluno;
+};
+
+
+bool vazio(filaUtilizadores& fila);
+int insereAluno(filaUtilizadores& fila);
+void mostrar(filaUtilizadores& fila);
+void retira(filaUtilizadores& fila);
+
+struct listasUtil *primeiro = NULL, *ultimo = NULL, *actual;
 
 
