@@ -1697,7 +1697,14 @@ void mostrar(filaUtilizadores& fila)
 }
 void retira(filaUtilizadores& fila)
 {
-
+	if (vazio(fila))
+		cout << "ERRO: Lista vazia\n";
+	else
+	{
+		filaUtilizadores::Utilizador *aux = fila.ultimoAluno; // o auxiliar é o topo, as informacoes do ultimo aluno
+		fila.ultimoAluno = aux->proximo; // o topo passa a ser a informacao anterior;
+		delete aux; // elimina o auxiliar 
+	}
 }
 void ProcurarNumero(filaUtilizadores& fila)
 {
