@@ -1551,7 +1551,7 @@ void printMainMenu()
 		}
 	}
 }
-
+/*-------------------------Sugestões?---------------------*/
 bool vazio(filaUtilizadores& fila)
 {
 	return (fila.ultimoAluno == 0);
