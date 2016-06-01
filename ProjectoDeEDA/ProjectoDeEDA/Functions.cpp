@@ -1690,7 +1690,7 @@ void mostrar(filaUtilizadores& fila)
 			wcout << aux->util.curso << endl;
 			//wcout << aux->util.nasc << endl;   //mostrar de outra maneira..
 			//wcout << aux->util.morada << endl; //mostrar de outra maneira..
-			wcout << aux->util.pass << endl;
+			wcout << aux->util.pass << endl;	
 			aux = aux->proximo;
 		}
 	}
