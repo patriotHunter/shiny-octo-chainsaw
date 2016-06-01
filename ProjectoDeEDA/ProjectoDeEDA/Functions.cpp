@@ -1699,3 +1699,31 @@ void retira(filaUtilizadores& fila)
 {
 
 }
+void ProcurarNumero(filaUtilizadores& fila)
+{
+	cout << "Por favor insira o seu numero\n" << endl;
+	int numero;
+	cin >> numero;
+	filaUtilizadores::Utilizador * aux = fila.ultimoAluno;
+	if (vazio(fila)) cout << "ERRO: Lista vazia\n";
+	else {
+		while (aux != NULL)
+		{
+			if (aux->util.numero == numero)
+			{
+				//Mostra a estrutura toda
+				wcout << aux->util.numero << endl;
+				wcout << aux->util.nome << endl;
+				wcout << aux->util.money << endl;
+				wcout << aux->util.curso << endl;
+				//wcout << aux->util.nasc << endl; // mostrar de outra forma
+				//wcout << aux->util.morada << endl; // mostrar de outra forma
+				wcout << aux->util.pass << endl;
+				return;
+			}
+			aux = aux->proximo;
+		}
+		wcout << "Não existe numero como esse\n";
+	}
+
+}
