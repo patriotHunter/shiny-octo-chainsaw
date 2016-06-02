@@ -61,8 +61,9 @@ Método de pilhas como na ficha 8
 struct filaUtilizadores {
 	struct Utilizador {
 		utilizador util;
-		Utilizador *proximo;
+		
 	};
+	Utilizador *proximo;
 	Utilizador *ultimoAluno;
 };
 
