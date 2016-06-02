@@ -2,6 +2,7 @@
 
 #include "Struct.h"
 #include "Other_Functions.h"
+#include "Functions_FILAS.h"
 
 /*
 Le dados do ficheiro contendo os plafonds

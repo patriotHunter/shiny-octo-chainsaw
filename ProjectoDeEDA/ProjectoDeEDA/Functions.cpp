@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Struct.h"
-#include "Other_Functions.h"
 #include "Functions.h"
-#include "Functions_FILAS.h"
 
 /*
 ATENÇÂO:	Neste ficheiro encontram-se todas as funções que necessitem de variáveis globais!!!
@@ -14,8 +11,7 @@ bool admin = false;								// O utilizador é funcionário ou não
 int const TAMANHO = 500;						// Tamanho dos arrays
 int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logged in
 wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
-wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
-wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos plafonds
+wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos refeicoes
 int numUtils = 0;								// Numero total de utilizadores
 int numPlafonds = 0;							// Numero total de utilizadores com plafond
 int numRefeicoes = 0;							// Numero total de refeicoes
@@ -30,7 +26,7 @@ void leDadosRefeicoes()
 {
 	wfstream file;
 	file.open(dadR, ios::in);
-
+	filaRefeicao::REF * atual = filRef.atual;
 	wstring temp;
 	int aux;
 
@@ -44,9 +40,9 @@ void leDadosRefeicoes()
 	file.clear();
 	file.seekg(ios::beg);
 
+	refeicao ref;
 
-	int i = 0;
-	while (i < TAMANHO)
+	while (true)
 	{
 		getline(file, temp);
 
@@ -54,47 +50,40 @@ void leDadosRefeicoes()
 
 		if (aux != INT_MIN && aux != 0)
 		{
-			array_refeicao[i].numero = aux;
+			ref.numero = aux;
 
 			getline(file, temp);
 
 			if (convert_Str_2_INT(temp) == 1)
 			{
-				array_refeicao[i].jantar = true;
+				ref.jantar = true;
 			}
 			else
 			{
-				array_refeicao[i].jantar = false;
+				ref.jantar = false;
 			}
 
 			getline(file, temp);
-			array_refeicao[i].data.ano = convert_Str_2_INT(temp);
+			ref.data.ano = convert_Str_2_INT(temp);
 
 			getline(file, temp);
-			array_refeicao[i].data.mes = convert_Str_2_INT(temp);
+			ref.data.mes = convert_Str_2_INT(temp);
 
 			getline(file, temp);
-			array_refeicao[i].data.dia = convert_Str_2_INT(temp);
+			ref.data.dia = convert_Str_2_INT(temp);
 
 			getline(file, temp);
 
 			//Se for uma data anterior à atual descarta-a 
-			if (dateValid(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+			if (dateValid(ref.data.ano, ref.data.mes, ref.data.dia))
 			{
 				numRefeicoes++;
-				i++;
-			}
-			else
-			{
-				refeicao ref;
-				ref.numero = INT_MIN;
-				array_refeicao[i] = ref;	//Substitui por refeição inválida e irá fazer overwrite desta informação se ainda faltar refeições por meter no array
+				insereNaFila(filRef, ref);
 			}
 		}
 		else
 		{
-			fillArrayBlankRefeicoes(i);
-			i = TAMANHO * 10;
+			break;
 		}
 	}
 	file.close();
@@ -119,47 +108,29 @@ void escreveDadosRefeicoes()
 	file.clear();
 	file.seekp(ios::beg);
 
-	int i = 0;
-
 	int refeicoes_guardadas = 0;
 
-	while (i < TAMANHO && refeicoes_guardadas != numRefeicoes)
-	{
-		if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas < numRefeicoes)			// Se for uma refeicao válida guarda caso contrário passa à próxima refeicao
-		{
-			file << array_refeicao[i].numero << endl;
-			if (array_refeicao[i].jantar)
-			{
-				file << 1 << endl;
-			}
-			else
-			{
-				file << 0 << endl;
-			}
-			file << array_refeicao[i].data.ano << endl;
-			file << array_refeicao[i].data.mes << endl;
-			file << array_refeicao[i].data.dia << endl;
-			file << "-" << endl;
+	filaRefeicao::REF * atual = filRef.atual;
 
-			refeicoes_guardadas++;
-		}
-		else if (array_refeicao[i].numero != INT_MIN && refeicoes_guardadas == numRefeicoes)		// Se for a última refeicao válida guarda sem colocar uma linha em branco no fim do ficheiro
+	while (atual != NULL && refeicoes_guardadas != numRefeicoes)
+	{
+		
+		file << atual->refeicao.numero << endl;
+		if (atual->refeicao.jantar)
 		{
-			file << array_refeicao[i].numero << endl;
-			if (array_refeicao[i].jantar)
-			{
-				file << 1 << endl;
-			}
-			else
-			{
-				file << 0 << endl;
-			}
-			file << array_refeicao[i].data.ano << endl;
-			file << array_refeicao[i].data.mes << endl;
-			file << array_refeicao[i].data.dia << endl;
-			file << "-";
+			file << 1 << endl;
 		}
-		i++;
+		else
+		{
+			file << 0 << endl;
+		}
+		file << atual->refeicao.data.ano << endl;
+		file << atual->refeicao.data.mes << endl;
+		file << atual->refeicao.data.dia << endl;
+		file << "-" << endl;
+
+		refeicoes_guardadas++;
+		atual = atual->anterior;
 	}
 	file.close();
 }
@@ -202,6 +173,9 @@ void leDadosUtilizadores()
 			util.nome = temp;
 
 			getline(file, temp);
+			util.money = convert_Str_2_INT(temp);
+
+			getline(file, temp);
 			util.nasc.dia = convert_Str_2_INT(temp);
 
 			getline(file, temp);
@@ -226,7 +200,8 @@ void leDadosUtilizadores()
 			util.pass = temp;
 
 			numUtils++;
-			atual = atual->anterior;
+
+			insereNaFila(filUtil, util);
 		}
 		else
 		{
@@ -557,7 +532,7 @@ bool login_logout()
 		return false;										//Realiza um logout
 	}
 
-	int i, num;
+	int num;
 	wstring pass;
 	bool repeat = true;
 	bool notAdmin = false;
@@ -835,7 +810,7 @@ Listar Refeições
 void listarRefeicao()
 {
 	wstring aux;
-	int num, i;
+	int num;
 	int r = 0;														// Inicializa i a zero
 	wcout << "Deseja listar as refeições de que aluno? (Número Mecanográfico ou 0 para todos os alunos) ";
 	getline(wcin, aux);												// Guarda em aux o valor inserido
@@ -843,48 +818,47 @@ void listarRefeicao()
 
 	if (num != INT_MIN)												// Se a int inserida for válida, isto é, se for realmente um valor númérico...
 	{
+		filaRefeicao::REF * atual = filRef.atual;
 		if (num == 0)												// Se o valor for zero...
 		{
-			i = 0;													// Inicializa i a zero
-			while (i < TAMANHO)										// Enquanto i for menor que o tamanho do array...
+			while (atual != NULL)										// Enquanto i for menor que o tamanho do array...
 			{
-				if (array_refeicao[i].numero != INT_MIN)			// Se existe uma refeição válida para aquele aluno...
+				if (atual->refeicao.numero != INT_MIN)			// Se existe uma refeição válida para aquele aluno...
 				{
-					if (array_refeicao[i].jantar)					// Se a refeição é jantar...
+					if (atual->refeicao.jantar)					// Se a refeição é jantar...
 					{
-						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
-							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+						wcout << endl << "Número: " << atual->refeicao.numero << "  Refeição: Jantar  Data: "
+							<< atual->refeicao.data.dia << "-" << atual->refeicao.data.mes << "-" << atual->refeicao.data.ano << endl;
 					}
 					else
 					{
-						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
-							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+						wcout << endl << "Número: " << atual->refeicao.numero << "  Refeição: Almoço  Data: "
+							<< atual->refeicao.data.dia << "-" << atual->refeicao.data.mes << "-" << atual->refeicao.data.ano << endl;
 					}
 					r++;											// Incrementa o número de refeições encontradas
 				}
-				i++;												// Incrementa a posição do array
+				atual = atual->anterior;												// Incrementa a posição do array
 			}
 		}
 		else														// Se foi inserido um número mecanográfico...
 		{
-			i = 0;													// Inicializa i a zero
-			while (i < TAMANHO)										// Enquanto i for menor que o tamanho do array...
+			while (atual != NULL)										// Enquanto i for menor que o tamanho do array...
 			{
-				if (num == array_refeicao[i].numero)				// Se existe uma refeição encomendada pelo aluno cujo número foi inserido...
+				if (num == atual->refeicao.numero)				// Se existe uma refeição encomendada pelo aluno cujo número foi inserido...
 				{
-					if (array_refeicao[i].jantar)					// Se for jantar...
+					if (atual->refeicao.jantar)					// Se for jantar...
 					{
-						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Jantar  Data: "
-							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+						wcout << endl << "Número: " << atual->refeicao.numero << "  Refeição: Jantar  Data: "
+							<< atual->refeicao.data.dia << "-" << atual->refeicao.data.mes << "-" << atual->refeicao.data.ano << endl;
 					}
 					else
 					{
-						wcout << endl << "Número: " << array_refeicao[i].numero << "  Refeição: Almoço  Data: "
-							<< array_refeicao[i].data.dia << "-" << array_refeicao[i].data.mes << "-" << array_refeicao[i].data.ano << endl;
+						wcout << endl << "Número: " << atual->refeicao.numero << "  Refeição: Almoço  Data: "
+							<< atual->refeicao.data.dia << "-" << atual->refeicao.data.mes << "-" << atual->refeicao.data.ano << endl;
 					}
 					r++;											// Incrementa a quantidade de refeições encontradas para o aluno
 				}
-				i++;												// Incrementa a posição do array
+				atual = atual->anterior;												// Incrementa a posição do array
 			}
 		}
 		wcout << "\nNúmero total de refeições encontradas: " << r << endl << endl;
@@ -901,12 +875,12 @@ void encomendarRefeicao()
 {
 	wstring aux;
 	int num;
-	int i = 0;
-	while (i < TAMANHO)
+	filaUtilizadores::UTIL * atual_util = filUtil.atual;
+	while (atual_util != NULL)
 	{
-		if (array_plafond[i].numero == Util_logged)
+		if (atual_util->util.numero == Util_logged)
 		{
-			if (array_plafond[i].money < 3)
+			if (atual_util->util.money < 3)
 			{
 				wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
 				wcout << "Pressione a tecla Enter para prosseguir...";
@@ -921,10 +895,10 @@ void encomendarRefeicao()
 		}
 		else
 		{
-			i++;
+			atual_util = atual_util->anterior;
 		}
 	}
-	if (i == TAMANHO)
+	if (atual_util->util.money < 3)
 	{
 		wcout << "Não tem saldo suficiente para encomendar refeições." << endl << endl;
 		wcout << "Pressione a tecla Enter para prosseguir...";
@@ -952,7 +926,7 @@ void encomendarRefeicao()
 			}
 			else
 			{
-				if (array_plafond[i].money < (num * 3))
+				if (atual_util->util.money < (num * 3))
 				{
 					wcout << "O seu plafond não premite encomendar " << num << " refeições." << endl;
 					Sleep(500);
@@ -969,7 +943,7 @@ void encomendarRefeicao()
 		int ano, mes, dia;
 		while (j < num)
 		{
-			//Pede a data de nascimento começando pelo ano
+			//Pede a data começando pelo ano
 			wcout << "Data da refeição nº " << j + 1 << endl << "Ano: ";
 			getline(wcin, temp);
 			ano = convert_Str_2_INT(temp);
@@ -984,7 +958,7 @@ void encomendarRefeicao()
 				}
 			}
 
-			//Pede o mes de nascimento
+			//Pede o mes
 			wcout << "Mês(número): ";
 			getline(wcin, temp);
 			mes = convert_Str_2_INT(temp);
@@ -999,7 +973,7 @@ void encomendarRefeicao()
 				}
 			}
 
-			//Pede o dia do nascimento
+			//Pede o dia
 			wcout << "Dia: ";
 			getline(wcin, temp);
 			dia = convert_Str_2_INT(temp);
@@ -1051,29 +1025,10 @@ void encomendarRefeicao()
 				food.data.dia = dia;
 				food.numero = Util_logged;
 				food.jantar = jantar;
+				
+				insereNaFila(filRef, food);
 
-				j = 0;
-
-				while (j < (TAMANHO * 10))
-				{
-					if (array_refeicao[j].numero == INT_MIN)
-					{
-						array_refeicao[j] = food;
-						numRefeicoes++;
-						array_plafond[i].money -= 3;
-						escreveDadosPlafonds();
-						escreveDadosRefeicoes();
-						break;
-					}
-					j++;
-				}
-				if (j == (TAMANHO * 10))
-				{
-					wcout << "Não é possível encomendar mais refeições." << endl;
-					Sleep(500);
-					clrConsole();
-					return;
-				}
+				j++;
 			}
 		}
 	}
@@ -1084,7 +1039,7 @@ Consumir Refeição
 */
 void consumirRefeição()
 {
-	int i = 0;
+	filaRefeicao::REF * atual = filRef.atual;
 	int num, op;
 	wstring aux, temp;
 	wcout << "Nº do aluno: ";
@@ -1097,15 +1052,13 @@ void consumirRefeição()
 		op = convert_Str_2_INT(aux);
 		if (op == 1)
 		{
-			while (i < (TAMANHO * 10))
+			while (atual != NULL)
 			{
-				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == false)
+				if (atual->refeicao.numero == num && atual->refeicao.jantar == false)
 				{
-					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					if (dataVerifica(atual->refeicao.data.ano, atual->refeicao.data.mes, atual->refeicao.data.dia))
 					{
-						refeicao ref;
-						ref.numero = INT_MIN;
-						array_refeicao[i] = ref;
+						retiraDaFila(filRef, atual->refeicao);
 						wcout << "A refeição foi removida com sucesso." << endl;
 						Sleep(500);
 						escreveDadosRefeicoes();
@@ -1116,20 +1069,18 @@ void consumirRefeição()
 						Sleep(500);
 					}
 				}
-				i++;
+				atual = atual->anterior;
 			}
 		}
 		else if (op == 2)
 		{
-			while (i < (TAMANHO * 10))
+			while (atual != NULL)
 			{
-				if (array_refeicao[i].numero == num && array_refeicao[i].jantar == true)
+				if (atual->refeicao.numero == num && atual->refeicao.jantar == true)
 				{
-					if (dataVerifica(array_refeicao[i].data.ano, array_refeicao[i].data.mes, array_refeicao[i].data.dia))
+					if (dataVerifica(atual->refeicao.data.ano, atual->refeicao.data.mes, atual->refeicao.data.dia))
 					{
-						refeicao ref;
-						ref.numero = INT_MIN;
-						array_refeicao[i] = ref;
+						retiraDaFila(filRef, atual->refeicao);
 						wcout << "A refeição foi removida com sucesso." << endl;
 						Sleep(500);
 						escreveDadosRefeicoes();
@@ -1140,7 +1091,7 @@ void consumirRefeição()
 						Sleep(500);
 					}
 				}
-				i++;
+				atual = atual->anterior;
 			}
 		}
 		else
@@ -1167,7 +1118,6 @@ void printMainMenu()
 	bool quit = false;
 
 	leDadosUtilizadores();
-	leDadosPlafonds();
 	leDadosRefeicoes();
 
 	while (!quit)
@@ -1192,11 +1142,11 @@ void printMainMenu()
 				<< "3. Pesquisar pelo Primeiro Nome\n"
 				//<< "4. Pesquisar pelo Número\n"
 				<< "4. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
-																//<< "6. Alterar alunos\n"
+				//<< "6. Alterar alunos\n"
 				<< "5. Remover alunos\n"						//O mesmo que acima	
 				<< "6. Consumir Refeicão\n"						//O mesmo que acima	
 				<< "7. Listar refeições\n"						//O mesmo que acima	
-																//<< "10. Listar refeições num determinado dia\n"
+				//<< "10. Listar refeições num determinado dia\n"
 				<< "\nOpção: ";
 		}
 		else if (!admin && logged) // se o utilizador n estiver logged in n no admin
@@ -1325,70 +1275,4 @@ void printMainMenu()
 
 		}
 	}
-}
-
-
-/*-------------------------Sugestões?---------------------*/
-bool vazio(filaUtilizadores& fila)
-{
-	return (fila.ultimoAluno == 0);
-}
-
-void mostrar(filaUtilizadores& fila)
-{
-	filaUtilizadores::Utilizador *aux = new filaUtilizadores::Utilizador();
-
-	if (vazio(fila)) cout << "ERRO: Lista Vazia";
-	else {
-		while (aux != NULL)
-		{
-			wcout << aux->util.numero << endl;
-			wcout << aux->util.nome << endl;
-			wcout << aux->util.money << endl;
-			wcout << aux->util.curso << endl;
-			//wcout << aux->util.nasc << endl;   //mostrar de outra maneira..
-			//wcout << aux->util.morada << endl; //mostrar de outra maneira..
-			wcout << aux->util.pass << endl;	
-			aux = aux->proximo;
-		}
-	}
-}
-void retira(filaUtilizadores& fila)
-{
-	if (vazio(fila))
-		cout << "ERRO: Lista vazia\n";
-	else
-	{
-		filaUtilizadores::Utilizador *aux = fila.ultimoAluno; // o auxiliar é o topo, as informacoes do ultimo aluno
-		fila.ultimoAluno = aux->proximo; // o topo passa a ser a informacao anterior;
-		delete aux; // elimina o auxiliar 
-	}
-}
-void ProcurarNumero(filaUtilizadores& fila)
-{
-	cout << "Por favor insira o seu numero\n" << endl;
-	int numero;
-	cin >> numero;
-	filaUtilizadores::Utilizador * aux = fila.ultimoAluno;
-	if (vazio(fila)) cout << "ERRO: Lista vazia\n";
-	else {
-		while (aux != NULL)
-		{
-			if (aux->util.numero == numero)
-			{
-				//Mostra a estrutura toda
-				wcout << aux->util.numero << endl;
-				wcout << aux->util.nome << endl;
-				wcout << aux->util.money << endl;
-				wcout << aux->util.curso << endl;
-				//wcout << aux->util.nasc << endl; // mostrar de outra forma
-				//wcout << aux->util.morada << endl; // mostrar de outra forma
-				wcout << aux->util.pass << endl;
-				return;
-			}
-			aux = aux->proximo;
-		}
-		wcout << "Não existe numero como esse\n";
-	}
-
 }

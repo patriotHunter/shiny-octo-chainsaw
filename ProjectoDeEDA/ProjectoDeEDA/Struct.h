@@ -81,11 +81,3 @@ struct filaRefeicao
 };
 
 
-bool vazio(filaUtilizadores& fila);
-int insereAluno(filaUtilizadores& fila);
-void mostrar(filaUtilizadores& fila);
-void retira(filaUtilizadores& fila);
-
-struct listasUtil *primeiro = NULL, *ultimo = NULL, *actual;
-
-
