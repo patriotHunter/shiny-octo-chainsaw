@@ -3,19 +3,6 @@
 #include "Struct.h"
 #include "Other_Functions.h"
 
-void fillArrayBlankUtil(int i);
-
-/*
-Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-*/
-void fillArrayBlankPlafond(int i);
-
-
-/*
-Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-*/
-void fillArrayBlankRefeicoes(int i);
-
 /*
 Le dados do ficheiro contendo os plafonds
 */

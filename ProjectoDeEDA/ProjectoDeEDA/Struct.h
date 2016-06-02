@@ -58,13 +58,26 @@ struct refeicao
 Método de pilhas como na ficha 8
 */
 
-struct filaUtilizadores {
-	struct Utilizador {
+struct filaUtilizadores 
+{
+	struct UTIL
+	{
 		utilizador util;
-		
+		UTIL *proximo;
+		UTIL *anterior;
 	};
-	Utilizador *proximo;
-	Utilizador *ultimoAluno;
+	UTIL * atual;
+};
+
+struct filaRefeicao
+{
+	struct REF
+	{
+		refeicao refeicao;
+		REF * proximo;
+		REF * anterior;
+	};
+	REF * atual;
 };
 
 

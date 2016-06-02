@@ -147,11 +147,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="Functions_FILAS.h" />
     <ClInclude Include="Other_Functions.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.cpp" />
+    <ClCompile Include="Functions_FILAS.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Other_Functions.cpp" />
   </ItemGroup>

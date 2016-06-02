@@ -3,6 +3,7 @@
 #include "Struct.h"
 #include "Other_Functions.h"
 #include "Functions.h"
+#include "Functions_FILAS.h"
 
 /*
 ATENÇÂO:	Neste ficheiro encontram-se todas as funções que necessitem de variáveis globais!!!
@@ -12,146 +13,15 @@ bool logged = false;							// O utilizador esta logged in ou não
 bool admin = false;								// O utilizador é funcionário ou não
 int const TAMANHO = 500;						// Tamanho dos arrays
 int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logged in
-utilizador array_util[TAMANHO];					// Array de utilizadores
-plafond array_plafond[TAMANHO];					// Array de plafonds
-refeicao array_refeicao[TAMANHO * 10];			// Array de refeicoes
 wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
 wchar_t dadP[50] = L"Plafond.txt";				// Nome do ficheiro contendo a informação dos plafonds
 wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos plafonds
 int numUtils = 0;								// Numero total de utilizadores
 int numPlafonds = 0;							// Numero total de utilizadores com plafond
 int numRefeicoes = 0;							// Numero total de refeicoes
+filaUtilizadores filUtil;
+filaRefeicao filRef;
 
-												/*
-												Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-												*/
-void fillArrayBlankUtil(int i)
-{
-	while (i < TAMANHO)
-	{
-		array_util[i].numero = INT_MIN;
-		i++;
-	}
-}
-
-/*
-Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-*/
-void fillArrayBlankPlafond(int i)
-{
-	while (i < TAMANHO)
-	{
-		array_plafond[i].numero = INT_MIN;
-		i++;
-	}
-}
-
-/*
-Preenche o resto dos utilizadores com informação que seja fácil para nós descartarmos esse utilizador como inválido
-*/
-void fillArrayBlankRefeicoes(int i)
-{
-	while (i < (TAMANHO * 10))
-	{
-		array_refeicao[i].numero = INT_MIN;
-		i++;
-	}
-}
-
-/*
-Le dados do ficheiro contendo os plafonds
-*/
-void leDadosPlafonds()
-{
-	wstring temp;
-
-	int aux;
-
-	wfstream file;
-
-	file.open(dadP, ios::in);
-	if (!file)
-	{
-		wcout << "\nErro, ficheiros corruptos.\nPressione Enter para terminar o programa.\n";
-		cin.sync();
-		cin.get();
-		exit(1);
-	}
-	file.clear();
-	file.seekg(ios::beg);
-
-	int i = 0;
-
-	while (i < TAMANHO)
-	{
-		getline(file, temp);
-
-		aux = convert_Str_2_INT(temp);									// Guarda o valor numerico da string temp em aux
-
-		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
-		{
-			array_plafond[i].numero = aux;
-
-			getline(file, temp);
-			array_plafond[i].money = convert_Str_2_INT(temp);
-
-			getline(file, temp);
-
-			numPlafonds++;
-			i++;
-		}
-		else
-		{
-			fillArrayBlankPlafond(i);
-			i = TAMANHO;
-		}
-	}
-	file.close();
-}
-
-/*
-Escreve os dados de plafonds nos ficheiros
-*/
-void escreveDadosPlafonds()
-{
-	wfstream file;
-
-	file.open(dadP, ios::out | ios::trunc);		// abre o ficheiro para escrever e com o comando ios::trunc indica que é para começar o ficheiro como se fosse um novo ficheiro, apagando o conteúdo presente anteriormente
-
-	if (!file)
-	{
-		wcout << "\nErro, ficheiros corruptos.\nNão é possível guardar dados!!!\n";
-		cin.sync();
-		cin.get();
-		exit(1);
-	}
-	file.clear();
-	file.seekp(ios::beg);
-
-	int i = 0;
-
-	int plafonds_guardados = 0;
-
-	while (i < TAMANHO && plafonds_guardados != numPlafonds)
-	{
-		if (array_plafond[i].numero != INT_MIN && plafonds_guardados < numPlafonds)			// Se for um plafond válido guarda caso contrário passa ao próximo plafond
-		{
-			file << array_plafond[i].numero << endl;
-			file << array_plafond[i].money << endl;
-			file << "-" << endl;
-
-			plafonds_guardados++;
-		}
-		else if (array_plafond[i].numero != INT_MIN && plafonds_guardados == numPlafonds)		// Se for o último plafond válido guarda sem colocar uma linha em branco no fim do ficheiro
-		{
-			file << array_plafond[i].numero << endl;
-			file << array_plafond[i].money << endl;
-			file << "-";
-		}
-		i++;
-	}
-	file.close();
-}
 
 /*
 Le a informação relativa às refeições e coloca-a no array respectivo
@@ -301,6 +171,8 @@ void leDadosUtilizadores()
 {
 	wstring temp;
 
+	utilizador util;
+
 	int aux;
 
 	wfstream file;
@@ -316,9 +188,7 @@ void leDadosUtilizadores()
 	file.clear();
 	file.seekg(ios::beg);
 
-	int i = 0;
-
-	while (i < TAMANHO)
+	while (true)
 	{
 		getline(file, temp);
 
@@ -326,42 +196,41 @@ void leDadosUtilizadores()
 
 		if (aux != INT_MIN && aux != 0)									// Se aux == INT_MIN ou == 0 significa que não há utilizadores por criar pois o que foi lido já não é um valor válido
 		{
-			array_util[i].numero = aux;
+			util.numero = aux;
 
 			getline(file, temp);
-			array_util[i].nome = temp;
+			util.nome = temp;
 
 			getline(file, temp);
-			array_util[i].nasc.dia = convert_Str_2_INT(temp);
+			util.nasc.dia = convert_Str_2_INT(temp);
 
 			getline(file, temp);
-			array_util[i].nasc.mes = convert_Str_2_INT(temp);
+			util.nasc.mes = convert_Str_2_INT(temp);
 
 			getline(file, temp);
-			array_util[i].nasc.ano = convert_Str_2_INT(temp);
+			util.nasc.ano = convert_Str_2_INT(temp);
 
 			getline(file, temp);
-			array_util[i].morada.rua = temp;
+			util.morada.rua = temp;
 
 			getline(file, temp);
-			array_util[i].morada.numPorta = temp;
+			util.morada.numPorta = temp;
 
 			getline(file, temp);
-			array_util[i].morada.codPost = temp;
+			util.morada.codPost = temp;
 
 			getline(file, temp);
-			array_util[i].curso = temp;
+			util.curso = temp;
 
 			getline(file, temp);
-			array_util[i].pass = temp;
+			util.pass = temp;
 
 			numUtils++;
-			i++;
+			atual = atual->anterior;
 		}
 		else
 		{
-			fillArrayBlankUtil(i);
-			i = TAMANHO;
+			break;
 		}
 	}
 	file.close();
@@ -386,40 +255,23 @@ void escreveDadosUtilizadores()
 	file.clear();
 	file.seekp(ios::beg);
 
-	int i = 0;
-	int utilizadores_guardados = 0;
+	filaUtilizadores::UTIL * atual = filUtil.atual;
 
-	while (i < TAMANHO && utilizadores_guardados != numUtils)
+	while (atual != NULL)
 	{
-		if (array_util[i].numero != INT_MIN && utilizadores_guardados < numUtils)			// Se for um utilizador válido guarda caso contrário passa ao próximo utilizador
-		{
-			file << array_util[i].numero << endl;
-			file << array_util[i].nome << endl;
-			file << array_util[i].nasc.dia << endl;
-			file << array_util[i].nasc.mes << endl;
-			file << array_util[i].nasc.ano << endl;
-			file << array_util[i].morada.rua << endl;
-			file << array_util[i].morada.numPorta << endl;
-			file << array_util[i].morada.codPost << endl;
-			file << array_util[i].curso << endl;
-			file << array_util[i].pass << endl;
+		file << atual->util.numero << endl;
+		file << atual->util.nome << endl;
+		file << atual->util.money << endl;
+		file << atual->util.nasc.dia << endl;
+		file << atual->util.nasc.mes << endl;
+		file << atual->util.nasc.ano << endl;
+		file << atual->util.morada.rua << endl;
+		file << atual->util.morada.numPorta << endl;
+		file << atual->util.morada.codPost << endl;
+		file << atual->util.curso << endl;
+		file << atual->util.pass << endl;
 
-			utilizadores_guardados++;
-		}
-		else if (array_util[i].numero != INT_MIN && utilizadores_guardados == numUtils)		// Se for o último utilizador a guardar, guarda informação no ficheiro sem colocar uma linha em branco no fim
-		{
-			file << array_util[i].numero << endl;
-			file << array_util[i].nome << endl;
-			file << array_util[i].nasc.dia << endl;
-			file << array_util[i].nasc.mes << endl;
-			file << array_util[i].nasc.ano << endl;
-			file << array_util[i].morada.rua << endl;
-			file << array_util[i].morada.numPorta << endl;
-			file << array_util[i].morada.codPost << endl;
-			file << array_util[i].curso << endl;
-			file << array_util[i].pass;
-		}
-		i++;
+		atual = atual->anterior;
 	}
 	file.close();
 }
@@ -674,33 +526,10 @@ int inserirAluno()
 	aluno.numero = num;
 	aluno.curso = curso;
 	aluno.pass = Pass;
+	aluno.money = 0;
 
-	int i = 0;
-
-	//procura um espaço vazio no array para colocar este utilizador
-	while (i < TAMANHO)
-	{
-		if (array_util[i].numero == INT_MIN)
-		{
-			array_util[i] = aluno;
-			numUtils++;
-			break;
-		}
-		i++;
-	}
-
-	if (i < TAMANHO)
-	{
-		escreveDadosUtilizadores();		//Atualiza a informação da base de dados para conter este novo aluno
-	}
-	else
-	{
-		clrConsole();
-		wcout << "ERRO!!!\n\nA base de dados encontra-se cheia!!!\n\nPresione a tecla Enter para prosseguir...";
-		cin.sync();
-		cin.get();
-	}
-
+	insereNaFila(filUtil, aluno);
+	escreveDadosUtilizadores();		//Atualiza a informação da base de dados para conter este novo aluno
 
 	return 0;
 }
@@ -710,31 +539,7 @@ Coloca os utilizadores no array por ordem alfabética para facilitar a colocação 
 */
 void organizearray_bynames()
 {
-	int i = 0;
-	int j;
-	wstring aux_str, aux_string;
-	while (i < TAMANHO)
-	{
-		if (array_util[i].numero != INT_MIN)
-		{
-			aux_str = array_util[i].nome;
-			j = i + 1;
-			while (j < TAMANHO)
-			{
-				if (array_util[j].numero != INT_MIN)
-				{
-					aux_string = array_util[j].nome;
-					if (aux_string.compare(aux_str) > 0)
-					{
-						swap(array_util[j], array_util[i]);
-						j = TAMANHO;
-					}
-				}
-				j++;
-			}
-		}
-		i++;
-	}
+	filUtil = ordenaPorNome(filUtil);
 }
 
 /*
@@ -790,18 +595,20 @@ bool login_logout()
 		{
 			wcout << "Insira a sua password: ";
 			getline(wcin, pass);
-			i = 0;
-			while (i < TAMANHO)								//Procura, no array, por um utilizador com a informação que foi passada pelo utilizador do programa
+
+			filaUtilizadores::UTIL * atual = filUtil.atual;
+
+			while (atual != NULL)								//Procura, na lista, por um utilizador com a informação que foi passada pelo utilizador do programa
 			{
-				if (num == array_util[i].numero && array_util[i].pass.compare(pass) == 0)
+				if (num == atual->util.numero && atual->util.pass.compare(pass) == 0)
 				{
 					clrConsole();
-					wcout << "Bem vindo " << array_util[i].nome << "!" << endl;
+					wcout << "Bem vindo " << atual->util.nome << "!" << endl;
 					Sleep(3000);
 					Util_logged = num;
 					return true;							//Indica que ocorreu login
 				}
-				i++;
+				atual = atual->anterior;
 			}
 		}
 		if (repeat)
@@ -827,19 +634,24 @@ Imprime users por ordem alfabética
 void printUsers()
 {
 	organizearray_bynames();
-	//organizearray_bynames();			//por alguma razão às vezes não ordena corretamente à primeira NON ISSUE
-	int i = TAMANHO - 1;
-	while (i >= 0)
+	
+	filaUtilizadores::UTIL * atual = filUtil.atual;
+
+	if (vazio(filUtil))
 	{
-		if (array_util[i].numero != INT_MIN)
-		{
-			wcout << "Nome: " << array_util[i].nome << " NUM: " << array_util[i].numero << endl;
-		}
-		i--;
+		wcout << "A lista de utilizadores encontra-se vazia!!!" << endl;
+		cin.sync();
+		cin.get();
+		return;
+	}
+
+	while (atual != NULL)
+	{
+		wcout << "Nome: " << atual->util.nome << ". Número: " << atual->util.numero << endl;
+		atual = atual->anterior;
 	}
 
 	wcout << "\n\nPrima a tecla Enter para prosseguir...";
-
 	cin.sync();
 	cin.get();
 }
@@ -850,28 +662,26 @@ Permite carregar plafond se nao houver informaçao cria um novo plafond na lista
 int carregarPlafond()
 {
 	clrConsole();
-	int i = 0;
 	int aux;
-	bool repeat = true;
 	wstring temp;
-	while (i < TAMANHO && repeat)
+
+	filaUtilizadores::UTIL * atual = filUtil.atual;
+
+	while (atual != NULL)
 	{
-		if (array_plafond[i].numero == Util_logged)
+		if (Util_logged == atual->util.numero)
 		{
-			repeat = false;
+			break;
 		}
 		else
 		{
-			i++;
+			atual = atual->anterior;
 		}
 	}
 
-	if (i < 500)
-	{
-		wcout << "Neste momento voçê possui " << array_plafond[i].money << "€." << endl;
-	}
+	wcout << "Neste momento voçê possui " << atual->util.money << "€." << endl;
 
-	repeat = true;
+	bool repeat = true;
 	while (repeat)
 	{
 		wcout << "Quanto deseja carregar?? (Insira \"0\" para cancelar)\n\nValor: ";
@@ -902,28 +712,12 @@ int carregarPlafond()
 		clrConsole();
 	}
 
-	if (i == 500)				//Não conseguiu encontrar
-	{
-		i = 0;
-		while (i < TAMANHO)
-		{
-			if (array_plafond[i].numero == INT_MIN)
-			{
-				array_plafond[i].numero = Util_logged;
-				array_plafond[i].money = aux;
-				escreveDadosPlafonds();
-				return 0;
-			}
-			i++;
-		}
-	}
-	else
-	{
-		array_plafond[i].money += aux;
-		escreveDadosPlafonds();
-		wcout << "Após o caregamento ficou com: " << array_plafond[i].money << "€." << endl;
-		Sleep(500);
-	}
+	atual->util.money += aux;
+
+	escreveDadosUtilizadores();
+	wcout << "Após o caregamento ficou com: " << atual->util.money << "€." << endl;
+	Sleep(500);
+	
 	return 0;
 }
 
@@ -959,56 +753,33 @@ void removerAluno()
 			}
 		}
 	}
-	int i = 0;
-	while (i < TAMANHO)
+	filaUtilizadores::UTIL * atual = filUtil.atual;
+	while (atual != NULL)
 	{
-		if (numAluno == array_util[i].numero)
+		if (numAluno == atual->util.numero)
 		{
 			break;
 		}
 		else
 		{
-			i++;
+			atual = atual->anterior;
 		}
 	}
-	if (i < TAMANHO)						// Se encontrar um aluno com este numero...
+	if (atual != NULL)						// Se encontrar um aluno com este numero...
 	{
-		wcout << "Número: " << array_util[i].numero << endl << "Nome: " << array_util[i].nome << endl << "Data de Nascimento: " <<
-			array_util[i].nasc.ano << "-" << array_util[i].nasc.mes << "-" << array_util[i].nasc.dia << endl << "Morada: " <<
-			array_util[i].morada.rua << ", nº " << array_util[i].morada.numPorta << endl << "Código Postal: " << array_util[i].morada.codPost <<
-			endl << "Curso: " << array_util[i].curso << endl << endl;
+		wcout << "Número: " << atual->util.numero << endl << "Nome: " << atual->util.nome << endl << "Data de Nascimento: " <<
+			atual->util.nasc.ano << "-" << atual->util.nasc.mes << "-" << atual->util.nasc.dia << endl << "Morada: " <<
+			atual->util.morada.rua << ", nº " << atual->util.morada.numPorta << endl << "Código Postal: " << atual->util.morada.codPost <<
+			endl << "Curso: " << atual->util.curso << endl << endl;
 		wcout << "Tem a certeza que quer eliminar o aluno nº " << numAluno << "?(S/N)";
 		wcin >> val;
 		cin.sync();
 		cin.get();
 		if (val == L's' || val == L'S')
 		{
-			utilizador utilizador_remove;
-			utilizador_remove.numero = INT_MIN;
-			array_util[i] = utilizador_remove;
+			retiraDaFila(filUtil, atual->util.numero);
 			numUtils--;
 			escreveDadosUtilizadores();
-			i = 0;
-			while (i < TAMANHO)
-			{
-				if (numAluno == array_plafond[i].numero)
-				{
-					break;
-				}
-				else
-				{
-					i++;
-				}
-			}
-			if (i < TAMANHO)
-			{
-				plafond plafond_remove;
-				plafond_remove.numero = INT_MIN;
-				array_plafond[i] = plafond_remove;
-				numPlafonds--;
-				escreveDadosPlafonds();
-			}
-			return;
 		}
 		else
 		{
@@ -1033,23 +804,24 @@ void primNome()
 	int r = 0;														// Inicializa r a zero
 	wcout << "Qual é o nome que quer procurar (primeiro nome)? ";	// Pede ao utilizador o nome que pretende procurar
 	getline(wcin, nomeP);											// Guarda em momeP o nome inserido pelo utilizador
-	while (i < TAMANHO)												// Enquanto o tamanho do array for menor...
+	filaUtilizadores::UTIL * atual = filUtil.atual;
+	while (atual != NULL)												// Enquanto o tamanho do array for menor...
 	{
-		if (array_util[i].numero != INT_MIN)						// Verifica se o número é válido
+		if (atual->util.numero != INT_MIN)						// Verifica se o número é válido
 		{
-			aux = array_util[i].nome;								// Coloca em aux o nome do utilizador
+			aux = atual->util.nome;								// Coloca em aux o nome do utilizador
 			wstring::size_type pos = aux.find(' ');					// Guarda em pos a posição do primeiro ' '(espaço)
 			if (pos != string::npos)								// Se a posição do espaço for diferente da última posição da string...
 			{
 				temp = aux.substr(0, pos);							// Guarda em temp o primeiro nome do aluno, que vai da posição 0 até à posição do espaço, guardado em pos
 				if (temp.compare(nomeP) == 0)						// Se o nome guardado em temp for igual ao nome inserido...
 				{
-					wcout << endl << "Número: " << array_util[i].numero << "  Nome: " << array_util[i].nome << endl << endl;
+					wcout << endl << "Número: " << atual->util.numero << "  Nome: " << atual->util.nome << endl << endl;
 					r++;											// Incrementa a varíavel que dá a quantidade de registos encontrados
 				}
 			}
 		}
-		i++;														// Passa para o aluno seguinte
+		atual = atual->anterior;														// Passa para o aluno seguinte
 	}
 	wcout << "Número de resultados encontrados: " << r << endl << endl;
 	wcout << "Para prosseguir pressione Enter. ";
@@ -1387,6 +1159,9 @@ Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pe
 */
 void printMainMenu()
 {
+	novo(filUtil);
+	novo(filRef);
+
 	wstring resposta;
 	int resposta_int;
 	bool quit = false;
@@ -1551,131 +1326,14 @@ void printMainMenu()
 		}
 	}
 }
+
+
 /*-------------------------Sugestões?---------------------*/
 bool vazio(filaUtilizadores& fila)
 {
 	return (fila.ultimoAluno == 0);
 }
-int insereAluno(filaUtilizadores& fila)
-{
-	filaUtilizadores::Utilizador *aux = new filaUtilizadores::Utilizador();
 
-	wstring nome, temp, rua, codPost, numPorta;
-	int num, dia, mes, ano;
-
-	//Pede o Nome
-	wcout << "Por favor insira os dados do aluno." << endl << endl << "Nome Completo (Sem colocar acentos ou cedilhas): ";
-	getline(wcin, nome);
-	clrConsole();
-
-	//Pede o Numero
-	wcout << "Número Mecanográfico: ";
-	getline(wcin, temp);
-	num = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (num == INT_MIN)
-	{
-		num = valorInvalido_inserirAluno(L"Número Mecanográfico: ");
-		if (num == -1)
-		{
-			return -1;
-		}
-	}
-
-	//Pede a data de nascimento começando pelo ano
-	wcout << "Data de nascimento" << endl << "Ano: ";
-	getline(wcin, temp);
-	ano = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (ano == INT_MIN)
-	{
-		ano = valorInvalido_inserirAluno(L"Ano: ");
-		if (ano == -1)
-		{
-			return -1;
-		}
-	}
-
-	//Pede o mes de nascimento
-	wcout << "Mês(número): ";
-	getline(wcin, temp);
-	mes = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (mes == INT_MIN)
-	{
-		mes = valorInvalido_inserirAluno(L"Mês(número): ");
-		if (mes == -1)
-		{
-			return -1;
-		}
-	}
-
-	//Pede o dia do nascimento
-	wcout << "Dia: ";
-	getline(wcin, temp);
-	dia = convert_Str_2_INT(temp);
-	clrConsole();
-
-	if (dia == INT_MIN)
-	{
-		dia = valorInvalido_inserirAluno(L"Dia: ");
-		if (dia == -1)
-		{
-			return -1;
-		}
-	}
-
-	dataNasc date;
-
-	date.ano = ano;
-	date.mes = mes;
-	date.dia = dia;
-
-	//Pede a rua da morada
-	wcout << "Morada" << endl << "Rua: ";
-	getline(wcin, rua);
-	clrConsole();
-
-	//Pede a porta da morada
-	wcout << "Nº da porta: ";
-	getline(wcin, numPorta);
-	clrConsole();
-
-	//Pede o codigo postal da morada
-	wcout << "Código Postal: ";
-	getline(wcin, codPost);
-	clrConsole();
-
-	morada mora;
-
-	mora.codPost = codPost;
-	mora.rua = rua;
-	mora.numPorta = numPorta;
-
-	wstring curso;
-
-	//Pede o Curso
-	wcout << "Curso: ";
-	getline(wcin, curso);
-	clrConsole();
-
-	wstring Pass = PassPrompt();
-
-	utilizador aluno;
-	aluno.morada = mora;
-	aluno.nasc = date;
-	aluno.nome = nome;
-	aluno.numero = num;
-	aluno.curso = curso;
-	aluno.pass = Pass;
-
-	aux->util = aluno;
-	aux->proximo = fila.ultimoAluno;
-	fila.ultimoAluno = aux;
-}
 void mostrar(filaUtilizadores& fila)
 {
 	filaUtilizadores::Utilizador *aux = new filaUtilizadores::Utilizador();

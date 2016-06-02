@@ -322,7 +322,7 @@ bool dateValid(int ano, int mes, int dia)
 }
 
 /*
-Verifica se a data é igual à introduzida
+Verifica se a data de hoje é igual à introduzida
 */
 bool dataVerifica(int ano, int mes, int dia)
 {
