@@ -16,7 +16,7 @@ void insereNaFila(filaUtilizadores& fila, utilizador util)
 	novo->util = util;
 	novo->proximo = NULL;
 	novo->anterior = fila.atual;
-	if (fila.atual == NULL)
+	if (fila.atual != NULL)
 	{
 		fila.atual->proximo = novo;
 	}
@@ -29,7 +29,7 @@ void insereNaFila(filaRefeicao& fila, refeicao ref)
 	novo->refeicao = ref;
 	novo->proximo = NULL;
 	novo->anterior = fila.atual;
-	if (fila.atual == NULL)
+	if (fila.atual != NULL)
 	{
 		fila.atual->proximo = novo;
 	}
@@ -194,16 +194,22 @@ filaUtilizadores ordenaPorNome(filaUtilizadores& fila)
 					}
 					else
 					{
-						atual->anterior = atual_2;
-						atual->proximo = atual_2->proximo;
-						atual_2->proximo->anterior = atual;
-						atual_2->proximo = atual;
+						filaUtilizadores::UTIL * novo = new filaUtilizadores::UTIL();
+						novo->util = atual->util;
+						novo->anterior = atual_2;
+						novo->proximo = atual_2->proximo;
+						atual_2->proximo->anterior = novo;
+						atual_2->proximo = novo;
 					}
 					break;
 				}
 				else if (atual_2->anterior == NULL)
 				{
-					atual_2->anterior = atual;
+					filaUtilizadores::UTIL * novo = new filaUtilizadores::UTIL();
+					novo->util = atual->util;
+					atual_2->anterior = novo;
+					novo->proximo = atual_2;
+					novo->anterior = NULL;
 					break;
 				}
 				else
