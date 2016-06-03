@@ -149,8 +149,14 @@ void retiraDaFila(filaRefeicao& fila, refeicao ref)
 		acima = atual->proximo;
 		abaixo = atual->anterior;
 
-		acima->anterior = atual->anterior;
-		abaixo->proximo = atual->proximo;
+		if (acima != NULL)
+		{
+			acima->anterior = atual->anterior;
+		}
+		if (abaixo != NULL)
+		{
+			abaixo->proximo = atual->proximo;
+		}
 
 		delete atual;
 	}
