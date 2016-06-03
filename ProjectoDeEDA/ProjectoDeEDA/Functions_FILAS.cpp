@@ -16,7 +16,10 @@ void insereNaFila(filaUtilizadores& fila, utilizador util)
 	novo->util = util;
 	novo->proximo = NULL;
 	novo->anterior = fila.atual;
-	fila.atual->proximo = novo;
+	if (fila.atual == NULL)
+	{
+		fila.atual->proximo = novo;
+	}
 	fila.atual = novo;
 }
 
@@ -26,7 +29,10 @@ void insereNaFila(filaRefeicao& fila, refeicao ref)
 	novo->refeicao = ref;
 	novo->proximo = NULL;
 	novo->anterior = fila.atual;
-	fila.atual->proximo = novo;
+	if (fila.atual == NULL)
+	{
+		fila.atual->proximo = novo;
+	}
 	fila.atual = novo;
 }
 
@@ -88,8 +94,14 @@ void retiraDaFila(filaUtilizadores& fila, int numero)
 		acima = atual->proximo;
 		abaixo = atual->anterior;
 		
-		acima->anterior = atual->anterior;
-		abaixo->proximo = atual->proximo;
+		if (acima != NULL)
+		{
+			acima->anterior = atual->anterior;
+		}
+		if (abaixo != NULL)
+		{
+			abaixo->proximo = atual->proximo;
+		}
 
 		delete atual;
 	}
