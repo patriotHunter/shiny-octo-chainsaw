@@ -1165,6 +1165,43 @@ void listarAlunoNumero()
 	}
 }
 
+void listarRefeicoesDias()
+{
+	wstring temp;
+	wcout << "Insira o dia a procurar: ";
+	getline(wcin, temp);
+	int dia = convert_Str_2_INT(temp);
+
+	wcout << endl << "Insira o mes a procurar: ";
+	getline(wcin, temp);
+	int mes = convert_Str_2_INT(temp);
+	
+	wcout << endl << "Insira o ano a procurar: ";
+	getline(wcin, temp);
+	int ano = convert_Str_2_INT(temp);
+
+	filaRefeicao::REF * atual = new filaRefeicao::REF();
+
+	atual = filRef.atual;
+
+	while (atual != NULL)
+	{
+		if (atual->refeicao.data.dia == dia && atual->refeicao.data.mes == mes && atual->refeicao.data.ano == ano)
+		{
+			wcout << "Número: " << atual->refeicao.numero << endl;
+			if (atual->refeicao.jantar == true)
+			{
+				wcout << "A refeição é para o jantar." << endl << endl;
+			}
+			else
+			{
+				wcout << "A refeição é para o almoço." << endl << endl;
+			}
+		}
+		atual = atual->anterior;
+	}
+}
+
 /*
 Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
@@ -1200,13 +1237,13 @@ void printMainMenu()
 		{
 			wcout << "2. Inserir alunos\n"
 				<< "3. Pesquisar pelo Primeiro Nome\n"
-				//<< "4. Pesquisar pelo Número\n"
-				<< "4. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
-				//<< "6. Alterar alunos\n"
-				<< "5. Remover alunos\n"						//O mesmo que acima	
-				<< "6. Consumir Refeicão\n"						//O mesmo que acima	
-				<< "7. Listar refeições\n"						//O mesmo que acima	
-				//<< "10. Listar refeições num determinado dia\n"
+				<< "4. Pesquisar pelo Número\n"
+				<< "5. Lista alunos por Ordem Alfabetica\n"		//Por enquanto é a quarta, mais para a frente irá ser a quinta opção
+				<< "6. Alterar alunos\n"
+				<< "7. Remover alunos\n"						//O mesmo que acima	
+				<< "8. Consumir Refeicão\n"						//O mesmo que acima	
+				<< "9. Listar refeições\n"						//O mesmo que acima	
+				<< "10. Listar refeições num determinado dia\n"
 				<< "\nOpção: ";
 		}
 		else if (!admin && logged) // se o utilizador n estiver logged in n no admin
@@ -1284,14 +1321,14 @@ void printMainMenu()
 				printUsers();
 				clrConsole();
 			}
-			/*else if (resposta_int == 6 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 6 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 			clrConsole();
 			wcout << "Escolheu alterar alunos\n";
 			Sleep(1000);
 			clrConsole();
-			}*/
-			else if (resposta_int == 5/*7*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			}
+			else if (resposta_int == 7 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu remover alunos.\n";
@@ -1300,7 +1337,7 @@ void printMainMenu()
 				clrConsole();
 			}
 
-			else if (resposta_int == 6/*8*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 8 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu remover refeição.\n";
@@ -1309,7 +1346,7 @@ void printMainMenu()
 				Sleep(500);
 				clrConsole();
 			}
-			else if (resposta_int == 7/*9*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 9 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu listar refeições.\n";
@@ -1318,13 +1355,14 @@ void printMainMenu()
 				Sleep(500);
 				clrConsole();
 			}
-			//else if (resposta_int == 10 && logged && admin)	// se tiver um admin logado isto é uma opção válida para o administrador
-			//{
-			//	clrconsole();
-			//	wcout << "escolheu listar refeições num determinado dia.\n";
-			//	sleep(1000);
-			//	clrconsole();
-			//}
+			else if (resposta_int == 10 && logged && admin)	// se tiver um admin logado isto é uma opção válida para o administrador
+			{
+				clrConsole();
+				wcout << "Escolheu listar refeições num determinado dia.\n";
+				listarRefeicoesDias();
+				Sleep(1000);
+				clrConsole();
+			}
 			else													// Se a opção inserida pelo utilizador não é válida.
 			{
 				clrConsole();
