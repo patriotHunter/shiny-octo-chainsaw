@@ -9,7 +9,6 @@ Le a informação relativa às refeições e coloca-a no array respectivo
 */
 void leDadosRefeicoes();
 
-
 /*
 Escreve os dados de refeicoes nos ficheiros
 */
@@ -56,11 +55,6 @@ Remover alunos
 void removerAluno();
 
 /*
-Pesquisar pelo primeiro nome
-*/
-void primNome();
-
-/*
 Listar Refeições
 */
 void listarRefeicao();
@@ -75,10 +69,13 @@ Consumir Refeição
 */
 void consumirRefeição();
 
+void listarAlunoNumero();
+
+void listarRefeicoesDias();
+
+void alterarAluno();
+
 /*
 Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
 void printMainMenu();
-
-
-

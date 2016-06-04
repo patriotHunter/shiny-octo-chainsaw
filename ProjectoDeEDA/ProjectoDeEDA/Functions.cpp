@@ -1202,6 +1202,210 @@ void listarRefeicoesDias()
 	}
 }
 
+void alterarAluno()
+{
+	wstring temp;
+
+	filaUtilizadores::UTIL * atual = filUtil.atual;
+sayagain:
+	clrConsole();
+	wcout << "Insira o número do aluno que deseja alterar(0 para sair): ";
+	getline(wcin, temp);
+
+	int num = convert_Str_2_INT(temp);
+	if (num != INT_MIN)
+	{
+		if (num == 0)
+		{
+			return;
+		}
+		else
+		{
+			while (atual != NULL)
+			{
+				if (atual->util.numero == num)
+				{
+					break;
+				}
+				else
+				{
+					atual = atual->anterior;
+				}
+			}
+			if (atual == NULL)
+			{
+				wcout << "Não existe nenhum utilizador com este número!!!" << endl;
+				wcout << "Pressione ENTER para sair.";
+				cin.sync();
+				cin.get();
+				return;
+			}
+			else
+			{
+				wchar_t conf;
+				wcout << "Número Mecanográfico: " << atual->util.numero << endl;
+				wcout << "Nome Completo: " << atual->util.nome << endl;
+				wcout << "Data de Nascimento: " << atual->util.nasc.dia << "/" << atual->util.nasc.mes << "/" << atual->util.nasc.ano << endl;
+				wcout << "Morada: " << atual->util.morada.rua << ", " << atual->util.morada.numPorta << ", Código postal: " << atual->util.morada.codPost << endl;
+				wcout << "Curso: " << atual->util.curso << endl << endl;
+				wcout << "Os dados estão correctos?(S/N) ";
+				wcin >> conf;
+				cin.sync();
+				cin.get();										//Retira um ghost "ENTER"
+																//Se o utilizador quiser editar os seus dados
+				if (conf == L'N' || conf == L'n')
+				{
+					bool repeat = true;
+					int answer, ano, mes, dia;
+					while (repeat)
+					{
+						here:
+						clrConsole();
+						wcout << "O que deseja alterar?" << endl;
+						wcout << "1) Número Mecanográfico: " << atual->util.numero << endl;
+						wcout << "2) Nome Completo: " << atual->util.nome << endl;
+						wcout << "3) Data de Nascimento: " << atual->util.nasc.dia << "/" << atual->util.nasc.mes << "/" << atual->util.nasc.ano << endl;
+						wcout << "4) Morada: " << atual->util.morada.rua << ", " << atual->util.morada.numPorta << ", Código postal: " << atual->util.morada.codPost << endl;
+						wcout << "5) Curso: " << atual->util.curso << endl;
+						wcout << "0) Terminar edição" << endl;
+						wcout << endl << "Insira o valor da opção pretendida: ";
+						getline(wcin, temp);
+
+						answer = convert_Str_2_INT(temp);
+
+						if (answer < 0 || answer > 4)
+						{
+							wcout << endl << endl << "O valor inserido não é válido!";
+							Sleep(1000);
+						}
+						else
+						{
+							clrConsole();
+							switch (answer)
+							{
+								//Sair da edição
+							case 0:
+								wcout << endl << "Deseja mesmo sair da edição de aluno? (S/N) ";
+								char answer;
+								cin >> answer;
+								if (answer == 's' || answer == 'S')
+								{
+									repeat = false;
+								}
+								break;
+								//Alterar nº mecanografico
+							case 1:
+								wcout << endl << "Reinsira o número mecanográfico: ";
+								getline(wcin, temp);
+								num = convert_Str_2_INT(temp);
+
+								if (num != INT_MIN)
+								{
+									atual->util.numero = valorInvalido_inserirAluno(L"Número Mecanográfico: ");
+								}
+								else
+								{
+									wcout << "Valor inválido!!!" << endl;
+									wcout << "Pressione ENTER para prosseguir." << endl;
+									cin.sync();
+									cin.get();
+								}
+								break;
+								//alterar o nome
+							case 2:
+								wcout << endl << "Reinsira o nome: ";
+								getline(wcin, atual->util.nome);
+								break;
+								//alterar a data de nascimento
+							case 3:
+								wcout << endl << endl << "Data de nascimento" << endl << "Dia: ";
+								getline(wcin, temp);
+								dia = convert_Str_2_INT(temp);
+								clrConsole();
+
+								if (dia == INT_MIN)
+								{
+									wcout << "Valor inválido!!!" << endl;
+									wcout << "Pressione ENTER para prosseguir." << endl;
+									cin.sync();
+									cin.get();
+									goto here;
+								}
+
+								wcout << endl << "Mês(número): ";
+								getline(wcin, temp);
+								mes = convert_Str_2_INT(temp);
+								clrConsole();
+
+								if (mes == INT_MIN)
+								{
+									wcout << "Valor inválido!!!" << endl;
+									wcout << "Pressione ENTER para prosseguir." << endl;
+									cin.sync();
+									cin.get();
+									goto here;
+								}
+
+								wcout << endl << "Ano: ";
+								getline(wcin, temp);
+								ano = convert_Str_2_INT(temp);
+								clrConsole();
+
+								if (ano == INT_MIN)
+								{
+									wcout << "Valor inválido!!!" << endl;
+									wcout << "Pressione ENTER para prosseguir." << endl;
+									cin.sync();
+									cin.get();
+									goto here;
+								}
+
+								atual->util.nasc.ano = ano;
+								atual->util.nasc.mes = mes;
+								atual->util.nasc.dia = dia;
+								break;
+								//alterar a morada
+							case 4:
+								wcout << endl << endl << "Morada" << endl << "Rua: " << endl << endl;
+								getline(wcin, atual->util.morada.rua);
+								clrConsole();
+
+								wcout << endl << "Nº da porta: " << endl << endl;
+								getline(wcin, atual->util.morada.numPorta);
+								clrConsole();
+
+								wcout << endl << "Código Postal: " << endl << endl;
+								getline(wcin, atual->util.morada.codPost);
+								clrConsole();
+								break;
+								//alterar o curso
+							case 5:
+								wcout << endl << "Reinsira o curso: ";
+								getline(wcin, atual->util.curso);
+								break;
+								//default: corre quando não for um valor esperado
+							default:
+								wcout << "Valor inválido!!!!";
+								Sleep(500);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		wcout << "Inseriu um número inválido." << endl << endl << "Pressione ENTER para prosseguir.";
+		cin.sync();
+		cin.get();
+		clrConsole();
+		goto sayagain;
+	}
+	escreveDadosUtilizadores();
+}
+
 /*
 Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
@@ -1307,11 +1511,11 @@ void printMainMenu()
 			}
 			else if (resposta_int == 4 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
-			clrConsole();
-			wcout << "Escolheu pesquisar pelo número\n";
-			listarAlunoNumero();
-			Sleep(1000);
-			clrConsole();
+				clrConsole();
+				wcout << "Escolheu pesquisar pelo número\n";
+				listarAlunoNumero();
+				Sleep(1000);
+				clrConsole();
 			}
 			else if (resposta_int == 5 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
@@ -1323,10 +1527,11 @@ void printMainMenu()
 			}
 			else if (resposta_int == 6 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
-			clrConsole();
-			wcout << "Escolheu alterar alunos\n";
-			Sleep(1000);
-			clrConsole();
+				clrConsole();
+				wcout << "Escolheu alterar alunos\n";
+				alterarAluno();
+				Sleep(1000);
+				clrConsole();
 			}
 			else if (resposta_int == 7 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
