@@ -1105,6 +1105,66 @@ void consumirRefeição()
 	}
 }
 
+void listarAlunoNumero()
+{
+	wstring temp;
+
+	pededenovo:
+	wcout << "Insira o número a procurar (insira 0 para sair): ";
+	getline(wcin, temp);
+
+	int num = convert_Str_2_INT(temp);
+	if (num != INT_MIN)
+	{
+		if (num == 0)
+		{
+			return;
+		}
+		filaUtilizadores::UTIL * atual = new filaUtilizadores::UTIL();
+		atual = filUtil.atual;
+		while (atual != NULL)
+		{
+			if (atual->util.numero == num)
+			{
+				break;
+			}
+			else
+			{
+				atual = atual->anterior;
+			}
+		}
+		if (atual != NULL)
+		{
+			wcout << "Número: " << atual->util.numero << endl <<
+				"Nome: " << atual->util.nome << endl <<
+				"Data de Nascimento: " << atual->util.nasc.dia << "/" << atual->util.nasc.mes << "/" << atual->util.nasc.ano << endl <<
+				"Morada: " << atual->util.morada.rua << ", " << atual->util.morada.numPorta << endl <<
+				"Código Postal: " << atual->util.morada.codPost << endl <<
+				"Curso: " << atual->util.curso << endl << endl <<
+				"Pressione ENTER para prosseguir.";
+			cin.sync();
+			cin.get();
+			return;
+
+		}
+		else
+		{
+			wcout << "Não há nenhum utilizador com esse número!!" << endl << endl << "Pressione ENTER para prosseguir.";
+			cin.sync();
+			cin.get();
+			return;
+		}
+	}
+	else
+	{
+		wcout << "Inseriu um número inválido." << endl << endl << "Pressione ENTER para prosseguir.";
+		cin.sync();
+		cin.get();
+		clrConsole();
+		goto pededenovo;
+	}
+}
+
 /*
 Coloca o menu principal no ecrã e realiza funções consoante a opção escolhida pelo utilizador.
 */
@@ -1208,14 +1268,15 @@ void printMainMenu()
 				carregarPlafond();
 				clrConsole();
 			}
-			/*else if (resposta_int == 4 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			else if (resposta_int == 4 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 			clrConsole();
 			wcout << "Escolheu pesquisar pelo número\n";
+			listarAlunoNumero();
 			Sleep(1000);
 			clrConsole();
-			}*/
-			else if (resposta_int == 4/*5*/ && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
+			}
+			else if (resposta_int == 5 && logged && admin)	// Se tiver um admin logado isto é uma opção válida para o administrador
 			{
 				clrConsole();
 				wcout << "Escolheu listar alunos por ordem alfabética.\n\n";

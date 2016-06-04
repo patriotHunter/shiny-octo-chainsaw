@@ -5,16 +5,6 @@
 #include "Functions_FILAS.h"
 
 /*
-Le dados do ficheiro contendo os plafonds
-*/
-void leDadosPlafonds();
-
-/*
-Escreve os dados de plafonds nos ficheiros
-*/
-void escreveDadosPlafonds();
-
-/*
 Le a informação relativa às refeições e coloca-a no array respectivo
 */
 void leDadosRefeicoes();
