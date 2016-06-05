@@ -394,7 +394,7 @@ int inserirAluno()
 
 			answer = convert_Str_2_INT(temp);
 
-			if (answer < 0 || answer > 4)
+			if (answer < 0 || answer > 5)
 			{
 				wcout << endl << endl << "O valor inserido não é válido!";
 				Sleep(1000);
@@ -1258,7 +1258,8 @@ sayagain:
 				wcout << "Nome Completo: " << atual->util.nome << endl;
 				wcout << "Data de Nascimento: " << atual->util.nasc.dia << "/" << atual->util.nasc.mes << "/" << atual->util.nasc.ano << endl;
 				wcout << "Morada: " << atual->util.morada.rua << ", " << atual->util.morada.numPorta << ", Código postal: " << atual->util.morada.codPost << endl;
-				wcout << "Curso: " << atual->util.curso << endl << endl;
+				wcout << "Curso: " << atual->util.curso << endl;
+				wcout << "Password: " << atual->util.pass << endl << endl;
 				wcout << "Os dados estão correctos?(S/N) ";
 				wcin >> conf;
 				cin.sync();
@@ -1278,13 +1279,14 @@ sayagain:
 						wcout << "3) Data de Nascimento: " << atual->util.nasc.dia << "/" << atual->util.nasc.mes << "/" << atual->util.nasc.ano << endl;
 						wcout << "4) Morada: " << atual->util.morada.rua << ", " << atual->util.morada.numPorta << ", Código postal: " << atual->util.morada.codPost << endl;
 						wcout << "5) Curso: " << atual->util.curso << endl;
+						wcout << "6) Password: " << atual->util.pass << endl;
 						wcout << "0) Terminar edição" << endl;
 						wcout << endl << "Insira o valor da opção pretendida: ";
 						getline(wcin, temp);
 
 						answer = convert_Str_2_INT(temp);
 
-						if (answer < 0 || answer > 4)
+						if (answer < 0 || answer > 6)
 						{
 							wcout << endl << endl << "O valor inserido não é válido!";
 							Sleep(1000);
@@ -1393,6 +1395,10 @@ sayagain:
 							case 5:
 								wcout << endl << "Reinsira o curso: ";
 								getline(wcin, atual->util.curso);
+								break;
+								//alterar a password
+							case 6:
+								atual->util.pass = PassPrompt();
 								break;
 								//default: corre quando não for um valor esperado
 							default:
