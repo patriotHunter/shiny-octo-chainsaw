@@ -13,7 +13,6 @@ int Util_logged;								// Numero mecanografico do ultimo/atual utilizador logge
 wchar_t dadU[50] = L"BaseDados.txt";			// Nome do ficheiro contendo a informação dos utilizadores 
 wchar_t dadR[50] = L"Refeicoes.txt";			// Nome do ficheiro contendo a informação dos refeicoes
 int numUtils = 0;								// Numero total de utilizadores
-int numPlafonds = 0;							// Numero total de utilizadores com plafond
 int numRefeicoes = 0;							// Numero total de refeicoes
 filaUtilizadores filUtil;
 filaRefeicao filRef;
@@ -916,7 +915,7 @@ void encomendarRefeicao()
 			num = convert_Str_2_INT(aux);
 			if (num < 0)
 			{
-				wcout << "o valor incerido é inválido.";
+				wcout << "o valor inserido é inválido.";
 				Sleep(500);
 				clrConsole();
 			}
@@ -1025,13 +1024,16 @@ void encomendarRefeicao()
 				food.data.dia = dia;
 				food.numero = Util_logged;
 				food.jantar = jantar;
-				
+				atual_util->util.money -= 3;
+				numRefeicoes++;
 				insereNaFila(filRef, food);
 
 				j++;
 			}
 		}
 	}
+	escreveDadosUtilizadores();
+	escreveDadosRefeicoes();
 }
 
 /*
@@ -1105,6 +1107,9 @@ void consumirRefeição()
 	}
 }
 
+/*
+Listar utilizadores por numero
+*/
 void listarAlunoNumero()
 {
 	wstring temp;
@@ -1165,6 +1170,9 @@ void listarAlunoNumero()
 	}
 }
 
+/*
+Listar refeicoes pelos dias pretendidos
+*/
 void listarRefeicoesDias()
 {
 	wstring temp;
@@ -1202,6 +1210,9 @@ void listarRefeicoesDias()
 	}
 }
 
+/*
+Permite alterar a informação de utilizadores
+*/
 void alterarAluno()
 {
 	wstring temp;
