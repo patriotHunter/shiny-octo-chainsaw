@@ -1,4 +1,4 @@
-# shiny-octo-chainsaw ReadMe
+#ReadMe
 
 ##Data Structure and Algorithms Project
 
