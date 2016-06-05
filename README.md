@@ -1,14 +1,4 @@
-# shiny-octo-chainsaw
-
-##Project Done by/Projecto Feito por:
-
-Joana Velosa - V3loz4.
-
-Josué Ferreira - patriotHunter.
-
-Marcelo Ramos - NnoukK.
-
-Pedro Vieira - Blackpeople.
+#ReadMe
 
 ##Data Structure and Algorithms Project
 
@@ -21,3 +11,15 @@ For the users and meals we used a stack of user and meal elements in which each 
 Neste projecto foi-nos dado o desafio de criar um programa para uma possível cantina, em que fosse possível os alunos adicionar fundos e encomendar refeições, e aos administadores fosse possível a criação, remoção, listagem e alteração de alunos bem como a listagem e abate de refeições consumidas.
 
 Para as listas de alunos e refeições foi utilizado pilhas em que cada elemento da mesma tem acesso ao elemento acima e ao abaixo desta.
+
+##Project Done by/Projecto Feito por:
+
+Joana Velosa - V3loz4.
+
+Josué Ferreira - patriotHunter.
+
+Marcelo Ramos - NnoukK.
+
+Pedro Vieira - Blackpeople.
+
+#;)
