@@ -1208,6 +1208,9 @@ void listarRefeicoesDias()
 		}
 		atual = atual->anterior;
 	}
+	wcout << "Pressione ENTER para prosseguir.";
+	cin.sync();
+	cin.get();
 }
 
 /*
