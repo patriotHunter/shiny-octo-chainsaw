@@ -28,7 +28,7 @@ struct morada
 	wstring rua;
 	wstring numPorta;
 	wstring codPost;
-};
+};		
 
 /*
 	Estrutura que define qual a informação necessária para termos um utilizador
@@ -37,6 +37,7 @@ struct utilizador
 {
 	int numero;
 	wstring nome;
+	int money;
 	dataNasc nasc;
 	morada morada;
 	wstring curso;
@@ -54,12 +55,29 @@ struct refeicao
 };
 
 /*
-	Estrutura que define o que é o plafond
+Método de pilhas como na ficha 8
 */
-struct plafond
+
+struct filaUtilizadores 
 {
-	int numero;
-	int money;
+	struct UTIL
+	{
+		utilizador util;
+		UTIL *proximo;
+		UTIL *anterior;
+	};
+	UTIL * atual;
+};
+
+struct filaRefeicao
+{
+	struct REF
+	{
+		refeicao refeicao;
+		REF * proximo;
+		REF * anterior;
+	};
+	REF * atual;
 };
 
 

@@ -24,15 +24,26 @@
     <ClInclude Include="Other_Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Functions_FILAS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Other_Functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions_FILAS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="BaseDados.txt" />
-    <Text Include="Plafond.txt" />
     <Text Include="Refeicoes.txt" />
   </ItemGroup>
 </Project>
