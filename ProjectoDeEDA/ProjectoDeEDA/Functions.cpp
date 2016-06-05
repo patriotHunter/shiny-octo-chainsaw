@@ -409,7 +409,7 @@ int inserirAluno()
 					wcout << endl << "Deseja mesmo sair da edição de aluno? (S/N) ";
 					char answer;
 					cin >> answer;
-					if (answer == 'n' || answer == 'N')
+					if (answer == 's' || answer == 'S')
 					{
 						repeat = false;
 					}
