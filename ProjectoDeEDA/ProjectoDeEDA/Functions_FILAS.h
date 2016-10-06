@@ -2,6 +2,8 @@
 
 #include "Struct.h"
 
+//Protótipo de funções
+
 void novo(filaUtilizadores& fila);
 
 void novo(filaRefeicao& fila);
